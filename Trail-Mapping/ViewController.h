@@ -7,9 +7,19 @@
 //
 
 #import <UIKit/UIKit.h>
+@import MapKit;
+#import "Annotation.h"
 
-@interface ViewController : UIViewController
+@interface ViewController : UIViewController <MKMapViewDelegate, CLLocationManagerDelegate>
 
+@property (weak, nonatomic) IBOutlet MKMapView *mapView;
+@property (retain, nonatomic) CLLocationManager *locationManager;
+@property (nonatomic, strong) NSMutableArray *allLocations;
+@property (nonatomic, strong) NSMutableArray *coordinates;
+@property (retain, nonatomic) MKPolyline *polyline;
+@property (retain, nonatomic) MKPolylineRenderer *lineView;
+@property (retain, nonatomic) MKOverlayView *overlayView;
 
+-(void)placePin:(UIGestureRecognizer *)gestureRecognizer;
 @end
 

@@ -13,6 +13,11 @@
 		A93DF42C1D73992F0028A997 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A93DF42A1D73992F0028A997 /* Main.storyboard */; };
 		A93DF42E1D73992F0028A997 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A93DF42D1D73992F0028A997 /* Assets.xcassets */; };
 		A93DF4311D73992F0028A997 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A93DF42F1D73992F0028A997 /* LaunchScreen.storyboard */; };
+		A93DF4391D7399580028A997 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A93DF4381D7399580028A997 /* MapKit.framework */; };
+		A93DF43B1D73995F0028A997 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A93DF43A1D73995F0028A997 /* UIKit.framework */; };
+		A93DF43D1D7399660028A997 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A93DF43C1D7399660028A997 /* Foundation.framework */; };
+		A93DF4401D739A620028A997 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A93DF43F1D739A620028A997 /* CoreLocation.framework */; };
+		A93DF4431D739DD90028A997 /* Annotation.m in Sources */ = {isa = PBXBuildFile; fileRef = A93DF4421D739DD90028A997 /* Annotation.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,6 +31,12 @@
 		A93DF42D1D73992F0028A997 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A93DF4301D73992F0028A997 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		A93DF4321D73992F0028A997 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A93DF4381D7399580028A997 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
+		A93DF43A1D73995F0028A997 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		A93DF43C1D7399660028A997 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		A93DF43F1D739A620028A997 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
+		A93DF4411D739DD90028A997 /* Annotation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Annotation.h; sourceTree = "<group>"; };
+		A93DF4421D739DD90028A997 /* Annotation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Annotation.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -33,6 +44,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A93DF4401D739A620028A997 /* CoreLocation.framework in Frameworks */,
+				A93DF43D1D7399660028A997 /* Foundation.framework in Frameworks */,
+				A93DF43B1D73995F0028A997 /* UIKit.framework in Frameworks */,
+				A93DF4391D7399580028A997 /* MapKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -42,6 +57,7 @@
 		A93DF4151D73992D0028A997 = {
 			isa = PBXGroup;
 			children = (
+				A93DF43E1D73996F0028A997 /* Frameworks */,
 				A93DF4201D73992F0028A997 /* Trail-Mapping */,
 				A93DF41F1D73992E0028A997 /* Products */,
 			);
@@ -67,6 +83,8 @@
 				A93DF42F1D73992F0028A997 /* LaunchScreen.storyboard */,
 				A93DF4321D73992F0028A997 /* Info.plist */,
 				A93DF4211D73992F0028A997 /* Supporting Files */,
+				A93DF4411D739DD90028A997 /* Annotation.h */,
+				A93DF4421D739DD90028A997 /* Annotation.m */,
 			);
 			path = "Trail-Mapping";
 			sourceTree = "<group>";
@@ -77,6 +95,17 @@
 				A93DF4221D73992F0028A997 /* main.m */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		A93DF43E1D73996F0028A997 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				A93DF43F1D739A620028A997 /* CoreLocation.framework */,
+				A93DF43C1D7399660028A997 /* Foundation.framework */,
+				A93DF43A1D73995F0028A997 /* UIKit.framework */,
+				A93DF4381D7399580028A997 /* MapKit.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -152,6 +181,7 @@
 			files = (
 				A93DF4291D73992F0028A997 /* ViewController.m in Sources */,
 				A93DF4261D73992F0028A997 /* AppDelegate.m in Sources */,
+				A93DF4431D739DD90028A997 /* Annotation.m in Sources */,
 				A93DF4231D73992F0028A997 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
