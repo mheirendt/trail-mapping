@@ -9,16 +9,21 @@
 #import <UIKit/UIKit.h>
 @import MapKit;
 #import "Annotation.h"
+#import "AttributedPolyline.h"
 
 @interface ViewController : UIViewController <MKMapViewDelegate, CLLocationManagerDelegate>
 
 @property (weak, nonatomic) IBOutlet MKMapView *mapView;
 @property (retain, nonatomic) CLLocationManager *locationManager;
+@property (strong, nonatomic) NSDate *lastTimestamp;
 @property (nonatomic, strong) NSMutableArray *allLocations;
 @property (nonatomic, strong) NSMutableArray *coordinates;
-@property (retain, nonatomic) MKPolyline *polyline;
+@property (nonatomic, strong) NSTimer *timer;
+@property int seconds;
+@property float distance;
+@property (retain, nonatomic) AttributedPolyline *traceLine;
 @property (retain, nonatomic) MKPolylineRenderer *lineView;
-@property (retain, nonatomic) MKOverlayView *overlayView;
+@property BOOL tracing;
 
 -(void)placePin:(UIGestureRecognizer *)gestureRecognizer;
 @end

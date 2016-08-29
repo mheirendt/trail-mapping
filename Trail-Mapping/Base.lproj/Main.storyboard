@@ -3,6 +3,7 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
         <!--View Controller-->
@@ -20,12 +21,30 @@
                             <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" showsUserLocation="YES" translatesAutoresizingMaskIntoConstraints="NO" id="D93-6T-tY1">
                                 <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                             </mapView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="TFV-Ox-n96">
+                                <rect key="frame" x="491" y="47" width="89" height="30"/>
+                                <state key="normal" title="Start Tracing"/>
+                                <connections>
+                                    <action selector="tracePath:" destination="BYZ-38-t0r" eventType="touchUpInside" id="eom-jA-A8c"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="uub-Q6-DPH">
+                                <rect key="frame" x="350" y="47" width="32" height="30"/>
+                                <state key="normal" title="Stop"/>
+                                <connections>
+                                    <action selector="stopTracing:" destination="BYZ-38-t0r" eventType="touchUpInside" id="3Vm-MH-1F2"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
+                            <constraint firstItem="uub-Q6-DPH" firstAttribute="baseline" secondItem="TFV-Ox-n96" secondAttribute="baseline" id="3w8-jE-TRj"/>
+                            <constraint firstItem="TFV-Ox-n96" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="27" id="6Lz-RX-RPN"/>
                             <constraint firstItem="D93-6T-tY1" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="DmZ-EV-mh0"/>
                             <constraint firstAttribute="trailing" secondItem="D93-6T-tY1" secondAttribute="trailing" id="Nda-Z2-XGs"/>
                             <constraint firstItem="D93-6T-tY1" firstAttribute="bottom" secondItem="wfy-db-euE" secondAttribute="top" id="SxQ-OJ-8tB"/>
+                            <constraint firstItem="TFV-Ox-n96" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailingMargin" id="o3r-7e-eXC"/>
+                            <constraint firstAttribute="trailing" secondItem="uub-Q6-DPH" secondAttribute="trailing" constant="218" id="oDp-yU-M8b"/>
                             <constraint firstItem="D93-6T-tY1" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" id="zPz-eC-WnP"/>
                         </constraints>
                     </view>
@@ -36,6 +55,23 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="245" y="350"/>
+        </scene>
+        <!--View Controller-->
+        <scene sceneID="Eq6-ga-fgZ">
+            <objects>
+                <viewController id="Qip-L9-4gR" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="CgX-wR-KwA"/>
+                        <viewControllerLayoutGuide type="bottom" id="L1N-Uq-JzM"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="o46-yg-692">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="ncY-mb-TiF" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
         </scene>
     </scenes>
 </document>

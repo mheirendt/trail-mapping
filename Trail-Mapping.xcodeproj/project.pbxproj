@@ -18,6 +18,7 @@
 		A93DF43D1D7399660028A997 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A93DF43C1D7399660028A997 /* Foundation.framework */; };
 		A93DF4401D739A620028A997 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A93DF43F1D739A620028A997 /* CoreLocation.framework */; };
 		A93DF4431D739DD90028A997 /* Annotation.m in Sources */ = {isa = PBXBuildFile; fileRef = A93DF4421D739DD90028A997 /* Annotation.m */; };
+		A93DF4461D73D23B0028A997 /* AttributedPolyline.m in Sources */ = {isa = PBXBuildFile; fileRef = A93DF4451D73D23B0028A997 /* AttributedPolyline.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -37,6 +38,8 @@
 		A93DF43F1D739A620028A997 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		A93DF4411D739DD90028A997 /* Annotation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Annotation.h; sourceTree = "<group>"; };
 		A93DF4421D739DD90028A997 /* Annotation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Annotation.m; sourceTree = "<group>"; };
+		A93DF4441D73D23B0028A997 /* AttributedPolyline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AttributedPolyline.h; sourceTree = "<group>"; };
+		A93DF4451D73D23B0028A997 /* AttributedPolyline.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AttributedPolyline.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -85,6 +88,8 @@
 				A93DF4211D73992F0028A997 /* Supporting Files */,
 				A93DF4411D739DD90028A997 /* Annotation.h */,
 				A93DF4421D739DD90028A997 /* Annotation.m */,
+				A93DF4441D73D23B0028A997 /* AttributedPolyline.h */,
+				A93DF4451D73D23B0028A997 /* AttributedPolyline.m */,
 			);
 			path = "Trail-Mapping";
 			sourceTree = "<group>";
@@ -183,6 +188,7 @@
 				A93DF4261D73992F0028A997 /* AppDelegate.m in Sources */,
 				A93DF4431D739DD90028A997 /* Annotation.m in Sources */,
 				A93DF4231D73992F0028A997 /* main.m in Sources */,
+				A93DF4461D73D23B0028A997 /* AttributedPolyline.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
