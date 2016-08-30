@@ -7,6 +7,7 @@
 //
 
 #import "ViewController.h"
+#import "AppDelegate.h"
 
 @interface ViewController ()
 
@@ -21,6 +22,7 @@
     self.mapView.delegate = self;
     self.locationManager.delegate = self;
     self.allLocations = [[NSMutableArray alloc] init];
+    [self.traceButton addTarget:self action:@selector(tracePath) forControlEvents:UIControlEventTouchUpInside];
     
     MKCoordinateRegion region = MKCoordinateRegionMakeWithDistance(locationManager.location.coordinate, 800, 800);
     [self.mapView setRegion:[self.mapView regionThatFits:region] animated:YES];
@@ -29,9 +31,7 @@
     UILongPressGestureRecognizer *press = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(placePin:)];
     press.minimumPressDuration = .5f;
     [self.mapView addGestureRecognizer:press];
-    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTap:)];
     press.minimumPressDuration = .5f;
-    [self.mapView addGestureRecognizer:tap];
 }
 #pragma mark - Location services
 - (void)startLocationManager
@@ -64,13 +64,16 @@
      }
      */
 }
-- (IBAction)tracePath:(id)sender {
+- (void)tracePath {
+    self.cancelButton.hidden = NO;
     self.seconds = 0;
     self.distance = 0;
     self.allLocations = [NSMutableArray array];
     self.timer = [NSTimer scheduledTimerWithTimeInterval:(1.0) target:self
                                                 selector:@selector(eachSecond) userInfo:nil repeats:YES];
     [self.locationManager startUpdatingLocation];
+    [self.traceButton addTarget:self action:@selector(stopTracing) forControlEvents:UIControlEventTouchUpInside];
+    [self.traceButton setImage:[UIImage imageNamed:@"Complete"] forState:UIControlStateNormal];
     // remove polyline if one exists
     //[self.mapView removeOverlay:self.traceLine];
     
@@ -87,11 +90,38 @@
     // create a traceLine with all cooridnates
 
 }
-- (IBAction)stopTracing:(id)sender {
+
+- (void)stopTracing {
     _tracing = NO;
+    for (id<MKOverlay> overlay in self.mapView.overlays)
+    {
+        AppDelegate *delegate = [[UIApplication sharedApplication] delegate];
+        NSLog(@"locs: %@", self.allLocations);
+        if(overlay){
+            [delegate.trails addObject:overlay];
+            NSLog(@"del: %@", delegate.trails);
+        }
+        [self.mapView removeOverlay:overlay];
+    }
+    self.cancelButton.hidden = YES;
+    //[self.mapView addOverlay:[self polyLine]];
+    [self.traceButton addTarget:self action:@selector(tracePath) forControlEvents:UIControlEventTouchUpInside];
+    [self.traceButton setImage:[UIImage imageNamed:@"Trace"] forState:UIControlStateNormal];
     [self.locationManager stopUpdatingLocation];
-    [self.mapView addOverlay:[self polyLine]];
+    //[self showSubview];
 }
+- (IBAction)cancelTracing:(id)sender {
+    _tracing = NO;
+    for (id<MKOverlay> overlay in self.mapView.overlays)
+    {
+        [self.mapView removeOverlay:overlay];
+    }
+    self.cancelButton.hidden = YES;
+    [self.locationManager stopUpdatingLocation];
+    [self.traceButton addTarget:self action:@selector(tracePath) forControlEvents:UIControlEventTouchUpInside];
+    [self.traceButton setImage:[UIImage imageNamed:@"Trace"] forState:UIControlStateNormal];
+}
+
 - (void)eachSecond
 {
     self.seconds++;
@@ -104,13 +134,27 @@
     if (_tracing){
         
         for (CLLocation *newLocation in locations) {
-            if (newLocation.horizontalAccuracy < 20) {
-                
+            
+            NSDate *eventDate = newLocation.timestamp;
+            
+            NSTimeInterval howRecent = [eventDate timeIntervalSinceNow];
+            
+            if (howRecent < 1.0/* && newLocation.horizontalAccuracy < 5*/) {
+                NSLog(@"logging");
                 // update distance
                 if (self.allLocations.count > 0) {
                     self.distance += [newLocation distanceFromLocation:self.allLocations.lastObject];
+                    CLLocationCoordinate2D coords[2];
+                    coords[0] = ((CLLocation *)self.allLocations.lastObject).coordinate;
+                    coords[1] = newLocation.coordinate;
+                    
+                    //MKCoordinateRegion region =
+                    //MKCoordinateRegionMakeWithDistance(newLocation.coordinate, 500, 500);
+                    //[self.mapView setRegion:region animated:YES];
+                    
+                    [self.mapView addOverlay:[MKPolyline polylineWithCoordinates:coords count:2]];
                 }
-                
+                NSLog(@"locs2: %@", self.allLocations);
                 [self.allLocations addObject:newLocation];
             }
         }
@@ -126,6 +170,7 @@
     }
     MKPolyline *poly = [MKPolyline polylineWithCoordinates:coords count:self.allLocations.count];
     poly.title = @"Trail";
+    //[self showSubview];
     return poly;
 }
 
@@ -135,103 +180,73 @@
     self.lineView.lineWidth = 3.0;
     return self.lineView;
 }
+- (MKOverlayRenderer *)mapView:(MKMapView *)mapView rendererForOverlay:(id<MKOverlay>)overlay{
+    if ([overlay isKindOfClass:[MKPolyline class]]) {
+        MKPolyline *polyLine = (MKPolyline *)overlay;
+        MKPolylineRenderer *aRenderer = [[MKPolylineRenderer alloc] initWithPolyline:polyLine];
+        aRenderer.strokeColor = [UIColor blueColor];
+        aRenderer.lineWidth = 3;
+        return aRenderer;
+    }
+    return nil;
+}
+
+-(void)showSubview{
+    if (!self.submissionView){
+        self.submissionView = [[subView alloc] initWithFrame:CGRectMake(10, self.view.bounds.size.height-110, self.view.bounds.size.width-20, self.view.bounds.size.height)];
+    }
+    //self.submissionView.coordinates = CLLocationCoordinate2DMake(coordinate.latitude, coordinate.longitude);
+    [self.view addSubview:self.submissionView];
+    
+    
+    UIBezierPath *path = [UIBezierPath bezierPathWithRect:self.submissionView.bounds];
+    self.submissionView.layer.shadowPath = path.CGPath;
+    CGRect frame = CGRectMake(10, (self.view.bounds.size.height/2)-110, self.view.bounds.size.width-20, (self.view.bounds.size.height/2)+110);
+    [UIView animateWithDuration:0.5f animations:^{
+        self.submissionView.frame = frame;
+    } completion:^(BOOL finished) {
+        if(finished){
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"viewDismissed" object:self];
+        }
+    }];
+}
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
 
-#pragma mark - handling taps on the overlay
-- (double)distanceOfPoint:(MKMapPoint)pt toPoly:(MKPolyline *)poly
+
+
+#pragma mark - show overview on complete
+- (void)loadMap
 {
-    double distance = MAXFLOAT;
-    for (int n = 0; n < poly.pointCount - 1; n++) {
+    if (self.allLocations.count > 0) {
         
-        MKMapPoint ptA = poly.points[n];
-        MKMapPoint ptB = poly.points[n + 1];
+        self.mapView.hidden = NO;
         
-        double xDelta = ptB.x - ptA.x;
-        double yDelta = ptB.y - ptA.y;
+        // set the map bounds
+        //[self.mapView setRegion:[self mapRegion]];
         
-        if (xDelta == 0.0 && yDelta == 0.0) {
-            
-            // Points must not be equal
-            continue;
-        }
+        // make the line(s!) on the map
+        [self.mapView addOverlay:[self polyLine]];
         
-        double u = ((pt.x - ptA.x) * xDelta + (pt.y - ptA.y) * yDelta) / (xDelta * xDelta + yDelta * yDelta);
-        MKMapPoint ptClosest;
-        if (u < 0.0) {
-            
-            ptClosest = ptA;
-        }
-        else if (u > 1.0) {
-            
-            ptClosest = ptB;
-        }
-        else {
-            
-            ptClosest = MKMapPointMake(ptA.x + u * xDelta, ptA.y + u * yDelta);
-        }
+    } /*else {
         
-        distance = MIN(distance, MKMetersBetweenMapPoints(ptClosest, pt));
+        // no locations were found!
+        self.mapView.hidden = YES;
+        
+        UIAlertView *alertView = [[UIAlertView alloc]
+                                  initWithTitle:@"Error"
+                                  message:@"Sorry, this run has no locations saved."
+                                  delegate:nil
+                                  cancelButtonTitle:@"OK"
+                                  otherButtonTitles:nil];
+        [alertView show];
     }
-    
-    return distance;
+       */
 }
 
 
-/** Converts |px| to meters at location |pt| */
-- (double)metersFromPixel:(NSUInteger)px atPoint:(CGPoint)pt
-{
-    CGPoint ptB = CGPointMake(pt.x + px, pt.y);
-    
-    CLLocationCoordinate2D coordA = [self.mapView convertPoint:pt toCoordinateFromView:self.mapView];
-    CLLocationCoordinate2D coordB = [self.mapView convertPoint:ptB toCoordinateFromView:self.mapView];
-    
-    return MKMetersBetweenMapPoints(MKMapPointForCoordinate(coordA), MKMapPointForCoordinate(coordB));
-}
-
-
-#define MAX_DISTANCE_PX 22.0f
-- (void)handleTap:(UITapGestureRecognizer *)tap
-{
-    if ((tap.state & UIGestureRecognizerStateRecognized) == UIGestureRecognizerStateRecognized) {
-        
-        // Get map coordinate from touch point
-        CGPoint touchPt = [tap locationInView:self.mapView];
-        CLLocationCoordinate2D coord = [self.mapView convertPoint:touchPt toCoordinateFromView:self.mapView];
-        
-        double maxMeters = [self metersFromPixel:MAX_DISTANCE_PX atPoint:touchPt];
-        
-        float nearestDistance = MAXFLOAT;
-        MKPolyline *nearestPoly = nil;
-        
-        // for every overlay ...
-        for (id <MKOverlay> overlay in self.mapView.overlays) {
-            
-            // .. if MKPolyline ...
-            if ([overlay isKindOfClass:[MKPolyline class]]) {
-                
-                // ... get the distance ...
-                float distance = [self distanceOfPoint:MKMapPointForCoordinate(coord)
-                                                toPoly:overlay];
-                
-                // ... and find the nearest one
-                if (distance < nearestDistance) {
-                    
-                    nearestDistance = distance;
-                    nearestPoly = overlay;
-                }
-            }
-        }
-        
-        if (nearestDistance <= maxMeters) {
-            
-            NSLog(@"Touched poly: %@\n"
-                  "    distance: %f", nearestPoly.title, nearestDistance);
-        }
-    }
-}
 
 @end

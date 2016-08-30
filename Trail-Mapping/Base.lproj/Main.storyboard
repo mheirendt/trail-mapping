@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="10117" systemVersion="15B42" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="10117" systemVersion="15B42" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="Ys3-T2-ahd">
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
-        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
-        <!--View Controller-->
+        <!--Record-->
         <scene sceneID="tne-QT-ifu">
             <objects>
                 <viewController id="BYZ-38-t0r" customClass="ViewController" sceneMemberID="viewController">
@@ -21,57 +20,105 @@
                             <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" showsUserLocation="YES" translatesAutoresizingMaskIntoConstraints="NO" id="D93-6T-tY1">
                                 <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                             </mapView>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="TFV-Ox-n96">
-                                <rect key="frame" x="491" y="47" width="89" height="30"/>
-                                <state key="normal" title="Start Tracing"/>
-                                <connections>
-                                    <action selector="tracePath:" destination="BYZ-38-t0r" eventType="touchUpInside" id="eom-jA-A8c"/>
-                                </connections>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="1zu-sb-pC0">
+                                <rect key="frame" x="260" y="463" width="80" height="80"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="80" id="Oi6-ku-7FU"/>
+                                </constraints>
+                                <state key="normal" image="Trace"/>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="uub-Q6-DPH">
-                                <rect key="frame" x="350" y="47" width="32" height="30"/>
-                                <state key="normal" title="Stop"/>
+                            <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="XUf-qJ-Rmf">
+                                <rect key="frame" x="280" y="415" width="40" height="40"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="40" id="9d8-a7-iBZ"/>
+                                    <constraint firstAttribute="width" constant="40" id="lcs-iB-e8X"/>
+                                </constraints>
+                                <state key="normal" title="Button" image="Cancel"/>
                                 <connections>
-                                    <action selector="stopTracing:" destination="BYZ-38-t0r" eventType="touchUpInside" id="3Vm-MH-1F2"/>
+                                    <action selector="cancelTracing:" destination="BYZ-38-t0r" eventType="touchUpInside" id="kr4-ba-9FQ"/>
                                 </connections>
                             </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="uub-Q6-DPH" firstAttribute="baseline" secondItem="TFV-Ox-n96" secondAttribute="baseline" id="3w8-jE-TRj"/>
-                            <constraint firstItem="TFV-Ox-n96" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="27" id="6Lz-RX-RPN"/>
-                            <constraint firstItem="D93-6T-tY1" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="DmZ-EV-mh0"/>
-                            <constraint firstAttribute="trailing" secondItem="D93-6T-tY1" secondAttribute="trailing" id="Nda-Z2-XGs"/>
-                            <constraint firstItem="D93-6T-tY1" firstAttribute="bottom" secondItem="wfy-db-euE" secondAttribute="top" id="SxQ-OJ-8tB"/>
-                            <constraint firstItem="TFV-Ox-n96" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailingMargin" id="o3r-7e-eXC"/>
-                            <constraint firstAttribute="trailing" secondItem="uub-Q6-DPH" secondAttribute="trailing" constant="218" id="oDp-yU-M8b"/>
-                            <constraint firstItem="D93-6T-tY1" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" id="zPz-eC-WnP"/>
+                            <constraint firstItem="1zu-sb-pC0" firstAttribute="top" secondItem="XUf-qJ-Rmf" secondAttribute="bottom" constant="8" symbolic="YES" id="8EB-RL-0mX"/>
+                            <constraint firstAttribute="trailing" secondItem="D93-6T-tY1" secondAttribute="trailing" id="HRs-Dz-0sX"/>
+                            <constraint firstItem="D93-6T-tY1" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" id="KXY-gH-foD"/>
+                            <constraint firstItem="D93-6T-tY1" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="NTp-Lq-Fcf"/>
+                            <constraint firstItem="XUf-qJ-Rmf" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="395" id="P5g-zF-Kih"/>
+                            <constraint firstAttribute="bottom" secondItem="D93-6T-tY1" secondAttribute="bottom" id="R8H-AJ-emf"/>
+                            <constraint firstItem="XUf-qJ-Rmf" firstAttribute="centerX" secondItem="1zu-sb-pC0" secondAttribute="centerX" id="emu-X0-8fW"/>
+                            <constraint firstItem="D93-6T-tY1" firstAttribute="centerX" secondItem="1zu-sb-pC0" secondAttribute="centerX" id="vJl-Sw-4zz"/>
+                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="1zu-sb-pC0" secondAttribute="bottom" constant="8" symbolic="YES" id="vdy-6i-Vi9"/>
                         </constraints>
                     </view>
+                    <tabBarItem key="tabBarItem" title="Record" image="IC_trace" id="lLR-O3-1Bq"/>
+                    <navigationItem key="navigationItem" id="sdt-KH-VtY"/>
                     <connections>
+                        <outlet property="cancelButton" destination="XUf-qJ-Rmf" id="PP8-JX-6DK"/>
                         <outlet property="mapView" destination="D93-6T-tY1" id="r4X-pg-2NG"/>
+                        <outlet property="traceButton" destination="1zu-sb-pC0" id="cYK-pb-RVQ"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="245" y="350"/>
+            <point key="canvasLocation" x="1869" y="150"/>
         </scene>
-        <!--View Controller-->
-        <scene sceneID="Eq6-ga-fgZ">
+        <!--Overview Controller-->
+        <scene sceneID="W1u-2j-57E">
             <objects>
-                <viewController id="Qip-L9-4gR" sceneMemberID="viewController">
+                <viewController id="JDC-OG-wXa" customClass="overviewController" sceneMemberID="viewController">
                     <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="CgX-wR-KwA"/>
-                        <viewControllerLayoutGuide type="bottom" id="L1N-Uq-JzM"/>
+                        <viewControllerLayoutGuide type="top" id="UQF-hy-Gpf"/>
+                        <viewControllerLayoutGuide type="bottom" id="uRy-iG-WOf"/>
                     </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" id="o46-yg-692">
+                    <view key="view" contentMode="scaleToFill" id="WVA-Um-UIN">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" showsUserLocation="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Wdf-2V-Lhl">
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="551"/>
+                            </mapView>
+                        </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="Wdf-2V-Lhl" firstAttribute="top" secondItem="WVA-Um-UIN" secondAttribute="top" id="BPS-lu-dn5"/>
+                            <constraint firstAttribute="trailing" secondItem="Wdf-2V-Lhl" secondAttribute="trailing" id="F4H-uX-15l"/>
+                            <constraint firstItem="Wdf-2V-Lhl" firstAttribute="leading" secondItem="WVA-Um-UIN" secondAttribute="leading" id="UEt-BP-VDs"/>
+                            <constraint firstItem="Wdf-2V-Lhl" firstAttribute="bottom" secondItem="uRy-iG-WOf" secondAttribute="top" id="if9-r2-uG0"/>
+                        </constraints>
                     </view>
+                    <tabBarItem key="tabBarItem" systemItem="bookmarks" id="V7V-AR-fTg"/>
+                    <connections>
+                        <outlet property="mapView" destination="Wdf-2V-Lhl" id="YgS-yx-11b"/>
+                    </connections>
                 </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="ncY-mb-TiF" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="ngc-Ou-aR6" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
+            <point key="canvasLocation" x="1869" y="823"/>
+        </scene>
+        <!--Tab Bar Controller-->
+        <scene sceneID="kZ1-dn-3WD">
+            <objects>
+                <tabBarController automaticallyAdjustsScrollViewInsets="NO" id="Ys3-T2-ahd" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <tabBar key="tabBar" contentMode="scaleToFill" id="Xmy-kd-3Gu">
+                        <autoresizingMask key="autoresizingMask"/>
+                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                    </tabBar>
+                    <connections>
+                        <segue destination="JDC-OG-wXa" kind="relationship" relationship="viewControllers" id="psk-0x-Pi1"/>
+                        <segue destination="BYZ-38-t0r" kind="relationship" relationship="viewControllers" id="WlE-cH-Mp2"/>
+                    </connections>
+                </tabBarController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="dZv-bI-UiI" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1007" y="356"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="Cancel" width="333" height="333"/>
+        <image name="IC_trace" width="25" height="25"/>
+        <image name="Trace" width="83" height="83"/>
+    </resources>
 </document>
