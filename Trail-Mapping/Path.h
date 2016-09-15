@@ -15,7 +15,7 @@
 //@property (nonatomic, copy) NSMutableArray* tags;
 @property (nonatomic, copy) NSMutableArray* categories;
 @property (nonatomic, retain) NSMutableArray* vertices;
-@property (nonatomic, copy) MKPolyline *polyline;
+@property (nonatomic, retain) MKPolyline *polyline;
 @property (nonatomic, retain) id location;
 
 /** This property starts out YES until modified manually or loaded from the network. This way dragging the pin will update the coordinates and geocoded info */
@@ -34,6 +34,17 @@
 - (void) setLatitude:(CLLocationDegrees)latitude longitude:(CLLocationDegrees)longitude;
 - (void) setGeoJSON:(id)geoPoint;
 - (void) setCoordinate:(CLLocationCoordinate2D)newCoordinate;
++ (Path *) initWithPolyline: (MKPolyline *) line;
+
+#pragma mark - MKOverlay
+- (CLLocationCoordinate2D) coordinate;
+- (MKMapRect) boundingMapRect;
+- (BOOL)intersectsMapRect:(MKMapRect)mapRect;
+- (MKMapPoint *) points;
+- (NSUInteger) pointCount;
+- (void)getCoordinates:(CLLocationCoordinate2D *)coords range:(NSRange)range;
+
+
 @end
 
 

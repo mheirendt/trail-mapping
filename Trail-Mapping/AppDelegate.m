@@ -16,7 +16,7 @@
 
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    self.trails = [[NSMutableArray alloc]init];
+    _trails = [[NSMutableArray alloc] init];
     // Override point for customization after application launch.
     return YES;
 }

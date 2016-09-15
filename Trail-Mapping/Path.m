@@ -14,6 +14,7 @@
 @implementation Path
 @synthesize boundingMapRect;
 @synthesize coordinate;
+@synthesize polyline;
 
 - (instancetype) init
 {
@@ -24,7 +25,13 @@
     return self;
 }
 
-#pragma mark - MKAnnotation
++ (Path *)initWithPolyline: (MKPolyline *) line{
+    Path *path = [[Path alloc] init];
+    path.polyline = line;
+    return path;
+}
+
+#pragma mark - custom attributes
 
 - (NSMutableArray *)categories
 {
@@ -36,7 +43,6 @@
     return self.tags;
 }
  */
-
 - (NSMutableArray *)coordinates
 {
     NSMutableArray *arr = [[NSMutableArray alloc] init];
@@ -53,6 +59,33 @@
 - (void)setCoordinate:(CLLocationCoordinate2D)newCoordinate
 {
     [self setLatitude:newCoordinate.latitude longitude:newCoordinate.longitude];
+}
+
+#pragma mark - MKOverlay
+
+- (CLLocationCoordinate2D) coordinate {
+    return [polyline coordinate];
+}
+
+- (MKMapRect) boundingMapRect {
+    return [polyline boundingMapRect];
+}
+
+- (BOOL)intersectsMapRect:(MKMapRect)mapRect {
+    return [polyline intersectsMapRect:mapRect];
+}
+
+- (MKMapPoint *) points {
+    return [polyline points];
+}
+
+
+- (NSUInteger) pointCount {
+    return [polyline pointCount];
+}
+
+- (void)getCoordinates:(CLLocationCoordinate2D *)coords range:(NSRange)range {
+    return [polyline getCoordinates:coords range:range];
 }
 
 #pragma mark - GeoJSON

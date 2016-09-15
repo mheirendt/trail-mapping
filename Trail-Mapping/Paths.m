@@ -113,7 +113,7 @@ static NSString* const kPaths = @"paths";
 
 - (void) persist:(Path*)path
 {
-    if (!path || path.categories == nil || path.tags == nil) {
+    if (!path || path.categories == nil) {
         NSLog(@"!Location");
         return; //input safety check
     }
