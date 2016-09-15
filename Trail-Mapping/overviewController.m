@@ -8,6 +8,7 @@
 
 #import "overviewController.h"
 #import "AppDelegate.h"
+#import "ViewController.h"
 
 @interface overviewController ()
 
@@ -16,6 +17,7 @@
 @implementation overviewController
 @synthesize locationManager;
 @class overviewController;
+@class ViewController;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -53,10 +55,15 @@
     if ([viewController isKindOfClass:[overviewController class]]){
         NSLog(@"switching");
         AppDelegate *del = [[UIApplication sharedApplication] delegate];
-        if (del.trails){
+        if (!([del.trails lastObject] == nil)){
             NSLog(@"delTrails: %@", del.trails);
-            [self.mapView addOverlays:del.trails];
+            //[self.mapView addOverlay:[del.trails lastObject]];
+            //need to empty resources
+            //del.trails = nil;
         }
+    }
+    if ([viewController isKindOfClass:[viewController class]]){
+        //[(ViewController *)viewController hide
     }
 }
 
@@ -77,7 +84,7 @@
     return nil;
 }
 
-#pragma mark - handling taps on the overlay
+# pragma mark - detect touches on MKOverlay
 - (double)distanceOfPoint:(MKMapPoint)pt toPoly:(MKPolyline *)poly
 {
     double distance = MAXFLOAT;

@@ -17,10 +17,16 @@
 @property (weak, nonatomic) IBOutlet MKMapView *mapView;
 @property (weak, nonatomic) IBOutlet UIButton *traceButton;
 @property (weak, nonatomic) IBOutlet UIButton *cancelButton;
+@property (weak, nonatomic) IBOutlet UIButton *submitButton;
+@property (weak, nonatomic) IBOutlet UIButton *completeSketch;
+@property (weak, nonatomic) IBOutlet UILabel *distanceLabel;
+@property (weak, nonatomic) IBOutlet UIButton *editButton;
+@property (weak, nonatomic) IBOutlet UIButton *saveButton;
+@property (weak, nonatomic) IBOutlet UIButton *zoomToButton;
+
 @property (retain, nonatomic) CLLocationManager *locationManager;
-@property (strong, nonatomic) NSDate *lastTimestamp;
 @property (nonatomic, strong) NSMutableArray *allLocations;
-@property (nonatomic, strong) NSMutableArray *coordinates;
+@property (strong, nonatomic) MKPolyline *result;
 @property (nonatomic, strong) NSTimer *timer;
 @property int seconds;
 @property float distance;
@@ -29,7 +35,12 @@
 @property (retain, nonatomic) MKPolylineRenderer *lineView;
 @property BOOL tracing;
 @property subView *submissionView;
+@property BOOL submitFlag;
+@property int following;
+@property (strong, nonatomic) NSMutableArray *vertices;
+@property (strong, nonatomic) NSMutableArray *movedCoordinates;
 
--(void)placePin:(UIGestureRecognizer *)gestureRecognizer;
+- (void)setTabBarVisible:(BOOL)visible animated:(BOOL)animated completion:(void (^)(BOOL))completion;
+- (BOOL)tabBarIsVisible;
 @end
 

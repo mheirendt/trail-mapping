@@ -15,5 +15,8 @@
 @property (weak, nonatomic) IBOutlet MKMapView *mapView;
 @property (retain, nonatomic) CLLocationManager *locationManager;
 @property (retain, nonatomic) MKPolylineRenderer *lineView;
+
+
 -(void)startLocationManager;
+
 @end

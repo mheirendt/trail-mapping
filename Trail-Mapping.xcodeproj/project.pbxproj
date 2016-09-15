@@ -21,6 +21,9 @@
 		A93DF4461D73D23B0028A997 /* AttributedPolyline.m in Sources */ = {isa = PBXBuildFile; fileRef = A93DF4451D73D23B0028A997 /* AttributedPolyline.m */; };
 		A93DF4491D73E39C0028A997 /* subView.m in Sources */ = {isa = PBXBuildFile; fileRef = A93DF4481D73E39C0028A997 /* subView.m */; };
 		A93DF44F1D7521120028A997 /* overviewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A93DF44E1D7521120028A997 /* overviewController.m */; };
+		A93DF4521D7658580028A997 /* trailOverviewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A93DF4511D7658580028A997 /* trailOverviewController.m */; };
+		A97A83DB1D7CE838003F4C80 /* Path.m in Sources */ = {isa = PBXBuildFile; fileRef = A97A83DA1D7CE838003F4C80 /* Path.m */; };
+		A97A83DE1D7D15AA003F4C80 /* Paths.m in Sources */ = {isa = PBXBuildFile; fileRef = A97A83DD1D7D15AA003F4C80 /* Paths.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -46,6 +49,12 @@
 		A93DF4481D73E39C0028A997 /* subView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = subView.m; path = "../../Pokemon Finder/Pokemon Finder/subView.m"; sourceTree = "<group>"; };
 		A93DF44D1D7521120028A997 /* overviewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = overviewController.h; sourceTree = "<group>"; };
 		A93DF44E1D7521120028A997 /* overviewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = overviewController.m; sourceTree = "<group>"; };
+		A93DF4501D7658580028A997 /* trailOverviewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = trailOverviewController.h; sourceTree = "<group>"; };
+		A93DF4511D7658580028A997 /* trailOverviewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = trailOverviewController.m; sourceTree = "<group>"; };
+		A97A83D91D7CE838003F4C80 /* Path.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Path.h; sourceTree = "<group>"; };
+		A97A83DA1D7CE838003F4C80 /* Path.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Path.m; sourceTree = "<group>"; };
+		A97A83DC1D7D15AA003F4C80 /* Paths.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Paths.h; sourceTree = "<group>"; };
+		A97A83DD1D7D15AA003F4C80 /* Paths.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Paths.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -83,12 +92,18 @@
 		A93DF4201D73992F0028A997 /* Trail-Mapping */ = {
 			isa = PBXGroup;
 			children = (
+				A97A83D91D7CE838003F4C80 /* Path.h */,
+				A97A83DA1D7CE838003F4C80 /* Path.m */,
+				A97A83DC1D7D15AA003F4C80 /* Paths.h */,
+				A97A83DD1D7D15AA003F4C80 /* Paths.m */,
 				A93DF4241D73992F0028A997 /* AppDelegate.h */,
 				A93DF4251D73992F0028A997 /* AppDelegate.m */,
 				A93DF4271D73992F0028A997 /* ViewController.h */,
 				A93DF4281D73992F0028A997 /* ViewController.m */,
 				A93DF44D1D7521120028A997 /* overviewController.h */,
 				A93DF44E1D7521120028A997 /* overviewController.m */,
+				A93DF4501D7658580028A997 /* trailOverviewController.h */,
+				A93DF4511D7658580028A997 /* trailOverviewController.m */,
 				A93DF4471D73E39C0028A997 /* subView.h */,
 				A93DF4481D73E39C0028A997 /* subView.m */,
 				A93DF42A1D73992F0028A997 /* Main.storyboard */,
@@ -195,8 +210,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				A93DF4291D73992F0028A997 /* ViewController.m in Sources */,
+				A97A83DB1D7CE838003F4C80 /* Path.m in Sources */,
+				A97A83DE1D7D15AA003F4C80 /* Paths.m in Sources */,
 				A93DF4491D73E39C0028A997 /* subView.m in Sources */,
 				A93DF4261D73992F0028A997 /* AppDelegate.m in Sources */,
+				A93DF4521D7658580028A997 /* trailOverviewController.m in Sources */,
 				A93DF4431D739DD90028A997 /* Annotation.m in Sources */,
 				A93DF4231D73992F0028A997 /* main.m in Sources */,
 				A93DF44F1D7521120028A997 /* overviewController.m in Sources */,

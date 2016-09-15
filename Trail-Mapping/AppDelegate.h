@@ -12,6 +12,7 @@
 
 @property (strong, nonatomic) UIWindow *window;
 @property (strong, nonatomic) NSMutableArray *trails;
+@property (strong, nonatomic) UIImage *overviewImage;
 
 
 @end
