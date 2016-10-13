@@ -7,6 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A916A4A21DA7FF9400A7B104 /* SettingsTable.m in Sources */ = {isa = PBXBuildFile; fileRef = A916A4A11DA7FF9300A7B104 /* SettingsTable.m */; };
+		A916A4A41DA8003700A7B104 /* SettingsTableCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = A916A4A31DA8003700A7B104 /* SettingsTableCell.xib */; };
+		A916A4A71DA8013300A7B104 /* SettingsCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A916A4A61DA8013300A7B104 /* SettingsCell.m */; };
+		A916A4AA1DA83BCD00A7B104 /* SigninScene.m in Sources */ = {isa = PBXBuildFile; fileRef = A916A4A91DA83BCD00A7B104 /* SigninScene.m */; };
+		A916A4AD1DA83E4B00A7B104 /* RegisterScene.m in Sources */ = {isa = PBXBuildFile; fileRef = A916A4AC1DA83E4B00A7B104 /* RegisterScene.m */; };
+		A916A4B01DA847C900A7B104 /* User.m in Sources */ = {isa = PBXBuildFile; fileRef = A916A4AF1DA847C900A7B104 /* User.m */; };
 		A93DF4231D73992F0028A997 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = A93DF4221D73992F0028A997 /* main.m */; };
 		A93DF4261D73992F0028A997 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = A93DF4251D73992F0028A997 /* AppDelegate.m */; };
 		A93DF4291D73992F0028A997 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A93DF4281D73992F0028A997 /* ViewController.m */; };
@@ -17,17 +23,34 @@
 		A93DF43B1D73995F0028A997 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A93DF43A1D73995F0028A997 /* UIKit.framework */; };
 		A93DF43D1D7399660028A997 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A93DF43C1D7399660028A997 /* Foundation.framework */; };
 		A93DF4401D739A620028A997 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A93DF43F1D739A620028A997 /* CoreLocation.framework */; };
-		A93DF4431D739DD90028A997 /* Annotation.m in Sources */ = {isa = PBXBuildFile; fileRef = A93DF4421D739DD90028A997 /* Annotation.m */; };
-		A93DF4461D73D23B0028A997 /* AttributedPolyline.m in Sources */ = {isa = PBXBuildFile; fileRef = A93DF4451D73D23B0028A997 /* AttributedPolyline.m */; };
-		A93DF4491D73E39C0028A997 /* subView.m in Sources */ = {isa = PBXBuildFile; fileRef = A93DF4481D73E39C0028A997 /* subView.m */; };
 		A93DF44F1D7521120028A997 /* overviewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A93DF44E1D7521120028A997 /* overviewController.m */; };
 		A93DF4521D7658580028A997 /* trailOverviewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A93DF4511D7658580028A997 /* trailOverviewController.m */; };
+		A95889391D8F178400E7711C /* CallOutAnnotation.m in Sources */ = {isa = PBXBuildFile; fileRef = A95889381D8F178400E7711C /* CallOutAnnotation.m */; };
+		A96757C11D921CD300331D86 /* categoryView.m in Sources */ = {isa = PBXBuildFile; fileRef = A96757C01D921CD300331D86 /* categoryView.m */; };
+		A96757C31D921D2200331D86 /* TokenView.xib in Resources */ = {isa = PBXBuildFile; fileRef = A96757C21D921D2200331D86 /* TokenView.xib */; };
+		A96757C61D921E8300331D86 /* CategoryCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A96757C51D921E8300331D86 /* CategoryCell.m */; };
+		A96757CA1D922BEA00331D86 /* tableCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = A96757C91D922BEA00331D86 /* tableCell.xib */; };
 		A97A83DB1D7CE838003F4C80 /* Path.m in Sources */ = {isa = PBXBuildFile; fileRef = A97A83DA1D7CE838003F4C80 /* Path.m */; };
 		A97A83DE1D7D15AA003F4C80 /* Paths.m in Sources */ = {isa = PBXBuildFile; fileRef = A97A83DD1D7D15AA003F4C80 /* Paths.m */; };
 		A99005D01D8A2ECF0074B688 /* Vertex.m in Sources */ = {isa = PBXBuildFile; fileRef = A99005CF1D8A2ECF0074B688 /* Vertex.m */; };
+		A9FC002E1D8CFB6000D4D707 /* VertexView.m in Sources */ = {isa = PBXBuildFile; fileRef = A9FC002D1D8CFB6000D4D707 /* VertexView.m */; };
+		FB07FF2DE398F8BBB9B3C6EB /* libPods-Trail-Mapping.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DF30851544A5D023206909D9 /* libPods-Trail-Mapping.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		376255EBBA14F201039D240C /* Pods-Trail-Mapping.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Trail-Mapping.release.xcconfig"; path = "Pods/Target Support Files/Pods-Trail-Mapping/Pods-Trail-Mapping.release.xcconfig"; sourceTree = "<group>"; };
+		8C9A40167163477C129C1B0A /* Pods-Trail-Mapping.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Trail-Mapping.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Trail-Mapping/Pods-Trail-Mapping.debug.xcconfig"; sourceTree = "<group>"; };
+		A916A4A01DA7FF9300A7B104 /* SettingsTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingsTable.h; sourceTree = "<group>"; };
+		A916A4A11DA7FF9300A7B104 /* SettingsTable.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingsTable.m; sourceTree = "<group>"; };
+		A916A4A31DA8003700A7B104 /* SettingsTableCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SettingsTableCell.xib; sourceTree = "<group>"; };
+		A916A4A51DA8013300A7B104 /* SettingsCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingsCell.h; sourceTree = "<group>"; };
+		A916A4A61DA8013300A7B104 /* SettingsCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingsCell.m; sourceTree = "<group>"; };
+		A916A4A81DA83BCC00A7B104 /* SigninScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SigninScene.h; sourceTree = "<group>"; };
+		A916A4A91DA83BCD00A7B104 /* SigninScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SigninScene.m; sourceTree = "<group>"; };
+		A916A4AB1DA83E4B00A7B104 /* RegisterScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegisterScene.h; sourceTree = "<group>"; };
+		A916A4AC1DA83E4B00A7B104 /* RegisterScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RegisterScene.m; sourceTree = "<group>"; };
+		A916A4AE1DA847C900A7B104 /* User.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = User.h; sourceTree = "<group>"; };
+		A916A4AF1DA847C900A7B104 /* User.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = User.m; sourceTree = "<group>"; };
 		A93DF41E1D73992E0028A997 /* Trail-Mapping.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Trail-Mapping.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A93DF4221D73992F0028A997 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		A93DF4241D73992F0028A997 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -42,22 +65,27 @@
 		A93DF43A1D73995F0028A997 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		A93DF43C1D7399660028A997 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		A93DF43F1D739A620028A997 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
-		A93DF4411D739DD90028A997 /* Annotation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Annotation.h; sourceTree = "<group>"; };
-		A93DF4421D739DD90028A997 /* Annotation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Annotation.m; sourceTree = "<group>"; };
-		A93DF4441D73D23B0028A997 /* AttributedPolyline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AttributedPolyline.h; sourceTree = "<group>"; };
-		A93DF4451D73D23B0028A997 /* AttributedPolyline.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AttributedPolyline.m; sourceTree = "<group>"; };
-		A93DF4471D73E39C0028A997 /* subView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = subView.h; path = "../../Pokemon Finder/Pokemon Finder/subView.h"; sourceTree = "<group>"; };
-		A93DF4481D73E39C0028A997 /* subView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = subView.m; path = "../../Pokemon Finder/Pokemon Finder/subView.m"; sourceTree = "<group>"; };
 		A93DF44D1D7521120028A997 /* overviewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = overviewController.h; sourceTree = "<group>"; };
 		A93DF44E1D7521120028A997 /* overviewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = overviewController.m; sourceTree = "<group>"; };
 		A93DF4501D7658580028A997 /* trailOverviewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = trailOverviewController.h; sourceTree = "<group>"; };
 		A93DF4511D7658580028A997 /* trailOverviewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = trailOverviewController.m; sourceTree = "<group>"; };
+		A95889371D8F178400E7711C /* CallOutAnnotation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CallOutAnnotation.h; sourceTree = "<group>"; };
+		A95889381D8F178400E7711C /* CallOutAnnotation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CallOutAnnotation.m; sourceTree = "<group>"; };
+		A96757BF1D921CD300331D86 /* categoryView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = categoryView.h; sourceTree = "<group>"; };
+		A96757C01D921CD300331D86 /* categoryView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = categoryView.m; sourceTree = "<group>"; };
+		A96757C21D921D2200331D86 /* TokenView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TokenView.xib; sourceTree = "<group>"; };
+		A96757C41D921E8300331D86 /* CategoryCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CategoryCell.h; sourceTree = "<group>"; };
+		A96757C51D921E8300331D86 /* CategoryCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CategoryCell.m; sourceTree = "<group>"; };
+		A96757C91D922BEA00331D86 /* tableCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = tableCell.xib; sourceTree = "<group>"; };
 		A97A83D91D7CE838003F4C80 /* Path.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Path.h; sourceTree = "<group>"; };
 		A97A83DA1D7CE838003F4C80 /* Path.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Path.m; sourceTree = "<group>"; };
 		A97A83DC1D7D15AA003F4C80 /* Paths.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Paths.h; sourceTree = "<group>"; };
 		A97A83DD1D7D15AA003F4C80 /* Paths.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Paths.m; sourceTree = "<group>"; };
 		A99005CE1D8A2ECF0074B688 /* Vertex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Vertex.h; sourceTree = "<group>"; };
 		A99005CF1D8A2ECF0074B688 /* Vertex.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Vertex.m; sourceTree = "<group>"; };
+		A9FC002C1D8CFB6000D4D707 /* VertexView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VertexView.h; sourceTree = "<group>"; };
+		A9FC002D1D8CFB6000D4D707 /* VertexView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VertexView.m; sourceTree = "<group>"; };
+		DF30851544A5D023206909D9 /* libPods-Trail-Mapping.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Trail-Mapping.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -69,18 +97,29 @@
 				A93DF43D1D7399660028A997 /* Foundation.framework in Frameworks */,
 				A93DF43B1D73995F0028A997 /* UIKit.framework in Frameworks */,
 				A93DF4391D7399580028A997 /* MapKit.framework in Frameworks */,
+				FB07FF2DE398F8BBB9B3C6EB /* libPods-Trail-Mapping.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		2EF6B4BCF705FEA6E98EC65B /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				8C9A40167163477C129C1B0A /* Pods-Trail-Mapping.debug.xcconfig */,
+				376255EBBA14F201039D240C /* Pods-Trail-Mapping.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
 		A93DF4151D73992D0028A997 = {
 			isa = PBXGroup;
 			children = (
 				A93DF43E1D73996F0028A997 /* Frameworks */,
 				A93DF4201D73992F0028A997 /* Trail-Mapping */,
 				A93DF41F1D73992E0028A997 /* Products */,
+				2EF6B4BCF705FEA6E98EC65B /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -95,31 +134,46 @@
 		A93DF4201D73992F0028A997 /* Trail-Mapping */ = {
 			isa = PBXGroup;
 			children = (
+				A93DF4241D73992F0028A997 /* AppDelegate.h */,
+				A93DF4251D73992F0028A997 /* AppDelegate.m */,
+				A93DF44D1D7521120028A997 /* overviewController.h */,
+				A93DF44E1D7521120028A997 /* overviewController.m */,
+				A93DF4271D73992F0028A997 /* ViewController.h */,
+				A93DF4281D73992F0028A997 /* ViewController.m */,
+				A916A4AB1DA83E4B00A7B104 /* RegisterScene.h */,
+				A916A4AC1DA83E4B00A7B104 /* RegisterScene.m */,
+				A916A4A81DA83BCC00A7B104 /* SigninScene.h */,
+				A916A4A91DA83BCD00A7B104 /* SigninScene.m */,
 				A99005CE1D8A2ECF0074B688 /* Vertex.h */,
 				A99005CF1D8A2ECF0074B688 /* Vertex.m */,
+				A95889371D8F178400E7711C /* CallOutAnnotation.h */,
+				A95889381D8F178400E7711C /* CallOutAnnotation.m */,
+				A9FC002C1D8CFB6000D4D707 /* VertexView.h */,
+				A9FC002D1D8CFB6000D4D707 /* VertexView.m */,
 				A97A83D91D7CE838003F4C80 /* Path.h */,
 				A97A83DA1D7CE838003F4C80 /* Path.m */,
 				A97A83DC1D7D15AA003F4C80 /* Paths.h */,
 				A97A83DD1D7D15AA003F4C80 /* Paths.m */,
-				A93DF4241D73992F0028A997 /* AppDelegate.h */,
-				A93DF4251D73992F0028A997 /* AppDelegate.m */,
-				A93DF4271D73992F0028A997 /* ViewController.h */,
-				A93DF4281D73992F0028A997 /* ViewController.m */,
-				A93DF44D1D7521120028A997 /* overviewController.h */,
-				A93DF44E1D7521120028A997 /* overviewController.m */,
+				A916A4AE1DA847C900A7B104 /* User.h */,
+				A916A4AF1DA847C900A7B104 /* User.m */,
+				A96757BF1D921CD300331D86 /* categoryView.h */,
+				A96757C01D921CD300331D86 /* categoryView.m */,
+				A96757C41D921E8300331D86 /* CategoryCell.h */,
+				A96757C51D921E8300331D86 /* CategoryCell.m */,
+				A916A4A51DA8013300A7B104 /* SettingsCell.h */,
+				A916A4A61DA8013300A7B104 /* SettingsCell.m */,
 				A93DF4501D7658580028A997 /* trailOverviewController.h */,
 				A93DF4511D7658580028A997 /* trailOverviewController.m */,
-				A93DF4471D73E39C0028A997 /* subView.h */,
-				A93DF4481D73E39C0028A997 /* subView.m */,
+				A916A4A01DA7FF9300A7B104 /* SettingsTable.h */,
+				A916A4A11DA7FF9300A7B104 /* SettingsTable.m */,
+				A96757C91D922BEA00331D86 /* tableCell.xib */,
+				A916A4A31DA8003700A7B104 /* SettingsTableCell.xib */,
+				A96757C21D921D2200331D86 /* TokenView.xib */,
 				A93DF42A1D73992F0028A997 /* Main.storyboard */,
 				A93DF42D1D73992F0028A997 /* Assets.xcassets */,
 				A93DF42F1D73992F0028A997 /* LaunchScreen.storyboard */,
 				A93DF4321D73992F0028A997 /* Info.plist */,
 				A93DF4211D73992F0028A997 /* Supporting Files */,
-				A93DF4411D739DD90028A997 /* Annotation.h */,
-				A93DF4421D739DD90028A997 /* Annotation.m */,
-				A93DF4441D73D23B0028A997 /* AttributedPolyline.h */,
-				A93DF4451D73D23B0028A997 /* AttributedPolyline.m */,
 			);
 			path = "Trail-Mapping";
 			sourceTree = "<group>";
@@ -139,6 +193,7 @@
 				A93DF43C1D7399660028A997 /* Foundation.framework */,
 				A93DF43A1D73995F0028A997 /* UIKit.framework */,
 				A93DF4381D7399580028A997 /* MapKit.framework */,
+				DF30851544A5D023206909D9 /* libPods-Trail-Mapping.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -150,9 +205,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = A93DF4351D73992F0028A997 /* Build configuration list for PBXNativeTarget "Trail-Mapping" */;
 			buildPhases = (
+				1378BDE0B309544BF6BE6BB8 /* Check Pods Manifest.lock */,
 				A93DF41A1D73992E0028A997 /* Sources */,
 				A93DF41B1D73992E0028A997 /* Frameworks */,
 				A93DF41C1D73992E0028A997 /* Resources */,
+				9FA0795D6DA8C5E34706763E /* Embed Pods Frameworks */,
+				51144570059C0BD5FA38E269 /* Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -169,7 +227,7 @@
 		A93DF4161D73992D0028A997 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0730;
+				LastUpgradeCheck = 0800;
 				ORGANIZATIONNAME = "Michael Heirendt";
 				TargetAttributes = {
 					A93DF41D1D73992E0028A997 = {
@@ -202,12 +260,63 @@
 			buildActionMask = 2147483647;
 			files = (
 				A93DF4311D73992F0028A997 /* LaunchScreen.storyboard in Resources */,
+				A916A4A41DA8003700A7B104 /* SettingsTableCell.xib in Resources */,
+				A96757CA1D922BEA00331D86 /* tableCell.xib in Resources */,
 				A93DF42E1D73992F0028A997 /* Assets.xcassets in Resources */,
+				A96757C31D921D2200331D86 /* TokenView.xib in Resources */,
 				A93DF42C1D73992F0028A997 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		1378BDE0B309544BF6BE6BB8 /* Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		51144570059C0BD5FA38E269 /* Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Trail-Mapping/Pods-Trail-Mapping-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		9FA0795D6DA8C5E34706763E /* Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Trail-Mapping/Pods-Trail-Mapping-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		A93DF41A1D73992E0028A997 /* Sources */ = {
@@ -216,15 +325,21 @@
 			files = (
 				A93DF4291D73992F0028A997 /* ViewController.m in Sources */,
 				A97A83DB1D7CE838003F4C80 /* Path.m in Sources */,
+				A95889391D8F178400E7711C /* CallOutAnnotation.m in Sources */,
 				A97A83DE1D7D15AA003F4C80 /* Paths.m in Sources */,
-				A93DF4491D73E39C0028A997 /* subView.m in Sources */,
+				A916A4B01DA847C900A7B104 /* User.m in Sources */,
+				A96757C11D921CD300331D86 /* categoryView.m in Sources */,
 				A93DF4261D73992F0028A997 /* AppDelegate.m in Sources */,
 				A93DF4521D7658580028A997 /* trailOverviewController.m in Sources */,
-				A93DF4431D739DD90028A997 /* Annotation.m in Sources */,
+				A916A4A21DA7FF9400A7B104 /* SettingsTable.m in Sources */,
+				A96757C61D921E8300331D86 /* CategoryCell.m in Sources */,
 				A99005D01D8A2ECF0074B688 /* Vertex.m in Sources */,
+				A916A4A71DA8013300A7B104 /* SettingsCell.m in Sources */,
+				A916A4AA1DA83BCD00A7B104 /* SigninScene.m in Sources */,
+				A9FC002E1D8CFB6000D4D707 /* VertexView.m in Sources */,
+				A916A4AD1DA83E4B00A7B104 /* RegisterScene.m in Sources */,
 				A93DF4231D73992F0028A997 /* main.m in Sources */,
 				A93DF44F1D7521120028A997 /* overviewController.m in Sources */,
-				A93DF4461D73D23B0028A997 /* AttributedPolyline.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -264,8 +379,10 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
@@ -308,8 +425,10 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
@@ -334,8 +453,10 @@
 		};
 		A93DF4361D73992F0028A997 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 8C9A40167163477C129C1B0A /* Pods-Trail-Mapping.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = SX8TK3HB38;
 				INFOPLIST_FILE = "Trail-Mapping/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.mheirendt.Trail-Mapping";
@@ -345,8 +466,10 @@
 		};
 		A93DF4371D73992F0028A997 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 376255EBBA14F201039D240C /* Pods-Trail-Mapping.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = SX8TK3HB38;
 				INFOPLIST_FILE = "Trail-Mapping/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.mheirendt.Trail-Mapping";

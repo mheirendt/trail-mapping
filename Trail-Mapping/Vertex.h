@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "MapKit/MapKit.h"
+#import "CallOutAnnotation.h"
 
 @interface Vertex : NSObject <MKAnnotation>
 
@@ -16,4 +17,8 @@
 
 + (Vertex *)initWithCoordinate:(CLLocationCoordinate2D)coordinate;
 -(void)setCoordinate:(CLLocationCoordinate2D)newCoordinate;
+-(void)setName:(NSString *)title;
+
+@property (nonatomic, strong) CallOutAnnotation *calloutAnnotation;
+
 @end

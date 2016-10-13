@@ -7,9 +7,11 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "Paths.h"
+#import "Path.h"
 @import MapKit;
 
-@interface overviewController : UIViewController <MKMapViewDelegate, CLLocationManagerDelegate, UITabBarControllerDelegate>
+@interface overviewController : UIViewController <MKMapViewDelegate, CLLocationManagerDelegate, UITabBarControllerDelegate, polylineModelDelegate>
 
 
 @property (weak, nonatomic) IBOutlet MKMapView *mapView;
@@ -17,6 +19,9 @@
 @property (retain, nonatomic) MKPolylineRenderer *lineView;
 
 
+- (Paths*) paths;
+
 -(void)startLocationManager;
 
+- (void)modelUpdated;
 @end

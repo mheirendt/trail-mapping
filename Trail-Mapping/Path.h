@@ -11,12 +11,14 @@
 
 @interface Path : NSObject <MKOverlay>
 
-@property (nonatomic, copy) NSString* _id;
-//@property (nonatomic, copy) NSMutableArray* tags;
-@property (nonatomic, copy) NSMutableArray* categories;
-@property (nonatomic, retain) NSMutableArray* vertices;
-@property (nonatomic, retain) MKPolyline *polyline;
-@property (nonatomic, retain) id location;
+@property (nonatomic, strong) NSString* _id;
+@property (nonatomic, strong) NSNumber *userID;
+@property (nonatomic, strong) NSMutableArray* categories;
+@property (nonatomic, strong) NSMutableArray* tags;
+@property (nonatomic, strong) NSMutableArray* vertices;
+@property (nonatomic, strong) MKPolyline *polyline;
+@property (nonatomic, strong) id location;
+@property CLLocationCoordinate2D Coordinate;
 
 /** This property starts out YES until modified manually or loaded from the network. This way dragging the pin will update the coordinates and geocoded info */
 @property (nonatomic) BOOL configuredBySystem;
@@ -25,12 +27,15 @@
 #pragma mark - JSON-ification
 
 - (instancetype) initWithDictionary:(NSDictionary*)dictionary;
+- (instancetype) initWithDictionary:(NSDictionary*)dictionary Polyline:(MKPolyline *)poly;
 - (NSDictionary*) toDictionary;
 
+
 #pragma mark - Location
+- (NSNumber *) userID;
 - (NSMutableArray *) categories;
-//- (NSMutableArray *) tags;
-- (NSMutableArray *) coordinates;
+- (NSMutableArray *) tags;
+//- (NSMutableArray *) coordinates;
 - (void) setLatitude:(CLLocationDegrees)latitude longitude:(CLLocationDegrees)longitude;
 - (void) setGeoJSON:(id)geoPoint;
 - (void) setCoordinate:(CLLocationCoordinate2D)newCoordinate;

@@ -14,9 +14,13 @@
 
 @implementation AppDelegate
 
-
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     _trails = [[NSMutableArray alloc] init];
+    _categories = [[NSMutableArray alloc] init];
+    
+    self.paths = [[Paths alloc] init];
+    [self.paths import];
+    
     // Override point for customization after application launch.
     return YES;
 }

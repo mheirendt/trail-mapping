@@ -21,10 +21,13 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
     [self startLocationManager];
     self.mapView.delegate = self;
     self.locationManager.delegate = self;
     self.tabBarController.delegate = self;
+    
+    [self paths].delegate = self;
     //self.allLocations = [[NSMutableArray alloc] init];
     //[self.traceButton addTarget:self action:@selector(tracePath) forControlEvents:UIControlEventTouchUpInside];
     
@@ -35,6 +38,29 @@
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTap:)];
     //press.minimumPressDuration = .5f;
     [self.mapView addGestureRecognizer:tap];
+    
+}
+-(void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:animated];
+    [self modelUpdated];
+}
+-(void)viewDidAppear:(BOOL)animated{
+    [super viewDidAppear:animated];
+    NSString *flag = [[NSUserDefaults standardUserDefaults] objectForKey:@"signin"];
+    NSString *name = [[NSUserDefaults standardUserDefaults] objectForKey:@"username"];
+    if ([flag isEqualToString:@"signin"]){
+        UIViewController *signinScene = [self.storyboard instantiateViewControllerWithIdentifier:@"signin"];
+        [self presentViewController:signinScene animated:NO completion:nil];
+    }
+    if ([flag isEqualToString:@"register"]){
+        UIViewController *registerScene = [self.storyboard instantiateViewControllerWithIdentifier:@"register"];
+        [self presentViewController:registerScene animated:NO completion:nil];
+    }
+    if (name == nil || [name isEqualToString:@""]) {
+        self.definesPresentationContext = YES;
+        UIViewController *registerScene = [self.storyboard instantiateViewControllerWithIdentifier:@"register"];
+        [self presentViewController:registerScene animated:NO completion:nil];
+    }
 }
 
 - (void)didReceiveMemoryWarning {
@@ -54,7 +80,8 @@
     
     if ([viewController isKindOfClass:[overviewController class]]){
         NSLog(@"switching");
-        AppDelegate *del = [[UIApplication sharedApplication] delegate];
+        AppDelegate *del;
+        del = (AppDelegate *)[[UIApplication sharedApplication] delegate];
         if (!([del.trails lastObject] == nil)){
             NSLog(@"delTrails: %@", del.trails);
             //[self.mapView addOverlay:[del.trails lastObject]];
@@ -67,17 +94,11 @@
     }
 }
 
-- (MKOverlayView *)mapView:(MKMapView *)mapView viewForOverlay:(id<MKOverlay>)overlay {
-    self.lineView =[[MKPolylineRenderer alloc] initWithPolyline:overlay];
-    self.lineView.strokeColor = [UIColor orangeColor];
-    self.lineView.lineWidth = 3.0;
-    return self.lineView;
-}
 - (MKOverlayRenderer *)mapView:(MKMapView *)mapView rendererForOverlay:(id<MKOverlay>)overlay{
-    if ([overlay isKindOfClass:[MKPolyline class]]) {
-        MKPolyline *polyLine = (MKPolyline *)overlay;
-        MKPolylineRenderer *aRenderer = [[MKPolylineRenderer alloc] initWithPolyline:polyLine];
-        aRenderer.strokeColor = [UIColor blueColor];
+    if ([overlay isKindOfClass:[Path class]]) {
+        Path *polyLine = [Path initWithPolyline:overlay];
+        MKPolylineRenderer *aRenderer = [[MKPolylineRenderer alloc] initWithPolyline:(MKPolyline *)polyLine];
+        aRenderer.strokeColor = [UIColor colorWithRed:.067f green:.384 blue:.384 alpha:1.f];
         aRenderer.lineWidth = 3;
         return aRenderer;
     }
@@ -85,13 +106,13 @@
 }
 
 # pragma mark - detect touches on MKOverlay
-- (double)distanceOfPoint:(MKMapPoint)pt toPoly:(MKPolyline *)poly
+- (double)distanceOfPoint:(MKMapPoint)pt toPoly:(Path *)poly
 {
     double distance = MAXFLOAT;
-    for (int n = 0; n < poly.pointCount - 1; n++) {
+    for (int n = 0; n < poly.polyline.pointCount - 1; n++) {
         
-        MKMapPoint ptA = poly.points[n];
-        MKMapPoint ptB = poly.points[n + 1];
+        MKMapPoint ptA = poly.polyline.points[n];
+        MKMapPoint ptB = poly.polyline.points[n + 1];
         
         double xDelta = ptB.x - ptA.x;
         double yDelta = ptB.y - ptA.y;
@@ -148,44 +169,59 @@
         double maxMeters = [self metersFromPixel:MAX_DISTANCE_PX atPoint:touchPt];
         
         float nearestDistance = MAXFLOAT;
-        MKPolyline *nearestPoly = nil;
+        Path *nearestPoly = nil;
         
-        // for every overlay ...
-        for (id <MKOverlay> overlay in self.mapView.overlays) {
+        // for every trail ...
+        for (Path *p in self.mapView.overlays) {
+            // ... get the distance ...
+            float distance = [self distanceOfPoint:MKMapPointForCoordinate(coord) toPoly:p];
             
-            // .. if MKPolyline ...
-            if ([overlay isKindOfClass:[MKPolyline class]]) {
-                
-                // ... get the distance ...
-                float distance = [self distanceOfPoint:MKMapPointForCoordinate(coord)
-                                                toPoly:overlay];
-                
-                // ... and find the nearest one
-                if (distance < nearestDistance) {
-                    
-                    nearestDistance = distance;
-                    nearestPoly = overlay;
-                }
+            // ... and find the nearest one
+            if (distance < nearestDistance) {
+                nearestDistance = distance;
+                nearestPoly = p;
             }
         }
         
         if (nearestDistance <= maxMeters) {
-            
-            NSLog(@"Touched poly: %@\n"
-                  "    distance: %f", nearestPoly.title, nearestDistance);
+            NSLog(@"Touched poly: %@ distance: %f", nearestPoly.categories, nearestDistance);
+            //NSLog(@"touched: %@", nearestPoly.categories);
         }
     }
 }
-/*
-#pragma mark - Navigation
 
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-
-    
-}*/
+#pragma mark - Model
+- (void)modelUpdated
+{
+    NSLog(@"Updating Model...");
+    //[self.mapView addAnnotations:self.annotationArray];
+    //for (id anno in self.annotationArray){
+    //[self.locations addLocation:anno];
+    //}
+    [self refreshAnnotations];
+}
+- (Paths*) paths
+{
+    //NSLog(@"Paths Method: %@", [self paths].delegate);
+    AppDelegate *del;
+    del = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+    return del.paths;
+}
+- (void) refreshAnnotations
+{
+    NSLog(@"refreshing annotations");
+    dispatch_async(dispatch_get_main_queue(), ^{
+        NSLog(@"Removing polylines");
+        for (id<MKOverlay> overlay in self.mapView.overlays){
+            [self.mapView removeOverlay:overlay];
+        }
+        
+        for (id<MKOverlay> a in self.paths.filteredLocations) {
+            
+            [self.mapView addOverlay:a];
+        }
+    });
+}
 
 
 @end

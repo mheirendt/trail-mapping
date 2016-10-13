@@ -11,7 +11,7 @@
 #import "overviewController.h"
 
 static NSString* const kBaseURL = @"https://secure-garden-50529.herokuapp.com/";
-static NSString* const kPaths = @"paths";
+static NSString* const kPaths = @"trails";
 
 
 @implementation Paths
@@ -101,11 +101,16 @@ static NSString* const kPaths = @"paths";
     
     NSString* boxQuery = [NSString stringWithFormat:@"{\"$geoWithin\":{\"$box\":[[%f,%f],[%f,%f]]}}",x0,y0,x1,y1]; //3
     NSString* locationInBox = [NSString stringWithFormat:@"{\"location\":%@}", boxQuery]; //4
+    /*
     NSString* escBox = (NSString *)CFBridgingRelease(CFURLCreateStringByAddingPercentEscapes(NULL,
                                                                                              (CFStringRef) locationInBox,
                                                                                              NULL,
                                                                                              (CFStringRef) @"!*();':@&=+$,/?%#[]{}",
-                                                                                             kCFStringEncodingUTF8)); //5
+                                    kCFStringEncodingUTF8)); //5
+     */
+    //NSString *escBox = (NSString *)CFBridgingRelease(CFURLCreateStringByReplacingPercentEscapes(NULL, (CFStringRef)locationInBox, (CFStringRef)@"!*();':@&=+$,/?%#[]{}"));
+    NSCharacterSet *charSet = [NSCharacterSet URLHostAllowedCharacterSet];
+    NSString *escBox = [locationInBox stringByAddingPercentEncodingWithAllowedCharacters:charSet];
     NSString* query = [NSString stringWithFormat:@"?query=%@", escBox]; //6
     [self runQuery:query]; //7
 }
@@ -118,16 +123,15 @@ static NSString* const kPaths = @"paths";
         return; //input safety check
     }
     
-    
     NSString* paths = [kBaseURL stringByAppendingPathComponent:kPaths];
     
     BOOL isExistingLocation = path._id != nil;
     NSURL* url = isExistingLocation ? [NSURL URLWithString:[paths stringByAppendingPathComponent:path._id]] :
     [NSURL URLWithString:paths];
-    
+    NSDictionary *dictionary = [path toDictionary];
     NSMutableURLRequest* request = [NSMutableURLRequest requestWithURL:url];
     request.HTTPMethod = isExistingLocation ? @"PUT" : @"POST";
-    NSData* data = [NSJSONSerialization dataWithJSONObject:[path toDictionary] options:0 error:NULL];
+    NSData* data = [NSJSONSerialization dataWithJSONObject:dictionary options:0 error:NULL];
     request.HTTPBody = data;
     
     [request addValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
