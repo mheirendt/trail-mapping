@@ -49,8 +49,8 @@
     NSString *flag = [[NSUserDefaults standardUserDefaults] objectForKey:@"signin"];
     NSString *name = [[NSUserDefaults standardUserDefaults] objectForKey:@"username"];
     if ([flag isEqualToString:@"signin"]){
-        UIViewController *signinScene = [self.storyboard instantiateViewControllerWithIdentifier:@"signin"];
-        [self presentViewController:signinScene animated:NO completion:nil];
+        UIViewController *registerScene = [self.storyboard instantiateViewControllerWithIdentifier:@"register"];
+        [self presentViewController:registerScene animated:NO completion:nil];
     }
     if ([flag isEqualToString:@"register"]){
         UIViewController *registerScene = [self.storyboard instantiateViewControllerWithIdentifier:@"register"];

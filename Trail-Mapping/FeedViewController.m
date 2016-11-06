@@ -1,18 +1,18 @@
 //
-//  SigninScene.m
+//  FeedViewController.m
 //  Trail-Mapping
 //
-//  Created by Michael Heirendt on 10/7/16.
+//  Created by Michael Heirendt on 10/13/16.
 //  Copyright © 2016 Michael Heirendt. All rights reserved.
 //
 
-#import "SigninScene.h"
+#import "FeedViewController.h"
 
-@interface SigninScene ()
+@interface FeedViewController ()
 
 @end
 
-@implementation SigninScene
+@implementation FeedViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -23,14 +23,9 @@
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
-- (IBAction)dismissView:(id)sender {
-    [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"signin"];
-   [self dismissViewControllerAnimated:YES completion:nil];
-}
-
-- (IBAction)switchToRegister:(id)sender {
-    [[NSUserDefaults standardUserDefaults] setValue:@"register" forKey:@"signin"];
-    [self dismissViewControllerAnimated:NO completion:nil];
+- (IBAction)signOut:(id)sender {
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"username"];
+    [self.tabBarController setSelectedIndex:0];
 }
 
 /*
