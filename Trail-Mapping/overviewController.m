@@ -186,9 +186,26 @@
         if (nearestDistance <= maxMeters) {
             NSLog(@"Touched poly: %@ distance: %f", nearestPoly.categories, nearestDistance);
             //NSLog(@"touched: %@", nearestPoly.categories);
+            MKMapPoint middlePoint = nearestPoly.points[nearestPoly.pointCount/2];
+            [self createAndAddAnnotationForCoordinate:MKCoordinateForMapPoint(middlePoint)title:nearestPoly.userID subtitle:nearestPoly.categories];
         }
     }
 }
+
+-(void) createAndAddAnnotationForCoordinate : (CLLocationCoordinate2D) coordinate title: (NSNumber *)title subtitle: (NSMutableArray *)subtitle{
+    //VertexView *annoView = [[Vertexview alloc] initWithAnnotation:anno reuseIdentifier:nil];
+    
+    MKPointAnnotation* annotation= [[MKPointAnnotation alloc] init];
+    annotation.coordinate = coordinate;
+    NSString *newTitle = [title stringValue];
+    NSString *newSub = [subtitle description];
+    annotation.title = newTitle;
+    annotation.subtitle = newSub;
+    
+    [_mapView addAnnotation: annotation];
+    
+}
+
 
 #pragma mark - Model
 - (void)modelUpdated
@@ -211,11 +228,10 @@
 {
     NSLog(@"refreshing annotations");
     dispatch_async(dispatch_get_main_queue(), ^{
-        NSLog(@"Removing polylines");
         for (id<MKOverlay> overlay in self.mapView.overlays){
             [self.mapView removeOverlay:overlay];
         }
-        
+        NSLog(@"Paths: %@", self.paths.filteredLocations);
         for (id<MKOverlay> a in self.paths.filteredLocations) {
             
             [self.mapView addOverlay:a];

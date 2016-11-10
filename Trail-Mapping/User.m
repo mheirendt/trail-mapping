@@ -36,10 +36,10 @@
 - (void) persist:(User*)user
 {
     
-    //NSString* users = @"https://secure-garden-50529.herokuapp.com/users";
+    //NSString* users = @"https://secure-garden-50529.herokuapp.com/users/";
     ///local-reg
-    NSString* users = @"https://secure-garden-50529.herokuapp.com/local-reg";
     
+    NSString* users = @"https://secure-garden-50529.herokuapp.com/local-reg";
     //BOOL isExistingLocation = path._id != nil;
     NSURL* url = [NSURL URLWithString:users];
     NSDictionary *dictionary = [user toDictionary];

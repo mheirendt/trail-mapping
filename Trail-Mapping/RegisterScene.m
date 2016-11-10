@@ -53,41 +53,90 @@
     return YES;
 }
 -(void)validateFacebookUser {
-    NSURL* url = [NSURL URLWithString:[@"https://secure-garden-50529.herokuapp.com/users/"  stringByAppendingPathComponent:self.facebookUsername]];
+    //NSURL* url = [NSURL URLWithString:[@"https://secure-garden-50529.herokuapp.com/users/"  stringByAppendingPathComponent:self.facebookUsername]];
+    NSURL* url = [NSURL URLWithString:@"https://secure-garden-50529.herokuapp.com/login"];
     NSMutableURLRequest* request = [NSMutableURLRequest requestWithURL:url];
-    request.HTTPMethod = @"GET";
+    request.HTTPMethod = @"POST";
+    NSDictionary *dict = @{
+                           @"username" : self.facebookUsername,
+                           @"password" : self.facebookPassword,
+                           };
+    NSError *error = nil;
+    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dict
+                                                       options:NSJSONWritingPrettyPrinted // Pass 0 if you don't care about the readability of the generated string
+                                                         error:&error];
+    request.HTTPBody = jsonData;
     [request addValue:@"application/json" forHTTPHeaderField:@"Accept"];
     NSURLSessionConfiguration* config = [NSURLSessionConfiguration defaultSessionConfiguration];
     NSURLSession* session = [NSURLSession sessionWithConfiguration:config];
     NSURLSessionDataTask* dataTask = [session dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
         //Completion block
         if (error == nil) {
-            NSLog(@"error is nil");
             if (response.expectedContentLength < 5){
-                NSLog(@"should be saved");
-                User *user = [[User alloc] initWithEmail:self.facebookEmail Username:self.facebookUsername Password:nil];
+                //User exists in database
                 [[NSUserDefaults standardUserDefaults] setValue:self.facebookUsername forKey:@"username"];
                 [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"signin"];
-                [user persist:user];
+                //dismiss the popup (temporary fix)
                 [self dismissViewControllerAnimated:YES completion:^{
+                    //dismiss the sign in view
                     [self dismissViewControllerAnimated:YES completion:nil];
                 }];
                 
             } else {
-                //Todo : inform the user to come up with a new name
-                NSLog(@"should not be");
-                //[self.errorDesc addObject:@"duplicate username"];
+                //User does not exist in databse
+                NSURL* url = [NSURL URLWithString:@"https://secure-garden-50529.herokuapp.com/local-reg"];
+                NSMutableURLRequest* newRequest = [NSMutableURLRequest requestWithURL:url];
+                newRequest.HTTPMethod = @"POST";
+                NSDictionary *newDict = @{
+                                          @"username" : self.facebookUsername,
+                                          @"password" : self.facebookPassword,
+                                       };
+                NSError *error = nil;
+                NSData *newJSONdata = [NSJSONSerialization dataWithJSONObject:newDict
+                                                                   options:NSJSONWritingPrettyPrinted // Pass 0 if you don't care about the readability of the generated string
+                                                                     error:&error];
+                newRequest.HTTPBody = newJSONdata;
+                [newRequest addValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+                NSURLSessionConfiguration* newConfig = [NSURLSessionConfiguration defaultSessionConfiguration];
+                NSURLSession* newSession = [NSURLSession sessionWithConfiguration:newConfig];
+                NSURLSessionDataTask* dTask = [newSession dataTaskWithRequest:newRequest completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+                    if (!error) {
+                        [[NSUserDefaults standardUserDefaults] setValue:self.facebookUsername forKey:@"username"];
+                        [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"signin"];
+                        [self dismissViewControllerAnimated:YES completion:nil];
+                    } else{
+                        NSLog(@"Error: %@", error.localizedDescription);
+                    }
+                }];
+                [dTask resume];
             }
+        }
+        else {
+            NSLog(@"error: %@", error.localizedDescription);
         }
     }];
     [dataTask resume];
 }
 - (IBAction)validate:(id)sender {
+    if ([self.titleLabel.text isEqualToString:@"Create a Profile"]){
     self.flag = YES;
     [self.errorDesc removeAllObjects];
-    NSURL* url = [NSURL URLWithString:[@"https://secure-garden-50529.herokuapp.com/users/"  stringByAppendingPathComponent:self.usernameField.text]];
+    //NSURL* url = [NSURL URLWithString:[@"https://secure-garden-50529.herokuapp.com/login/"  stringByAppendingPathComponent:self.usernameField.text]];
+    NSURL* url = [NSURL URLWithString:@"https://secure-garden-50529.herokuapp.com/local-reg"];
     NSMutableURLRequest* request = [NSMutableURLRequest requestWithURL:url];
-    request.HTTPMethod = @"GET";
+    request.HTTPMethod = @"POST";
+    User *user = [[User alloc] initWithEmail:self.emailField.text Username:self.usernameField.text Password:self.passwordField.text];
+    NSDictionary *dict = @{
+                                @"username" : user.username,
+                                @"password" : user.password,
+                                };
+    NSLog(@"Dictionary: %@", dict);
+    NSError *error = nil;
+    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dict
+                                                       options:NSJSONWritingPrettyPrinted // Pass 0 if you don't care about the readability of the generated string
+                                                         error:&error];
+    NSLog(@"jsonData: %@", jsonData);
+    request.HTTPBody = jsonData;
     [request addValue:@"application/json" forHTTPHeaderField:@"Accept"];
     NSURLSessionConfiguration* config = [NSURLSessionConfiguration defaultSessionConfiguration];
     NSURLSession* session = [NSURLSession sessionWithConfiguration:config];
@@ -95,7 +144,7 @@
         //Completion block
         if (error == nil) {
             NSLog(@"error is nil");
-            if (response.expectedContentLength < 5){
+            //if (response.expectedContentLength < 5){
                 NSLog(@"should be saved");
                 self.flag = YES;
             } else {
@@ -103,29 +152,32 @@
                 [self.errorDesc addObject:@"duplicate username"];
                 self.flag = NO;
             }
-            
-            //validate fields
-            if (_usernameField.text.length < 1){
-                [self.errorDesc addObject:@"empty username"];
-                self.flag = NO;
-            }
-            if (_passwordField.text.length < 1){
-                [self.errorDesc addObject:@"empty password"];
-                self.flag = NO;
-            }
-            if (_passwordReEntryField.text.length < 1){
-                [self.errorDesc addObject:@"empty second password"];
-                self.flag = NO;
-            }
-            if (![_passwordField.text isEqualToString:_passwordReEntryField.text]){
-                [self.errorDesc addObject:@"must match"];
-                self.flag = NO;
-            }
-            if (self.emailField.text.length < 9 || ![self.emailField.text containsString:@"@"]){
-                [self.errorDesc addObject:@"invalid email"];
-                self.flag = NO;
-            }
-            
+
+        
+        /*
+         //validate fields
+         if (_usernameField.text.length < 1){
+         [self.errorDesc addObject:@"empty username"];
+         self.flag = NO;
+         }
+         if (_passwordField.text.length < 1){
+         [self.errorDesc addObject:@"empty password"];
+         self.flag = NO;
+         }
+         if (_passwordReEntryField.text.length < 1){
+         [self.errorDesc addObject:@"empty second password"];
+         self.flag = NO;
+         }
+         if (![_passwordField.text isEqualToString:_passwordReEntryField.text]){
+         [self.errorDesc addObject:@"must match"];
+         self.flag = NO;
+         }
+         if (self.emailField.text.length < 9 || ![self.emailField.text containsString:@"@"]){
+         [self.errorDesc addObject:@"invalid email"];
+         self.flag = NO;
+         }
+         */
+        
             if (self.flag){
                 [self dismissView];
             } else {
@@ -155,13 +207,54 @@
                         [self showErrorMessage:self.usernameWarning andMessage:@"Your selected username is already taken."];
                     }
                 }
+            //}
+        //}else{
+            //NSLog(@"Error: %@", [error localizedDescription]);
             }
-        }else{
-            NSLog(@"Error: %@", [error localizedDescription]);
-        }
     }];
     [dataTask resume];
+        
+    } else {
+        //We are signing in instead of creating a new user
+        NSURL* url = [NSURL URLWithString:@"https://secure-garden-50529.herokuapp.com/login"];
+        NSMutableURLRequest* request = [NSMutableURLRequest requestWithURL:url];
+        request.HTTPMethod = @"POST";
+        User *existingUser = [[User alloc] initWithEmail:self.emailField.text Username:self.usernameField.text Password:self.passwordField.text];
+        NSDictionary *dict = @{
+                               @"username" : existingUser.username,
+                               @"password" : existingUser.password,
+                               };
+        NSLog(@"Dictionary: %@", dict);
+        NSError *error = nil;
+        NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dict options:0 error:&error];
+        request.HTTPBody = jsonData;
+        [request addValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+        [request addValue:@"application/json" forHTTPHeaderField:@"Accept"];
+        NSURLSessionConfiguration* config = [NSURLSessionConfiguration defaultSessionConfiguration];
+        NSURLSession* session = [NSURLSession sessionWithConfiguration:config];
+        NSURLSessionDataTask* dataTask = [session dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *res, NSError *error) {
+            //Completion block
+            if (error == nil) {
+                NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *) res;
+                NSLog(@"response status code: %lu", [httpResponse statusCode]);
+                if ([httpResponse statusCode] == 200) {
+                    //User has been verified
+                    [[NSUserDefaults standardUserDefaults] setValue:_usernameField.text forKey:@"username"];
+                    [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"signin"];
+                    [self dismissViewControllerAnimated:YES completion:nil];
+                } else {
+                    //user has not been verified
+                    
+                };
+            } else {
+                NSLog(@"Something went wrong: %@", [error localizedDescription]);
+            }
+        }];
+        [dataTask resume];
+    }
 }
+
+
 -(void)handleErrors{
     NSLog(@"handling");
     for (NSString *error in self.errorDesc){
@@ -228,6 +321,7 @@
                                                    UITextField *login = controller.textFields.firstObject;
                                                    self.facebookUsername = login.text;
                                                    self.facebookEmail = [result objectForKey:@"email"];
+                                                   self.facebookPassword = [result objectForKey:@"id"];
                                                    [self validateFacebookUser];
                                                }];
                     [controller addTextFieldWithConfigurationHandler:^(UITextField *textField)

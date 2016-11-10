@@ -31,6 +31,8 @@
 @property (weak, nonatomic) IBOutlet UILabel *helpLabel;
 @property (weak, nonatomic) IBOutlet UIButton *toggleSigninButton;
 
+@property (strong, nonatomic) User* storedUser;
+
 @property (strong, nonatomic) NSMutableArray *errorDesc;
 
 
