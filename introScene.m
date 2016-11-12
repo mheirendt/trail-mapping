@@ -1,18 +1,18 @@
 //
-//  FeedViewController.m
+//  introScene.m
 //  Trail-Mapping
 //
-//  Created by Michael Heirendt on 10/13/16.
+//  Created by Michael Heirendt on 11/9/16.
 //  Copyright © 2016 Michael Heirendt. All rights reserved.
 //
 
-#import "FeedViewController.h"
+#import "introScene.h"
 
-@interface FeedViewController ()
+@interface introScene ()
 
 @end
 
-@implementation FeedViewController
+@implementation introScene
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -22,13 +22,6 @@
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
-}
-- (IBAction)signOut:(id)sender {
-    //TODO: post to appURL/logout to register with server
-    //NSString* users = @"https://secure-garden-50529.herokuapp.com/logout";
-    //NSURL* url = [NSURL URLWithString:users];
-    [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"username"];
-    [self.tabBarController setSelectedIndex:0];
 }
 
 /*

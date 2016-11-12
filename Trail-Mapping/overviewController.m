@@ -49,16 +49,16 @@
     NSString *flag = [[NSUserDefaults standardUserDefaults] objectForKey:@"signin"];
     NSString *name = [[NSUserDefaults standardUserDefaults] objectForKey:@"username"];
     if ([flag isEqualToString:@"signin"]){
-        UIViewController *registerScene = [self.storyboard instantiateViewControllerWithIdentifier:@"register"];
+        UIViewController *registerScene = [self.storyboard instantiateViewControllerWithIdentifier:@"introScene"];
         [self presentViewController:registerScene animated:NO completion:nil];
     }
     if ([flag isEqualToString:@"register"]){
-        UIViewController *registerScene = [self.storyboard instantiateViewControllerWithIdentifier:@"register"];
+        UIViewController *registerScene = [self.storyboard instantiateViewControllerWithIdentifier:@"introScene"];
         [self presentViewController:registerScene animated:NO completion:nil];
     }
     if (name == nil || [name isEqualToString:@""]) {
         self.definesPresentationContext = YES;
-        UIViewController *registerScene = [self.storyboard instantiateViewControllerWithIdentifier:@"register"];
+        UIViewController *registerScene = [self.storyboard instantiateViewControllerWithIdentifier:@"introScene"];
         [self presentViewController:registerScene animated:NO completion:nil];
     }
 }

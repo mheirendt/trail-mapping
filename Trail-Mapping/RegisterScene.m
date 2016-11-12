@@ -371,5 +371,8 @@
         [self.signinButton setTitle:@"Sign in Here" forState:UIControlStateNormal];
     }
 }
+- (IBAction)backPressed:(id)sender {
+    [self dismissViewControllerAnimated:YES completion:nil];
+}
 
 @end

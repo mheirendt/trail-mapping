@@ -34,6 +34,8 @@
 		A99005D01D8A2ECF0074B688 /* Vertex.m in Sources */ = {isa = PBXBuildFile; fileRef = A99005CF1D8A2ECF0074B688 /* Vertex.m */; };
 		A9BBE43E1DB01616004FD193 /* FeedViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A9BBE43D1DB01616004FD193 /* FeedViewController.m */; };
 		A9FC002E1D8CFB6000D4D707 /* VertexView.m in Sources */ = {isa = PBXBuildFile; fileRef = A9FC002D1D8CFB6000D4D707 /* VertexView.m */; };
+		A9FF38881DD4140400D2E98E /* loginScene.m in Sources */ = {isa = PBXBuildFile; fileRef = A9FF38871DD4140400D2E98E /* loginScene.m */; };
+		A9FF388B1DD415BB00D2E98E /* introScene.m in Sources */ = {isa = PBXBuildFile; fileRef = A9FF388A1DD415BB00D2E98E /* introScene.m */; };
 		FB07FF2DE398F8BBB9B3C6EB /* libPods-Trail-Mapping.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DF30851544A5D023206909D9 /* libPods-Trail-Mapping.a */; };
 /* End PBXBuildFile section */
 
@@ -85,6 +87,10 @@
 		A9BBE43D1DB01616004FD193 /* FeedViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FeedViewController.m; sourceTree = "<group>"; };
 		A9FC002C1D8CFB6000D4D707 /* VertexView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VertexView.h; sourceTree = "<group>"; };
 		A9FC002D1D8CFB6000D4D707 /* VertexView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VertexView.m; sourceTree = "<group>"; };
+		A9FF38861DD4140400D2E98E /* loginScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = loginScene.h; sourceTree = "<group>"; };
+		A9FF38871DD4140400D2E98E /* loginScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = loginScene.m; sourceTree = "<group>"; };
+		A9FF38891DD415BB00D2E98E /* introScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = introScene.h; path = ../introScene.h; sourceTree = "<group>"; };
+		A9FF388A1DD415BB00D2E98E /* introScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = introScene.m; path = ../introScene.m; sourceTree = "<group>"; };
 		DF30851544A5D023206909D9 /* libPods-Trail-Mapping.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Trail-Mapping.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -136,14 +142,18 @@
 			children = (
 				A93DF4241D73992F0028A997 /* AppDelegate.h */,
 				A93DF4251D73992F0028A997 /* AppDelegate.m */,
+				A9FF38891DD415BB00D2E98E /* introScene.h */,
+				A9FF388A1DD415BB00D2E98E /* introScene.m */,
+				A9FF38861DD4140400D2E98E /* loginScene.h */,
+				A9FF38871DD4140400D2E98E /* loginScene.m */,
+				A916A4AB1DA83E4B00A7B104 /* RegisterScene.h */,
+				A916A4AC1DA83E4B00A7B104 /* RegisterScene.m */,
 				A93DF44D1D7521120028A997 /* overviewController.h */,
 				A93DF44E1D7521120028A997 /* overviewController.m */,
 				A93DF4271D73992F0028A997 /* ViewController.h */,
 				A93DF4281D73992F0028A997 /* ViewController.m */,
 				A9BBE43C1DB01616004FD193 /* FeedViewController.h */,
 				A9BBE43D1DB01616004FD193 /* FeedViewController.m */,
-				A916A4AB1DA83E4B00A7B104 /* RegisterScene.h */,
-				A916A4AC1DA83E4B00A7B104 /* RegisterScene.m */,
 				A99005CE1D8A2ECF0074B688 /* Vertex.h */,
 				A99005CF1D8A2ECF0074B688 /* Vertex.m */,
 				A95889371D8F178400E7711C /* CallOutAnnotation.h */,
@@ -330,6 +340,7 @@
 				A97A83DE1D7D15AA003F4C80 /* Paths.m in Sources */,
 				A916A4B01DA847C900A7B104 /* User.m in Sources */,
 				A96757C11D921CD300331D86 /* categoryView.m in Sources */,
+				A9FF388B1DD415BB00D2E98E /* introScene.m in Sources */,
 				A93DF4261D73992F0028A997 /* AppDelegate.m in Sources */,
 				A93DF4521D7658580028A997 /* trailOverviewController.m in Sources */,
 				A916A4A21DA7FF9400A7B104 /* SettingsTable.m in Sources */,
@@ -340,6 +351,7 @@
 				A916A4AD1DA83E4B00A7B104 /* RegisterScene.m in Sources */,
 				A93DF4231D73992F0028A997 /* main.m in Sources */,
 				A9BBE43E1DB01616004FD193 /* FeedViewController.m in Sources */,
+				A9FF38881DD4140400D2E98E /* loginScene.m in Sources */,
 				A93DF44F1D7521120028A997 /* overviewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
