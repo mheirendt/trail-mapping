@@ -36,14 +36,18 @@
     return 4;
 }
 
+-(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
+    return 70;
+}
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    SettingsCell *cell = [tableView dequeueReusableCellWithIdentifier:@"reuse" forIndexPath:indexPath];
+    SettingsCell *cell = [tableView dequeueReusableCellWithIdentifier:@"settings"];
     if (cell == nil) {
         
-        [tableView registerNib:[UINib nibWithNibName:@"tableCell" bundle:nil] forCellReuseIdentifier:@"reuse"];
-        cell = [tableView dequeueReusableCellWithIdentifier:@"reuse"];
+        [tableView registerNib:[UINib nibWithNibName:@"SettingsTableCell" bundle:nil] forCellReuseIdentifier:@"settings"];
+        cell = [tableView dequeueReusableCellWithIdentifier:@"settings"];
     }
+
    if (indexPath.row == 0){
        cell.headerText.text = @"Default Categories";
        cell.subText.text = @"Click the button to select default categories for your paths.";

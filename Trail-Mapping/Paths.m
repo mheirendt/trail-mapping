@@ -39,8 +39,10 @@ static NSString* const kPaths = @"trails";
 - (void)import
 {
     NSURL* url = [NSURL URLWithString:[kBaseURL stringByAppendingPathComponent:kPaths]];
-    NSMutableURLRequest* request = [NSMutableURLRequest requestWithURL:url];
+    NSMutableURLRequest* request = [NSMutableURLRequest requestWithURL:url cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:10.f];
     request.HTTPMethod = @"GET";
+    [request addValue:@"no-cache" forHTTPHeaderField:@"cache-control"];
+    [request addValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
     [request addValue:@"application/json" forHTTPHeaderField:@"Accept"];
     NSURLSessionConfiguration* config = [NSURLSessionConfiguration defaultSessionConfiguration];
     NSURLSession* session = [NSURLSession sessionWithConfiguration:config];
@@ -72,8 +74,9 @@ static NSString* const kPaths = @"trails";
     NSString* urlStr = [[kBaseURL stringByAppendingPathComponent:kPaths] stringByAppendingString:queryString];
     NSURL* url = [NSURL URLWithString:urlStr];
     
-    NSMutableURLRequest* request = [NSMutableURLRequest requestWithURL:url];
+    NSMutableURLRequest* request = [NSMutableURLRequest requestWithURL:url cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:10.f];
     request.HTTPMethod = @"GET";
+    [request addValue:@"no-cache" forHTTPHeaderField:@"cache-control"];
     [request addValue:@"application/json" forHTTPHeaderField:@"Accept"];
     
     NSURLSessionConfiguration* config = [NSURLSessionConfiguration defaultSessionConfiguration];
@@ -129,19 +132,27 @@ static NSString* const kPaths = @"trails";
     NSURL* url = isExistingLocation ? [NSURL URLWithString:[paths stringByAppendingPathComponent:path._id]] :
     [NSURL URLWithString:paths];
     NSDictionary *dictionary = [path toDictionary];
-    NSMutableURLRequest* request = [NSMutableURLRequest requestWithURL:url];
+    //NSMutableURLRequest* request = [NSMutableURLRequest requestWithURL:url];
+    NSMutableURLRequest* request = [NSMutableURLRequest requestWithURL:url cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:10.f];
     request.HTTPMethod = isExistingLocation ? @"PUT" : @"POST";
     NSData* data = [NSJSONSerialization dataWithJSONObject:dictionary options:0 error:NULL];
     request.HTTPBody = data;
     
+    [request addValue:@"no-cache" forHTTPHeaderField:@"cache-control"];
     [request addValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+    [request addValue:@"application/json" forHTTPHeaderField:@"Accept"];
     
     NSURLSessionConfiguration* config = [NSURLSessionConfiguration defaultSessionConfiguration];
     NSURLSession* session = [NSURLSession sessionWithConfiguration:config];
     NSURLSessionDataTask* dataTask = [session dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
         if (!error) {
-            NSArray* responseArray = @[[NSJSONSerialization JSONObjectWithData:data options:0 error:NULL]];
-            [self parseAndAddLocations:responseArray toArray:self.objects];
+            NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *) response;
+            if ([httpResponse statusCode] == 200){
+                NSArray* responseArray = @[[NSJSONSerialization JSONObjectWithData:data options:0 error:NULL]];
+                [self parseAndAddLocations:responseArray toArray:self.objects];
+            } else if ([httpResponse statusCode] == 400){
+                NSLog(@"user must sign in");
+            }
         } else{
             NSLog(@"Error: %@", error.localizedDescription);
         }

@@ -17,12 +17,23 @@
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+    [self activateUser];
     _trails = [[NSMutableArray alloc] init];
     _categories = [[NSMutableArray alloc] init];
     
     self.paths = [[Paths alloc] init];
-    [self.paths import];
-    
+    NSString *username = [[NSUserDefaults standardUserDefaults] objectForKey:@"username"];
+    NSString *password = [[NSUserDefaults standardUserDefaults] objectForKey:@"password"];
+    NSString *token = [[NSUserDefaults standardUserDefaults] objectForKey:@"facebook"];
+    NSLog(@"username: %@ password: %@", username, password);
+    if(username && password){
+        [self.paths import];
+    }
+    if (token) {
+        NSLog(@"importing paths");
+        [self.paths import];
+    }
+
     // Override point for customization after application launch.
     return YES;
 }
@@ -45,11 +56,90 @@
 
 - (void)applicationDidBecomeActive:(UIApplication *)application {
     // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
+    [self activateUser];
     [FBSDKAppEvents activateApp];
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application {
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
+}
+
+-(void)activateUser{
+    NSString *username = [[NSUserDefaults standardUserDefaults] objectForKey:@"username"];
+    NSString *password = [[NSUserDefaults standardUserDefaults] objectForKey:@"password"];
+    NSString *token = [[NSUserDefaults standardUserDefaults] objectForKey:@"facebook"];
+    
+    if(username && password){
+        
+        NSURL* url = [NSURL URLWithString:@"https://secure-garden-50529.herokuapp.com/login"];
+        NSMutableURLRequest* request = [NSMutableURLRequest requestWithURL:url cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:10.f];
+        request.HTTPMethod = @"POST";
+        NSDictionary *dict = @{
+                               @"username" : username,
+                               @"password" : password,
+                               };
+        NSError *error = nil;
+        NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dict options:0 error:&error];
+        request.HTTPBody = jsonData;
+        [request addValue:@"no-cache" forHTTPHeaderField:@"cache-control"];
+        [request addValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+        [request addValue:@"application/json" forHTTPHeaderField:@"Accept"];
+        NSURLSessionConfiguration* config = [NSURLSessionConfiguration defaultSessionConfiguration];
+        NSURLSession* session = [NSURLSession sessionWithConfiguration:config];
+        NSURLSessionDataTask* dataTask = [session dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *res, NSError *error) {
+            //Completion block
+            if (error == nil) {
+                NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *) res;
+                NSLog(@"response status code: %lu", (long)[httpResponse statusCode]);
+                if ([httpResponse statusCode] == 200) {
+                    //User has been verified
+                    
+                    [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"signin"];
+                    //[self dismissViewControllerAnimated:YES completion:nil];
+                } else {
+                    NSLog(@"%ld", (long)[httpResponse statusCode]);
+                    //user has not been verified
+                };
+            } else {
+                NSLog(@"Something went wrong: %@", [error localizedDescription]);
+            }
+        }];
+        [dataTask resume];
+    }
+    if (token){
+        //NSString *fbAccessToken = [[FBSDKAccessToken currentAccessToken] tokenString];
+        //NSLog(@"This is token: %@", fbAccessToken);
+        NSURL* url = [NSURL URLWithString:@"https://secure-garden-50529.herokuapp.com/auth/facebook/token"];
+        NSMutableURLRequest* request = [NSMutableURLRequest requestWithURL:url cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:10.f];
+        request.HTTPMethod = @"POST";
+        NSError* error = nil;
+        NSDictionary *dict = @{
+                               @"access_token" : token
+                               };
+        NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dict
+                                                           options:NSJSONWritingPrettyPrinted // Pass 0 if you don't care about the readability of the generated string
+                                                             error:&error];
+        request.HTTPBody = jsonData;
+        [request addValue:@"no-cache" forHTTPHeaderField:@"cache-control"];
+        [request addValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+        [request addValue:@"application/json" forHTTPHeaderField:@"Accept"];
+        NSURLSessionConfiguration* config = [NSURLSessionConfiguration defaultSessionConfiguration];
+        NSURLSession* session = [NSURLSession sessionWithConfiguration:config];
+        NSURLSessionDataTask* dataTask = [session dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+            //Completion block
+            if (error == nil) {
+                NSLog(@"res: %@", response);
+                if (response.expectedContentLength < 5){
+                    //User exists in database
+                    NSLog(@"token still valid");
+                }
+            }
+            else {
+                NSLog(@"error: %@", error.localizedDescription);
+            }
+        }];
+        [dataTask resume];
+    }
 }
 
 @end

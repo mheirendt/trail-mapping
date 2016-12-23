@@ -609,8 +609,8 @@ Vertex *deletedVertex;
         del = (AppDelegate *)[[UIApplication sharedApplication] delegate];
         del.submittedPath = self.result;
         NSLog(@"pre del: %@", self.vertices);
-        del.submittedPath.vertices = del.trails;
-        NSLog(@"Before trans: %@", del.submittedPath.vertices);
+        del.submittedPath.geometry = del.trails;
+        NSLog(@"Before trans: %@", del.submittedPath.geometry);
         for (id<MKOverlay> overlay in self.mapView.overlays){
             [self.mapView removeOverlay:overlay];
         }

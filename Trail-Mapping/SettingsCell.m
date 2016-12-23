@@ -9,7 +9,7 @@
 #import "SettingsCell.h"
 
 @implementation SettingsCell
-
+@synthesize headerText, subText, button, switchButton;
 - (void)awakeFromNib {
     [super awakeFromNib];
     // Initialization code

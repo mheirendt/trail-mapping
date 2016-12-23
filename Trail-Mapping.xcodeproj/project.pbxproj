@@ -36,6 +36,9 @@
 		A9FC002E1D8CFB6000D4D707 /* VertexView.m in Sources */ = {isa = PBXBuildFile; fileRef = A9FC002D1D8CFB6000D4D707 /* VertexView.m */; };
 		A9FF38881DD4140400D2E98E /* loginScene.m in Sources */ = {isa = PBXBuildFile; fileRef = A9FF38871DD4140400D2E98E /* loginScene.m */; };
 		A9FF388B1DD415BB00D2E98E /* introScene.m in Sources */ = {isa = PBXBuildFile; fileRef = A9FF388A1DD415BB00D2E98E /* introScene.m */; };
+		A9FF388F1DE5F0E100D2E98E /* FeedPost.m in Sources */ = {isa = PBXBuildFile; fileRef = A9FF388D1DE5F0E100D2E98E /* FeedPost.m */; };
+		A9FF38901DE5F0E100D2E98E /* FeedPost.xib in Resources */ = {isa = PBXBuildFile; fileRef = A9FF388E1DE5F0E100D2E98E /* FeedPost.xib */; };
+		A9FF38931DE6036F00D2E98E /* ProfileViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A9FF38921DE6036F00D2E98E /* ProfileViewController.m */; };
 		FB07FF2DE398F8BBB9B3C6EB /* libPods-Trail-Mapping.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DF30851544A5D023206909D9 /* libPods-Trail-Mapping.a */; };
 /* End PBXBuildFile section */
 
@@ -91,6 +94,11 @@
 		A9FF38871DD4140400D2E98E /* loginScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = loginScene.m; sourceTree = "<group>"; };
 		A9FF38891DD415BB00D2E98E /* introScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = introScene.h; path = ../introScene.h; sourceTree = "<group>"; };
 		A9FF388A1DD415BB00D2E98E /* introScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = introScene.m; path = ../introScene.m; sourceTree = "<group>"; };
+		A9FF388C1DE5F0E100D2E98E /* FeedPost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FeedPost.h; sourceTree = "<group>"; };
+		A9FF388D1DE5F0E100D2E98E /* FeedPost.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FeedPost.m; sourceTree = "<group>"; };
+		A9FF388E1DE5F0E100D2E98E /* FeedPost.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = FeedPost.xib; sourceTree = "<group>"; };
+		A9FF38911DE6036F00D2E98E /* ProfileViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProfileViewController.h; sourceTree = "<group>"; };
+		A9FF38921DE6036F00D2E98E /* ProfileViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProfileViewController.m; sourceTree = "<group>"; };
 		DF30851544A5D023206909D9 /* libPods-Trail-Mapping.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Trail-Mapping.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -168,22 +176,27 @@
 				A916A4AF1DA847C900A7B104 /* User.m */,
 				A96757BF1D921CD300331D86 /* categoryView.h */,
 				A96757C01D921CD300331D86 /* categoryView.m */,
-				A96757C41D921E8300331D86 /* CategoryCell.h */,
-				A96757C51D921E8300331D86 /* CategoryCell.m */,
-				A916A4A51DA8013300A7B104 /* SettingsCell.h */,
-				A916A4A61DA8013300A7B104 /* SettingsCell.m */,
 				A93DF4501D7658580028A997 /* trailOverviewController.h */,
 				A93DF4511D7658580028A997 /* trailOverviewController.m */,
 				A916A4A01DA7FF9300A7B104 /* SettingsTable.h */,
 				A916A4A11DA7FF9300A7B104 /* SettingsTable.m */,
-				A96757C91D922BEA00331D86 /* tableCell.xib */,
-				A916A4A31DA8003700A7B104 /* SettingsTableCell.xib */,
 				A96757C21D921D2200331D86 /* TokenView.xib */,
 				A93DF42A1D73992F0028A997 /* Main.storyboard */,
 				A93DF42D1D73992F0028A997 /* Assets.xcassets */,
 				A93DF42F1D73992F0028A997 /* LaunchScreen.storyboard */,
 				A93DF4321D73992F0028A997 /* Info.plist */,
 				A93DF4211D73992F0028A997 /* Supporting Files */,
+				A9FF388C1DE5F0E100D2E98E /* FeedPost.h */,
+				A9FF388D1DE5F0E100D2E98E /* FeedPost.m */,
+				A9FF388E1DE5F0E100D2E98E /* FeedPost.xib */,
+				A916A4A51DA8013300A7B104 /* SettingsCell.h */,
+				A916A4A61DA8013300A7B104 /* SettingsCell.m */,
+				A916A4A31DA8003700A7B104 /* SettingsTableCell.xib */,
+				A96757C41D921E8300331D86 /* CategoryCell.h */,
+				A96757C51D921E8300331D86 /* CategoryCell.m */,
+				A96757C91D922BEA00331D86 /* tableCell.xib */,
+				A9FF38911DE6036F00D2E98E /* ProfileViewController.h */,
+				A9FF38921DE6036F00D2E98E /* ProfileViewController.m */,
 			);
 			path = "Trail-Mapping";
 			sourceTree = "<group>";
@@ -276,6 +289,7 @@
 				A93DF42E1D73992F0028A997 /* Assets.xcassets in Resources */,
 				A96757C31D921D2200331D86 /* TokenView.xib in Resources */,
 				A93DF42C1D73992F0028A997 /* Main.storyboard in Resources */,
+				A9FF38901DE5F0E100D2E98E /* FeedPost.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -338,6 +352,7 @@
 				A97A83DB1D7CE838003F4C80 /* Path.m in Sources */,
 				A95889391D8F178400E7711C /* CallOutAnnotation.m in Sources */,
 				A97A83DE1D7D15AA003F4C80 /* Paths.m in Sources */,
+				A9FF38931DE6036F00D2E98E /* ProfileViewController.m in Sources */,
 				A916A4B01DA847C900A7B104 /* User.m in Sources */,
 				A96757C11D921CD300331D86 /* categoryView.m in Sources */,
 				A9FF388B1DD415BB00D2E98E /* introScene.m in Sources */,
@@ -345,6 +360,7 @@
 				A93DF4521D7658580028A997 /* trailOverviewController.m in Sources */,
 				A916A4A21DA7FF9400A7B104 /* SettingsTable.m in Sources */,
 				A96757C61D921E8300331D86 /* CategoryCell.m in Sources */,
+				A9FF388F1DE5F0E100D2E98E /* FeedPost.m in Sources */,
 				A99005D01D8A2ECF0074B688 /* Vertex.m in Sources */,
 				A916A4A71DA8013300A7B104 /* SettingsCell.m in Sources */,
 				A9FC002E1D8CFB6000D4D707 /* VertexView.m in Sources */,

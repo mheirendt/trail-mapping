@@ -7,7 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "FeedPost.h"
 
-@interface FeedViewController : UIViewController
+@interface FeedViewController : UIViewController <UIScrollViewDelegate, UITextFieldDelegate>
+@property (strong, nonatomic) IBOutlet UIScrollView *scrollView;
+@property (strong, nonatomic) NSMutableArray *posts;
 
 @end

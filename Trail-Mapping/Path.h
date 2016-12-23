@@ -8,14 +8,16 @@
 
 #import <Foundation/Foundation.h>
 #import <MapKit/MapKit.h>
+#import "User.h"
 
 @interface Path : NSObject <MKOverlay>
 
 @property (nonatomic, strong) NSString* _id;
-@property (nonatomic, strong) NSNumber *userID;
+@property (nonatomic, strong) User *submittedUser;
 @property (nonatomic, strong) NSMutableArray* categories;
 @property (nonatomic, strong) NSMutableArray* tags;
-@property (nonatomic, strong) NSMutableArray* vertices;
+@property (nonatomic, strong) NSMutableArray* geometry;
+@property (nonatomic, strong) NSDate* created;
 @property (nonatomic, strong) MKPolyline *polyline;
 @property (nonatomic, strong) id location;
 @property CLLocationCoordinate2D Coordinate;
@@ -32,7 +34,7 @@
 
 
 #pragma mark - Location
-- (NSNumber *) userID;
+- (User *) submittedUser;
 - (NSMutableArray *) categories;
 - (NSMutableArray *) tags;
 //- (NSMutableArray *) coordinates;

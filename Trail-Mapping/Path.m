@@ -21,7 +21,8 @@
     self = [super init];
     self.tags = [[NSMutableArray alloc] init];
     self.categories = [[NSMutableArray alloc] init];
-    self.vertices = [[NSMutableArray alloc] init];
+    self.geometry = [[NSMutableArray alloc] init];
+    self.created = [NSDate alloc];
     return self;
 }
 
@@ -106,19 +107,20 @@
 {
     self = [super init];
     if (self) {
+        NSArray * arr = [dictionary allKeys];
+        NSLog(@"dict: %@", arr);
         __id = dictionary[@"_id"];
-        _userID = dictionary[@"userID"];
+        _submittedUser = dictionary[@"submittedUser"];
         _categories = dictionary[@"categories"];
         _tags = dictionary[@"tags"];
-        _vertices = dictionary[@"vertices"];
+        _geometry = dictionary[@"geometry"];
+        _created = dictionary[@"created"];
         
-        //self.polyline.coordinate =
-        
-        CLLocationCoordinate2D coordinates[_vertices.count];
-        for (NSInteger index = 0; index < _vertices.count; index++){
+        CLLocationCoordinate2D coordinates[_geometry.count];
+        for (NSInteger index = 0; index < _geometry.count; index++){
             //Vertex *vertex = [p.vertices objectAtIndex:index];
             //
-            NSArray *arr = [_vertices objectAtIndex:index];
+            NSArray *arr = [_geometry objectAtIndex:index];
             NSNumber *longitude = [arr objectAtIndex:0];
             NSNumber *latitude = [arr objectAtIndex:1];
             
@@ -128,7 +130,7 @@
             coordinates[index] = coord;
         }
         
-        self.polyline = [MKPolyline polylineWithCoordinates:coordinates count:_vertices.count];
+        self.polyline = [MKPolyline polylineWithCoordinates:coordinates count:_geometry.count];
     }
     return self;
 }
@@ -138,41 +140,36 @@
     self = [super init];
     if (self) {
         __id = dictionary[@"_id"];
-        _userID = dictionary[@"userID"];
+        _submittedUser = dictionary[@"submittedUser"];
         _categories = dictionary[@"categories"];
         _tags = dictionary[@"tags"];
-        _vertices = dictionary[@"vertices"];
+        _geometry = dictionary[@"geometry"];
+        //_created = dictionary[@"created"];
         
         self.polyline = poly;
     }
     return self;
 }
 
-/*
- Polyline: (MKPolyline *) line{
- Path *path = [[Path alloc] init];
- path.polyline = line;
- return path;
-
- */
 
 - (NSDictionary*) toDictionary
 {
-    NSMutableDictionary* jsonable = [NSMutableDictionary dictionary];
-    safeSet(jsonable, @"_id", self._id);
-    safeSet(jsonable, @"userID", self.userID);
-    safeSet(jsonable, @"categories", self.categories);
-    safeSet(jsonable, @"tags", self.tags);
     NSMutableArray *array = [NSMutableArray array];
-    for (NSInteger index = 0; index < _vertices.count; index++) {
-        CLLocation *location = [_vertices objectAtIndex:index];
+    for (NSInteger index = 0; index < _geometry.count; index++) {
+        CLLocation *location = [_geometry objectAtIndex:index];
         CLLocationCoordinate2D theCoord = location.coordinate;
         NSArray *coords = [NSArray arrayWithObjects:[NSNumber numberWithDouble:theCoord.longitude], [NSNumber numberWithDouble:theCoord.latitude], nil];
         [array addObject:coords];
     }
+    NSMutableDictionary* jsonable = [NSMutableDictionary dictionary];
     
-    //safeSet(jsonable, @"vertices", self.vertices);
-    safeSet(jsonable, @"vertices", array);
+    safeSet(jsonable, @"_id", self._id);
+    safeSet(jsonable, @"submittedUser", self.submittedUser);
+    safeSet(jsonable, @"categories", self.categories);
+    safeSet(jsonable, @"tags", self.tags);
+    //safeSet(jsonable, @"created", self.created);
+    safeSet(jsonable, @"geometry", array);
+    
     return jsonable;
 }
 

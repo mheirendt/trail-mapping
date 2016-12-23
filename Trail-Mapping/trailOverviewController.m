@@ -51,7 +51,7 @@
     Path *path = del.submittedPath;
     path.categories = del.categories;
     path.tags = self.tokens;
-    path.userID = [NSNumber numberWithInt:3];
+    //path.submittedUser = [NSNumber numberWithInt:3];
     
     //NSDictionary *dict = [path toDictionary];
     Paths *paths = [[Paths alloc] init];

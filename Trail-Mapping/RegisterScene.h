@@ -28,6 +28,7 @@
 @property (strong, nonatomic) NSString *facebookUsername;
 @property (strong, nonatomic) NSString *facebookEmail;
 @property (strong, nonatomic) NSString *facebookPassword;
+@property (strong, nonatomic) NSString *facebookPhoto;
 @property (weak, nonatomic) IBOutlet UILabel *helpLabel;
 @property (weak, nonatomic) IBOutlet UIButton *toggleSigninButton;
 
