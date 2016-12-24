@@ -11,6 +11,7 @@
 #import "ViewController.h"
 #import "overviewController.h"
 #import "Path.h"
+#import "FeedPost.h"
 
 @interface trailOverviewController ()
 
@@ -47,24 +48,25 @@
     _submitFlag = 1;
     AppDelegate *del;
     del = (AppDelegate *)[[UIApplication sharedApplication] delegate];
-    
     Path *path = del.submittedPath;
     path.categories = del.categories;
     path.tags = self.tokens;
-    //path.submittedUser = [NSNumber numberWithInt:3];
-    
-    //NSDictionary *dict = [path toDictionary];
     Paths *paths = [[Paths alloc] init];
     [paths persist:path];
-    //NSLog(@"%@", dict);
-    //NSLog(@"Count: %lu", (unsigned long)[path.vertices count]);
-    //NSLog(@"ID: %@, userID: %@, categories: %@, tags: %@ polyline: %f, %f", path._id, path.userID, path.categories, path.tags, [path.polyline coordinate].latitude, [path.polyline coordinate].longitude);
-    
     [self.tokenField.textField resignFirstResponder];
     ViewController *vc = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"viewController"];
         overviewController *ovc = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"overviewController"];
     vc.submitFlag = YES;
     [ovc modelUpdated];
+    
+    //post
+    NSMutableDictionary *content = [NSMutableDictionary dictionaryWithObjectsAndKeys:@"created a trail", @"body", nil];
+    [content setObject:@"Jun 13, 2012 12:00:00 AM" forKey:@"created"];
+    [content setObject:@"4" forKey:@"likes"];
+    [content setObject:@"300" forKey:@"comments"];
+    FeedPost *post = [[FeedPost alloc] initWithDictionary:content frame:CGRectMake(0, 0, self.view.bounds.size.width, 220)];
+    [post persist:post];
+    
     [self dismissViewControllerAnimated:NO completion:nil];
 }
 

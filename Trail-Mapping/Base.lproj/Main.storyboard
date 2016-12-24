@@ -555,7 +555,7 @@
         <!--FeedViewVontroller-->
         <scene sceneID="jP8-hk-H0x">
             <objects>
-                <viewController id="hui-fC-JhR" userLabel="FeedViewVontroller" customClass="FeedViewController" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="feedViewController" id="hui-fC-JhR" userLabel="FeedViewVontroller" customClass="FeedViewController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="gJq-go-uO7"/>
                         <viewControllerLayoutGuide type="bottom" id="bDa-2G-3NE"/>

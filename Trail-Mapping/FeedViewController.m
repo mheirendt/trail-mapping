@@ -53,44 +53,61 @@
 }
 
 -(void)updateFeed {
+    //TODO: GET request to retrieve all posts of current user and following
     self.posts = [[NSMutableArray alloc] init];
     UIImage *image = [UIImage imageNamed:@"Bike"];
-    FeedPost *post = [[FeedPost alloc] initWithFrame:CGRectMake(0,0,0,0)];
+    FeedPost *post = [[FeedPost alloc] initWithFrame:CGRectMake(0,0,self.view.bounds.size.width,200)];
     post.avatar.image = image;
     post.username.text = @"mikey7896";
     post.avatar = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"Bike"]];
     post.bodyText.text = @"This is the first awesome post!";
+    post.parent = self;
+    
+    //UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(dismissKeyboard)];
+    UITapGestureRecognizer *inquire = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tap)];
+    //[self.view addGestureRecognizer:tap];
+    
+    [post.username addGestureRecognizer:inquire];
+    [post.avatar addGestureRecognizer:inquire];
+    
     [self.posts addObject:post];
     
     UIImage *image2 = [UIImage imageNamed:@"Run"];
-    FeedPost *post2 = [[FeedPost alloc] initWithFrame:CGRectMake(0,0,0,0)];
+    //FeedPost *post2 = [[FeedPost alloc] initWithFrame:CGRectMake(0,0,self.view.bounds.size.width,200)];
+    FeedPost *post2 = [[FeedPost alloc] initWithFrame:CGRectMake(0,0,/*self.view.bounds.size.width*/self.view.bounds.size.width,200)];
     post2.avatar.image = image2;
     post2.username.text = @"mikey7896";
     post2.bodyText.text = @"second test post on the feed wall";
+    post2.parent = self;
+    
+    [post2.username addGestureRecognizer:inquire];
+    [post2.avatar addGestureRecognizer:inquire];
+    
     [self.posts addObject:post2];
     
     UIImage *image3 = [UIImage imageNamed:@"Skate"];
-    FeedPost *post3 = [[FeedPost alloc] initWithFrame:CGRectMake(0,0,0,0)];
+    FeedPost *post3 = [[FeedPost alloc] initWithFrame:CGRectMake(0,0,self.view.bounds.size.width,200)];
     post3.avatar.image = image3;
     post3.username.text = @"another";
     post3.bodyText.text = @"and finally a third";
+    
+    [post3.username addGestureRecognizer:inquire];
+    [post3.avatar addGestureRecognizer:inquire];
+    post3.parent = self;
+    
     [self.posts addObject:post3];
     
     [self setUpScrollView];
 }
-
--(void)likePressed:(id)sender {
-    NSLog(@"liked");
+-(void)tap {
+    NSLog(@"taptap");
 }
 
 -(void)setUpScrollView {
     for (int i = 0; i < self.posts.count; i++) {
         FeedPost *currentPost = [self.posts objectAtIndex:i];
         CGFloat yOrigin = i * 220;
-        [currentPost setFrame:CGRectMake(0, yOrigin, self.view.frame.size.width, 10)];
-        [currentPost.likeButton addTarget:self
-                                   action:@selector(likePressed:)
-           forControlEvents:UIControlEventTouchUpInside];
+        [currentPost setFrame:CGRectMake(0, yOrigin, self.view.frame.size.width, 200)];
         [self.scrollView addSubview:currentPost];
     }
     self.scrollView.contentInset = UIEdgeInsetsMake(5, 5, -10, -10);
@@ -163,9 +180,11 @@
             int followersCount = (int)[followers count];
             int followingCount = (int)[following count];
             
+            UIImageView *profilePic = [[UIImageView alloc] initWithImage:image];
+            
             ProfileViewController *vc = [[UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]] instantiateViewControllerWithIdentifier:@"profile"];
             vc.username.text = username;
-            vc.avatar = [[UIImageView alloc] initWithImage:image];
+            vc.avatar = profilePic;
             vc.followers.text = [NSString stringWithFormat:@"%d", followersCount];
             vc.following.text = [NSString stringWithFormat:@"%d", followingCount];
             vc.peopleFollowers = followers;
