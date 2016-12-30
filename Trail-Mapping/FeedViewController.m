@@ -16,8 +16,8 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view.
     self.scrollView.delegate = self;
+    /*
     NSURL* url = [NSURL URLWithString:@"https://secure-garden-50529.herokuapp.com/user/profile"];
     NSMutableURLRequest* request = [NSMutableURLRequest requestWithURL:url cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:10.f];
     request.HTTPMethod = @"GET";
@@ -48,76 +48,55 @@
         }
     }];
     [dataTask resume];
-    
+     */
+}
+-(void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
     [self updateFeed];
 }
 
 -(void)updateFeed {
-    //TODO: GET request to retrieve all posts of current user and following
-    self.posts = [[NSMutableArray alloc] init];
-    UIImage *image = [UIImage imageNamed:@"Bike"];
-    FeedPost *post = [[FeedPost alloc] initWithFrame:CGRectMake(0,0,self.view.bounds.size.width,200)];
-    post.avatar.image = image;
-    post.username.text = @"mikey7896";
-    post.avatar = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"Bike"]];
-    post.bodyText.text = @"This is the first awesome post!";
-    post.parent = self;
+    id block = ^{
+        self.posts = [[NSMutableArray alloc] init];
+        NSURL* url = [NSURL URLWithString:@"https://secure-garden-50529.herokuapp.com/posts"];
+        NSMutableURLRequest* request = [NSMutableURLRequest requestWithURL:url cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:10.f];
+        request.HTTPMethod = @"GET";
+        [request addValue:@"no-cache" forHTTPHeaderField:@"cache-control"];
+        [request addValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+        [request addValue:@"application/json" forHTTPHeaderField:@"Accept"];
+        NSURLSessionConfiguration* config = [NSURLSessionConfiguration defaultSessionConfiguration];
+        NSURLSession* session = [NSURLSession sessionWithConfiguration:config];
+        NSURLSessionDataTask* dataTask = [session dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+            if (error == nil) {
+                NSMutableArray* responseArray = [NSJSONSerialization JSONObjectWithData:data options:0 error:NULL];
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    for (int i = 0; i < responseArray.count; i++) {
+                        FeedPost *currentPost = [[FeedPost alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 200)];
+                        [currentPost setDictionary:[responseArray objectAtIndex:i]];
+                        CGFloat yOrigin = i * 210;
+                        [currentPost setFrame:CGRectMake(0, yOrigin, self.view.frame.size.width, 200)];
+                        [self.posts addObject:currentPost];
+                        [self.scrollView addSubview:currentPost];
+                    }
+                    self.scrollView.contentInset = UIEdgeInsetsMake(0, 0, -10, -10);
+                    [self.scrollView setContentSize:CGSizeMake(self.view.frame.size.width, 210 * self.posts.count)];
+                    [self.view setNeedsDisplay];
+                    [self.scrollView setNeedsDisplay];
+                    NSLog(@"%lu", (unsigned long)self.posts.count);
+                });
+
+            }else{
+                NSLog(@"Error: %@", [error localizedDescription]);
+            }
+        }];
+        [dataTask resume];
+    };
+    //Create a Grand Central Dispatch queue and run the operation async
+    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+    dispatch_async(queue, block);
     
-    //UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(dismissKeyboard)];
-    UITapGestureRecognizer *inquire = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tap)];
-    //[self.view addGestureRecognizer:tap];
-    
-    [post.username addGestureRecognizer:inquire];
-    [post.avatar addGestureRecognizer:inquire];
-    
-    [self.posts addObject:post];
-    
-    UIImage *image2 = [UIImage imageNamed:@"Run"];
-    //FeedPost *post2 = [[FeedPost alloc] initWithFrame:CGRectMake(0,0,self.view.bounds.size.width,200)];
-    FeedPost *post2 = [[FeedPost alloc] initWithFrame:CGRectMake(0,0,/*self.view.bounds.size.width*/self.view.bounds.size.width,200)];
-    post2.avatar.image = image2;
-    post2.username.text = @"mikey7896";
-    post2.bodyText.text = @"second test post on the feed wall";
-    post2.parent = self;
-    
-    [post2.username addGestureRecognizer:inquire];
-    [post2.avatar addGestureRecognizer:inquire];
-    
-    [self.posts addObject:post2];
-    
-    UIImage *image3 = [UIImage imageNamed:@"Skate"];
-    FeedPost *post3 = [[FeedPost alloc] initWithFrame:CGRectMake(0,0,self.view.bounds.size.width,200)];
-    post3.avatar.image = image3;
-    post3.username.text = @"another";
-    post3.bodyText.text = @"and finally a third";
-    
-    [post3.username addGestureRecognizer:inquire];
-    [post3.avatar addGestureRecognizer:inquire];
-    post3.parent = self;
-    
-    [self.posts addObject:post3];
-    
-    [self setUpScrollView];
-}
--(void)tap {
-    NSLog(@"taptap");
 }
 
--(void)setUpScrollView {
-    for (int i = 0; i < self.posts.count; i++) {
-        FeedPost *currentPost = [self.posts objectAtIndex:i];
-        CGFloat yOrigin = i * 220;
-        [currentPost setFrame:CGRectMake(0, yOrigin, self.view.frame.size.width, 200)];
-        [self.scrollView addSubview:currentPost];
-    }
-    self.scrollView.contentInset = UIEdgeInsetsMake(5, 5, -10, -10);
-    [self.scrollView setContentSize:CGSizeMake(self.view.frame.size.width, 220 * self.posts.count)];
-}
-
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
-}
 - (IBAction)signOut:(id)sender {
     //TODO: post to appURL/logout to register with server
     NSURL* url = [NSURL URLWithString:@"https://secure-garden-50529.herokuapp.com/logout"];
@@ -197,24 +176,5 @@
 }
 
 #pragma mark - scroll view delegate methods
-//-(void)scroll
-
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
-#pragma mark - scroll view delegate methods
-- (void)dismissKeyboard {
-    //[self.comment resignFirstResponder];
-}
--(BOOL)textFieldShouldReturn:(UITextField *)textField{
-    [self dismissKeyboard];
-    return YES;
-}
 
 @end

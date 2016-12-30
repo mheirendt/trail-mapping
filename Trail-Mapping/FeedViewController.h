@@ -13,4 +13,5 @@
 @property (strong, nonatomic) IBOutlet UIScrollView *scrollView;
 @property (strong, nonatomic) NSMutableArray *posts;
 
+-(void)updateFeed;
 @end

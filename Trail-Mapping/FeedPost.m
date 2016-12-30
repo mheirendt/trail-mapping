@@ -16,66 +16,57 @@
 @end
 
 @implementation FeedPost
-@synthesize view, avatar, username, bodyText/*, likeButton, commentButton*/;
 
 - (id)initWithFrame:(CGRect)frame
 {
     self = [super initWithFrame:frame];
     if (self)
     {
-        // Initialization code.
-        //
         
         //UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(dismissKeyboard)];
-        UITapGestureRecognizer *inquire = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(showUserProfile)];
+        //UITapGestureRecognizer *inquire = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(showUserProfile)];
         //[self addGestureRecognizer:inquire];
-        
-        //self.parent = (UIViewController)
-        [self.username addGestureRecognizer:inquire];
-        [self.avatar addGestureRecognizer:inquire];
+        self.avatar.userInteractionEnabled = YES;
+        //self.avatarTapGesture.delegate = self.avatar;
+        //self.avatarTapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(showUserProfile)];
+        //[self.username addGestureRecognizer:inquire];
+        //[self.avatar addGestureRecognizer:self.avatarTapGesture];
         [[NSBundle mainBundle] loadNibNamed:@"FeedPost" owner:self options:nil];
         [self addSubview:self.view];
     }
     return self;
 }
+- (IBAction)usernamePressed:(id)sender {
+}
+
 - (IBAction)comment:(id)sender {
 }
 - (IBAction)like:(id)sender {
 }
 
--(id) initWithDictionary:(NSDictionary *)dictionary frame:(CGRect)frame{
-    self = [super initWithFrame:frame];
-    if (self) {
-        /////INIT WITH FRAME METHODS
-        //UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(dismissKeyboard)];
-        UITapGestureRecognizer *inquire = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(showUserProfile)];
-        //[self addGestureRecognizer:inquire];
-        [self.username addGestureRecognizer:inquire];
-        [self.avatar addGestureRecognizer:inquire];
-        //[[NSBundle mainBundle] loadNibNamed:@"FeedPost" owner:self options:nil];
-        //[self addSubview:self.view];
-        
-        ////IMPORT METHODS
-        NSArray * arr = [dictionary allKeys];
-        NSLog(@"dict: %@", arr);
-        __id = dictionary[@"_id"];
-        _submittedUser = dictionary[@"submittedUser"];
-        _body = dictionary[@"body"];
-        _likes = dictionary[@"likes"];
-        _comments = dictionary[@"comments"];
-        _created = dictionary[@"created"];
-        
-        self.bodyText.text = _body;
-        self.username.text = _submittedUser.username;
-        //self.likesLabel.text = [NSString stringWithFormat:@"%lu Likes", _likes.count];
-        //self.commentsLabel.text = [NSString stringWithFormat:@"%lu Comments", _comments.count];
-    }
-    return self;
+-(void) setDictionary:(NSDictionary *)dictionary {
+    
+    NSArray *arr = [dictionary allKeys];
+    NSLog(@"dict: %@", arr);
+    __id = dictionary[@"_id"];
+    _submittedUser = dictionary[@"submittedUser"];
+    _body = dictionary[@"body"];
+    _likes = dictionary[@"likes"];
+    _comments = dictionary[@"comments"];
+    _created = dictionary[@"created"];
+
+    self.avatar.image = [UIImage imageNamed:@"Bike"];
+    self.bodyText.text = _body;
+    NSString *uname = _submittedUser.username;
+    [self.username setTitle:uname  forState:UIControlStateNormal];
+    //self.likesLabel.text = [NSString stringWithFormat:@"%lu", (unsigned long)_likes.count];//[NSString stringWithFormat:@"%lu Likes", _likes.count];
+    //self.commentsLabel.text = [NSString stringWithFormat:@"%lu Comments", _comments.count];
 }
 
+
 - (NSDictionary*) toDictionary {
-    NSMutableDictionary* jsonable = [NSMutableDictionary dictionary];
     
+    NSMutableDictionary* jsonable = [NSMutableDictionary dictionary];
     safeSet(jsonable, @"_id", self._id);
     safeSet(jsonable, @"submittedUser", self.submittedUser);
     safeSet(jsonable, @"body", self.body);
@@ -109,8 +100,9 @@
 }
 
 
+
 -(void) showUserProfile {
-    NSString* urlstr = [NSString stringWithFormat:@"https://secure-garden-50529.herokuapp.com/user/search/username/%@", self.username.text];
+    NSString* urlstr = [NSString stringWithFormat:@"https://secure-garden-50529.herokuapp.com/user/search/username/%@", self.username.titleLabel.text];
     NSURL* url = [NSURL URLWithString:urlstr];
     NSMutableURLRequest* request = [NSMutableURLRequest requestWithURL:url cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:10.f];
     request.HTTPMethod = @"GET";
@@ -143,8 +135,6 @@
             vc.peopleFollowers = followers;
             vc.peopleFollowing = following;
             
-            self.parent.definesPresentationContext= YES;
-            [self.parent presentViewController:vc animated:YES completion:nil];
         }
     }];
     [dataTask resume];

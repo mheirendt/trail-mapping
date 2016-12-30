@@ -20,6 +20,21 @@
     return user;
 }
 
+- (instancetype) initWithDictionary:(NSDictionary*)dictionary
+{
+    self = [super init];
+    if (self) {
+        NSArray * arr = [dictionary allKeys];
+        NSLog(@"dict: %@", arr);
+        __id = dictionary[@"_id"];
+        _email = dictionary[@"email"];
+        _username = dictionary[@"username"];
+        _score = dictionary[@"score"];
+        _created = dictionary[@"created"];
+    }
+    return self;
+}
+
 - (NSDictionary*) toDictionary
 {
     NSMutableDictionary* jsonable = [NSMutableDictionary dictionary];
