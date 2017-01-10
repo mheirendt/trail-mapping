@@ -46,40 +46,7 @@
 
 - (IBAction)sendButtonPressed:(id)sender
 {
-    //Query active user
-    NSString* urlstr = [NSString stringWithFormat:@"https://secure-garden-50529.herokuapp.com/user/search/username/%@", [[NSUserDefaults standardUserDefaults] objectForKey:@"username"]];
-    NSURL* url = [NSURL URLWithString:urlstr];
-    NSMutableURLRequest* request = [NSMutableURLRequest requestWithURL:url cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:10.f];
-    request.HTTPMethod = @"GET";
-    [request addValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
-    [request addValue:@"application/json" forHTTPHeaderField:@"Accept"];
-    NSURLSessionConfiguration* config = [NSURLSessionConfiguration defaultSessionConfiguration];
-    NSURLSession* session = [NSURLSession sessionWithConfiguration:config];
-    NSURLSessionDataTask* dataTask = [session dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *res, NSError *error) {
-        if (error){
-            NSLog(@"error: %@", [error localizedDescription]);
-        } else {
-            //submit the trail
-            NSDictionary* dict = [NSJSONSerialization JSONObjectWithData:data options:0 error:NULL];
-            User *currUser = [[User alloc] initWithDictionary:dict];
-
-            
-            //post
-            //NSString *username = [[NSUserDefaults standardUserDefaults] objectForKey:@"username"];
-            NSMutableDictionary *content = [NSMutableDictionary dictionaryWithObjectsAndKeys:@"created a trail /n lkjdakljflda /n lfjadklsfkda /n kldflkadj /n ldjkfajldf /n   jlkafljdkjfa /n   ldkjfakldfda /n   fkdlaldjf /n  kjfaldfjdakfd /n dlkjfkadjfdka /n", @"body", nil];
-            [content setObject:currUser.username forKey:@"submittedUser"];
-            //[content setObject:@"Jun 13, 2012 12:00:00 AM" forKey:@"created"];
-            [content setObject:@"4" forKey:@"likes"];
-            [content setObject:@"300" forKey:@"comments"];
-            FeedPost *post = [[FeedPost alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, 220)];
-            [post setDictionary:content];
-            [post persist:post];
-            
-            [self dismissViewControllerAnimated:NO completion:nil];
-        }
-    }];
-    [dataTask resume];
-    
+    //Save the path
     _submitFlag = 1;
     AppDelegate *del;
     del = (AppDelegate *)[[UIApplication sharedApplication] delegate];
@@ -93,6 +60,45 @@
     overviewController *ovc = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"overviewController"];
     vc.submitFlag = YES;
     [ovc modelUpdated];
+    [self dismissViewControllerAnimated:NO completion:nil];
+    /*
+    //Query active user
+    NSString* urlstr = [NSString stringWithFormat:@"https://secure-garden-50529.herokuapp.com/user/search/username/%@", [[NSUserDefaults standardUserDefaults] objectForKey:@"username"]];
+    NSURL* url = [NSURL URLWithString:urlstr];
+    NSMutableURLRequest* request = [NSMutableURLRequest requestWithURL:url cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:10.f];
+    request.HTTPMethod = @"GET";
+    [request addValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+    [request addValue:@"application/json" forHTTPHeaderField:@"Accept"];
+    NSURLSessionConfiguration* config = [NSURLSessionConfiguration defaultSessionConfiguration];
+    NSURLSession* session = [NSURLSession sessionWithConfiguration:config];
+    NSURLSessionDataTask* dataTask = [session dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *res, NSError *error) {
+        if (error){
+            NSLog(@"error: %@", [error localizedDescription]);
+        } else {
+            
+            //submit the trail
+            NSDictionary* dict = [NSJSONSerialization JSONObjectWithData:data options:0 error:NULL];
+            User *currUser = [[User alloc] initWithDictionary:dict];
+            
+            
+            //post
+            //NSString *username = [[NSUserDefaults standardUserDefaults] objectForKey:@"username"];
+            NSMutableDictionary *content = [NSMutableDictionary dictionaryWithObjectsAndKeys:@"created a trail /n lkjdakljflda /n lfjadklsfkda /n kldflkadj /n ldjkfajldf /n   jlkafljdkjfa /n   ldkjfakldfda /n   fkdlaldjf /n  kjfaldfjdakfd /n dlkjfkadjfdka /n", @"body", nil];
+            [content setObject: currUser.username forKey:@"submittedUsername"];
+            [content setObject:currUser._id forKey:@"submittedUser"];
+            //[content setObject:@"Jun 13, 2012 12:00:00 AM" forKey:@"created"];
+            [content setObject:@"4" forKey:@"likes"];
+            [content setObject:@"300" forKey:@"comments"];
+            FeedPost *post = [[FeedPost alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, 220)];
+            [post setDictionary:content];
+            [post persist:post];
+            
+            [self dismissViewControllerAnimated:NO completion:nil];
+        }
+    }];
+    [dataTask resume];
+     */
+    
 }
 
 - (void)tokenDeleteButtonPressed:(UIButton *)tokenButton

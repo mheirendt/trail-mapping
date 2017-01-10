@@ -17,46 +17,49 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.scrollView.delegate = self;
-    /*
-    NSURL* url = [NSURL URLWithString:@"https://secure-garden-50529.herokuapp.com/user/profile"];
-    NSMutableURLRequest* request = [NSMutableURLRequest requestWithURL:url cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:10.f];
-    request.HTTPMethod = @"GET";
-    [request addValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
-    [request addValue:@"application/json" forHTTPHeaderField:@"Accept"];
-    NSURLSessionConfiguration* config = [NSURLSessionConfiguration defaultSessionConfiguration];
-    NSURLSession* session = [NSURLSession sessionWithConfiguration:config];
-    NSURLSessionDataTask* dataTask = [session dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *res, NSError *error) {
-        if (error){
-            NSLog(@"error: %@", [error localizedDescription]);
-        } else {
-            NSURL *imageURL; //= [NSURL URLWithString:@"https://scontent.xx.fbcdn.net/v/t1.0-1/p200x200/13528956_1275521285792762_6593284762910932365_n.jpg?oh=26f24fa76f0f37050e6e184cfaac3e3d&oe=58BDB28A"];
-            NSLog(@"response: %@", res);
-            NSDictionary* responseArray = [NSJSONSerialization JSONObjectWithData:data options:0 error:NULL];
-            //for (NSDictionary* item in responseArray) {
-                if ([responseArray objectForKey:@"avatar"]){
-                    NSLog(@"yas");
-                    imageURL = [NSURL URLWithString:[responseArray objectForKey:@"avatar"]];
-                }
-            //}
-            //UIImage* avatar = [UIImage imageWith]
-            NSData *imageData = [NSData dataWithContentsOfURL:imageURL];
-            UIImage *avatar = [UIImage imageWithData:imageData];
-            UIImageView* imageView = [[UIImageView alloc] initWithImage:avatar];
-            imageView.frame = CGRectMake(0, 0, 200, 200);
-            imageView.center = CGPointMake(self.view.bounds.size.width/2, self.view.bounds.size.height/2);
-            [self.view addSubview:imageView];
-        }
-    }];
-    [dataTask resume];
-     */
+    _refreshControl = [[UIRefreshControl alloc] init];
+    [_refreshControl addTarget:self action:@selector(updateFeed:) forControlEvents:UIControlEventValueChanged];
+    [_scrollView addSubview:_refreshControl];
+    //_scrollView.refreshControl = _refreshControl;
+    //[_scrollView.refreshControl addTarget:self action:@selector(updateFeed:) forControlEvents:UIControlEventValueChanged];
+
+}
+-(void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    [self updateFeed:_refreshControl];
 }
 -(void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    [self updateFeed];
+    [self updateFeed:_refreshControl];
+}
+- (void) stretchToSuperView:(UIView*) view {
+    /*view.translatesAutoresizingMaskIntoConstraints = NO;
+    NSDictionary *bindings = NSDictionaryOfVariableBindings(view);
+    NSString *formatTemplate = @"%@:|[view]|";
+    for (NSString * axis in @[@"V"]) {
+        NSString * format = [NSString stringWithFormat:formatTemplate,axis];
+        NSArray * constraints = [NSLayoutConstraint constraintsWithVisualFormat:format options:0 metrics:nil views:bindings];
+        [view.superview.superview addConstraints:constraints];
+    }*/
+    //view.superview.superview.translatesAutoresizingMaskIntoConstraints = NO;
+    //view.superview.translatesAutoresizingMaskIntoConstraints = NO;
+    //view.translatesAutoresizingMaskIntoConstraints = NO;
+    
+    /*NSDictionary *views = @{
+                            @"subview":view,
+                            @"parent":self.scrollView
+                            };*/
+    //[self.scrollView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-0-[parent]-0-|" options:0 metrics:nil views:views]];
+    //[self.scrollView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|[subview]|" options:0 metrics:nil views:views]];
+    //[self.scrollView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:[subview(==parent)]" options:0 metrics:nil views:views]];
+    
 }
 
--(void)updateFeed {
+-(void)updateFeed:(UIRefreshControl *)refreshControl {
+    refreshControl.attributedTitle = [[NSAttributedString alloc] initWithString:@"Updating feed..."];
+    [refreshControl beginRefreshing];
     id block = ^{
+        [refreshControl beginRefreshing];
         self.posts = [[NSMutableArray alloc] init];
         NSURL* url = [NSURL URLWithString:@"https://secure-garden-50529.herokuapp.com/posts"];
         NSMutableURLRequest* request = [NSMutableURLRequest requestWithURL:url cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:10.f];
@@ -71,18 +74,27 @@
                 NSMutableArray* responseArray = [NSJSONSerialization JSONObjectWithData:data options:0 error:NULL];
                 dispatch_async(dispatch_get_main_queue(), ^{
                     for (int i = 0; i < responseArray.count; i++) {
-                        FeedPost *currentPost = [[FeedPost alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 200)];
+                        FeedPost *currentPost = [[FeedPost alloc] initWithFrame:CGRectMake(0, self.refreshControl.frame.size.height, self.scrollView.frame.size.width, 300)];
                         [currentPost setDictionary:[responseArray objectAtIndex:i]];
-                        CGFloat yOrigin = i * 210;
-                        [currentPost setFrame:CGRectMake(0, yOrigin, self.view.frame.size.width, 200)];
+                        currentPost.parent = self;
+                        CGFloat yOrigin = i * 330;
+                        [currentPost setFrame:CGRectMake(0, yOrigin, self.view.frame.size.width,  300)];
                         [self.posts addObject:currentPost];
                         [self.scrollView addSubview:currentPost];
+                        [self stretchToSuperView:currentPost];
                     }
                     self.scrollView.contentInset = UIEdgeInsetsMake(0, 0, -10, -10);
-                    [self.scrollView setContentSize:CGSizeMake(self.view.frame.size.width, 210 * self.posts.count)];
+                    [self.scrollView setContentSize:CGSizeMake(self.scrollView.frame.size.width, 330 * self.posts.count)];
                     [self.view setNeedsDisplay];
                     [self.scrollView setNeedsDisplay];
-                    NSLog(@"%lu", (unsigned long)self.posts.count);
+                    //UIRefreshController interface
+                    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+                    [formatter setDateFormat:@"MMM d, h:mm a"];
+                    NSString *lastUpdate = [NSString stringWithFormat:@"Last updated on %@", [formatter stringFromDate:[NSDate date]]];
+                    refreshControl.attributedTitle = [[NSAttributedString alloc] initWithString:lastUpdate];
+                    //[refreshControl endRefreshing];
+                    [refreshControl endRefreshing];
+                    [_scrollView setContentInset:UIEdgeInsetsZero];
                 });
 
             }else{
@@ -96,6 +108,7 @@
     dispatch_async(queue, block);
     
 }
+
 
 - (IBAction)signOut:(id)sender {
     //TODO: post to appURL/logout to register with server
@@ -173,6 +186,16 @@
         }
     }];
     [dataTask resume];
+}
+
+-(void)viewPostDetail:(FeedPost *)post {
+    FeedPostDetailViewController *vc = [[UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]] instantiateViewControllerWithIdentifier:@"FeedPostDetailViewController"];
+    //vc.feedPost = post;
+    vc.dict = [post toDictionary];
+    Path *path = [[Path alloc] initWithDictionary:post.reference];
+    vc.path = path;
+    //[vc zoomToPath:path];
+    [self.navigationController pushViewController:vc animated:YES];
 }
 
 #pragma mark - scroll view delegate methods

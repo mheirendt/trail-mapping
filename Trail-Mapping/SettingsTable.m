@@ -33,7 +33,7 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
 
-    return 4;
+    return 1;
 }
 
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
@@ -55,7 +55,7 @@
        [cell.button addTarget:self action:@selector(showCategoryTable) forControlEvents:UIControlEventTouchUpInside];
        cell.button.hidden = NO;
        cell.switchButton.hidden = YES;
-   }
+   }/*
     if (indexPath.row == 1){
         cell.headerText.text = @"Default Categories";
         cell.subText.text = @"Click the button to select default categories for your paths.";
@@ -76,7 +76,7 @@
         [cell.button setTitle:@"Select Categories" forState:UIControlStateNormal];
         cell.button.hidden = NO;
         cell.switchButton.hidden = YES;
-    }
+    }*/
     
     return cell;
 }

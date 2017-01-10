@@ -13,7 +13,8 @@
 @interface Path : NSObject <MKOverlay>
 
 @property (nonatomic, strong) NSString* _id;
-@property (nonatomic, strong) User *submittedUser;
+@property (nonatomic, strong) NSDictionary *submittedUser;
+@property (nonatomic, strong) NSDictionary* reference;
 @property (nonatomic, strong) NSMutableArray* categories;
 @property (nonatomic, strong) NSMutableArray* tags;
 @property (nonatomic, strong) NSMutableArray* geometry;

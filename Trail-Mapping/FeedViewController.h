@@ -8,10 +8,16 @@
 
 #import <UIKit/UIKit.h>
 #import "FeedPost.h"
+////TODO
+@class FeedPost;
 
 @interface FeedViewController : UIViewController <UIScrollViewDelegate, UITextFieldDelegate>
+
+@property (strong, nonatomic) UINavigationController *navController;
 @property (strong, nonatomic) IBOutlet UIScrollView *scrollView;
+@property (strong, nonatomic) UIRefreshControl *refreshControl;
 @property (strong, nonatomic) NSMutableArray *posts;
 
--(void)updateFeed;
+-(void)updateFeed:(UIRefreshControl *)refreshControl;
+-(void)viewPostDetail:(FeedPost *)post;
 @end

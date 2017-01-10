@@ -20,12 +20,13 @@
 
 @property (nonatomic, weak) id<polylineModelDelegate> delegate;
 @property (nonatomic, strong) NSMutableArray* objects;
+@property (nonatomic, strong) NSString *pathID;
 
 - (NSArray*) filteredLocations;
 - (void) addPath:(Path*)path;
 
 - (void) import;
-- (void) persist:(Path*)path;
+- (NSString *) persist:(Path*)path;
 
 - (void) runQuery:(NSString*)queryString;
 - (void) queryRegion:(MKCoordinateRegion)region;

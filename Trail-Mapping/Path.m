@@ -111,6 +111,7 @@
         NSLog(@"dict: %@", arr);
         __id = dictionary[@"_id"];
         _submittedUser = dictionary[@"submittedUser"];
+        _reference = dictionary[@"reference"];
         _categories = dictionary[@"categories"];
         _tags = dictionary[@"tags"];
         _geometry = dictionary[@"geometry"];
@@ -141,6 +142,7 @@
     if (self) {
         __id = dictionary[@"_id"];
         _submittedUser = dictionary[@"submittedUser"];
+        _reference = dictionary[@"reference"];
         _categories = dictionary[@"categories"];
         _tags = dictionary[@"tags"];
         _geometry = dictionary[@"geometry"];
@@ -165,6 +167,7 @@
     
     safeSet(jsonable, @"_id", self._id);
     safeSet(jsonable, @"submittedUser", self.submittedUser);
+    safeSet(jsonable, @"reference", self.reference);
     safeSet(jsonable, @"categories", self.categories);
     safeSet(jsonable, @"tags", self.tags);
     //safeSet(jsonable, @"created", self.created);

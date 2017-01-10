@@ -119,12 +119,14 @@ static NSString* const kPaths = @"trails";
 }
 
 
-- (void) persist:(Path*)path
+- (NSString *) persist:(Path*)path
 {
+    /*
     if (!path || path.categories == nil) {
         NSLog(@"!Location");
         return; //input safety check
     }
+     */
     
     NSString* paths = [kBaseURL stringByAppendingPathComponent:kPaths];
     
@@ -150,6 +152,9 @@ static NSString* const kPaths = @"trails";
             if ([httpResponse statusCode] == 200){
                 NSArray* responseArray = @[[NSJSONSerialization JSONObjectWithData:data options:0 error:NULL]];
                 [self parseAndAddLocations:responseArray toArray:self.objects];
+                Path * path = [[Path alloc] initWithDictionary:responseArray[0]];
+                _pathID = path._id;
+                
             } else if ([httpResponse statusCode] == 400){
                 NSLog(@"user must sign in");
             }
@@ -158,6 +163,8 @@ static NSString* const kPaths = @"trails";
         }
     }];
     [dataTask resume];
+    
+    return _pathID;
 }
 
 @end

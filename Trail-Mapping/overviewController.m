@@ -44,7 +44,7 @@
 -(void)viewDidAppear:(BOOL)animated{
     [super viewDidAppear:animated];
     NSString *flag = [[NSUserDefaults standardUserDefaults] objectForKey:@"signin"];
-    NSString *name = [[NSUserDefaults standardUserDefaults] objectForKey:@"username"];
+    //NSString *name = [[NSUserDefaults standardUserDefaults] objectForKey:@"username"];
     if ([flag isEqualToString:@"signin"]){
         UIViewController *registerScene = [self.storyboard instantiateViewControllerWithIdentifier:@"introScene"];
         [self presentViewController:registerScene animated:NO completion:nil];
@@ -162,10 +162,14 @@
         }
         
         if (nearestDistance <= maxMeters) {
-            NSLog(@"Touched poly: %@ distance: %f", nearestPoly.created, nearestDistance);
+            //NSLog(@"Touched poly: %@ distance: %f", nearestPoly.created, nearestDistance);
             //NSLog(@"touched: %@", nearestPoly.categories);
             //MKMapPoint middlePoint = nearestPoly.points[nearestPoly.pointCount/2];
             //[self createAndAddAnnotationForCoordinate:MKCoordinateForMapPoint(middlePoint)title:nearestPoly.userID subtitle:nearestPoly.categories];
+            FeedPostDetailViewController *vc = [[UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]] instantiateViewControllerWithIdentifier:@"FeedPostDetailViewController"];
+            vc.dict = nearestPoly.reference;
+            vc.path = nearestPoly;
+            [self.navigationController pushViewController:vc animated:YES];
         }
     }
 }
