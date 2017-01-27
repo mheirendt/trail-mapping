@@ -158,10 +158,18 @@
 {
     NSMutableArray *array = [NSMutableArray array];
     for (NSInteger index = 0; index < _geometry.count; index++) {
-        CLLocation *location = [_geometry objectAtIndex:index];
-        CLLocationCoordinate2D theCoord = location.coordinate;
-        NSArray *coords = [NSArray arrayWithObjects:[NSNumber numberWithDouble:theCoord.longitude], [NSNumber numberWithDouble:theCoord.latitude], nil];
-        [array addObject:coords];
+        if ([[_geometry objectAtIndex:index ] isKindOfClass:[NSArray class]]) {
+            //CLLocation * location = [[CLLocation alloc]init];
+            NSArray *arr = [_geometry objectAtIndex:index];
+            CLLocationCoordinate2D theCoord = CLLocationCoordinate2DMake([arr[0] floatValue], [arr[1] floatValue]);
+            NSArray *coords = [NSArray arrayWithObjects:[NSNumber numberWithDouble:theCoord.longitude], [NSNumber numberWithDouble:theCoord.latitude], nil];
+            [array addObject:coords];
+        } else {
+            CLLocation *location = [_geometry objectAtIndex:index];
+            CLLocationCoordinate2D theCoord = location.coordinate;
+            NSArray *coords = [NSArray arrayWithObjects:[NSNumber numberWithDouble:theCoord.longitude], [NSNumber numberWithDouble:theCoord.latitude], nil];
+            [array addObject:coords];
+        }
     }
     NSMutableDictionary* jsonable = [NSMutableDictionary dictionary];
     

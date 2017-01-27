@@ -18,7 +18,7 @@
 @property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
 @property (weak, nonatomic) IBOutlet UIView *feedView;
 @property (strong, nonatomic) IBOutlet MKMapView *mapView;
-@property (strong, retain) NSDictionary *dict;
+@property (strong, retain) NSMutableDictionary *dict;
 @property (strong, retain) Path *path;
 @property (strong, retain) FeedPost *post;
 

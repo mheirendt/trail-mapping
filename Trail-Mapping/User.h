@@ -11,15 +11,18 @@
 @interface User : NSObject
 @property (strong, nonatomic) NSString *_id;
 @property (strong, nonatomic) NSString *email;
+@property (strong, nonatomic) NSString *avatar;
 @property (strong, nonatomic) NSString *username;
 @property (strong, nonatomic) NSString *password;
 @property (strong, nonatomic) NSNumber *score;
 @property (strong, nonatomic) NSDate *created;
+@property (strong, nonatomic) NSMutableArray *following;
+@property (strong, nonatomic) NSMutableArray *followers;
 @property int userID;
 
 -(NSDictionary *)toDictionary;
 
 - (void) persist:(User*)user;
 - (instancetype) initWithDictionary:(NSDictionary*)dictionary;
-- (User *)initWithEmail:(NSString *)email Username:(NSString *)username Password:(NSString *)password;
+- (User *)initWithEmail:(NSString *)email Username:(NSString *)username avatar:(NSString *)avatar Password:(NSString *)password;
 @end

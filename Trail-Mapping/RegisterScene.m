@@ -25,16 +25,19 @@
     self.emailField.delegate = self;
     self.usernameField.delegate = self;
     self.passwordField.delegate = self;
-    self.passwordReEntryField.delegate = self;
+    [self.avatar setUserInteractionEnabled:YES];
+    UITapGestureRecognizer *uploadPhoto = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(uploadPhoto)];
+    [self.avatar addGestureRecognizer:uploadPhoto];
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(dismissTheKeyboard)];
     [self.view addGestureRecognizer:tap];
     self.errorDesc = [NSMutableArray array];
+    
+    [_avatar.layer setBorderColor:[UIColor colorWithRed:.0706 green:.3137 blue:.3137 alpha:1.f].CGColor];
 }
 -(void)dismissTheKeyboard{
     [self.emailField resignFirstResponder];
     [self.usernameField resignFirstResponder];
     [self.passwordField resignFirstResponder];
-    [self.passwordReEntryField resignFirstResponder];
 }
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
@@ -46,9 +49,10 @@
     [[NSUserDefaults standardUserDefaults] setValue:_passwordField.text forKey:@"password"];
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"signin"];
     //[user persist:user];
-    [self dismissViewControllerAnimated:NO completion:^{
-        [self dismissViewControllerAnimated:NO completion:nil];
-    }];
+    [self.navigationController popToRootViewControllerAnimated:YES];
+    //[self dismissViewControllerAnimated:NO completion:^{
+        //[self dismissViewControllerAnimated:NO completion:nil];
+    //}];
 }
 -(BOOL)textFieldShouldReturn:(UITextField *)textField{
     //Dismiss the keyboards when the user selects the 'Return' button
@@ -100,45 +104,144 @@
     
 }
 - (IBAction)validate:(id)sender {
-    self.flag = YES;
-    [self.errorDesc removeAllObjects];
-    //NSURL* url = [NSURL URLWithString:[@"https://secure-garden-50529.herokuapp.com/signup"  stringByAppendingPathComponent:self.usernameField.text]];
-    NSURL* url = [NSURL URLWithString:@"https://secure-garden-50529.herokuapp.com/signup"];
-    NSMutableURLRequest* request = [NSMutableURLRequest requestWithURL:url cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:10.f];
-    request.timeoutInterval = 10.f;
-    request.HTTPMethod = @"POST";
-    User *user = [[User alloc] initWithEmail:self.emailField.text Username:self.usernameField.text Password:self.passwordField.text];
-    NSDictionary *dict = @{
-                                @"username" : user.username,
-                                @"password" : user.password,
-                                @"email"    : user.email
-                                };
-    NSError *error = nil;
-    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dict
-                                                       options:NSJSONWritingPrettyPrinted // Pass 0 if you don't care about the readability of the generated string
-                                                         error:&error];
-    NSString* myString;
-    myString = [[NSString alloc] initWithData:jsonData encoding:NSASCIIStringEncoding];
-    //NSLog(@"%@", myString);
-    request.HTTPBody = jsonData;
-    [request addValue:@"no-cache" forHTTPHeaderField:@"cache-control"];
-    [request addValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
-    [request addValue:@"application/json" forHTTPHeaderField:@"Accept"];
-    NSURLSessionConfiguration* config = [NSURLSessionConfiguration defaultSessionConfiguration];
-    NSURLSession* session = [NSURLSession sessionWithConfiguration:config];
-    NSURLSessionDataTask* dataTask = [session dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
-        //NSLog(@"%@", response);
-        //Completion block
-        if (!error) {
-            NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *) response;
-            if ([httpResponse statusCode] == 200){
-                 [self dismissView];
-            } else {
-                NSLog(@"status: %ld", (long)[httpResponse statusCode]);
-            }
-        }
-
+    id block = ^ {
         
+        self.flag = YES;
+        [self.errorDesc removeAllObjects];
+        //NSURL* url = [NSURL URLWithString:[@"https://secure-garden-50529.herokuapp.com/signup"  stringByAppendingPathComponent:self.usernameField.text]];
+        NSURL* url = [NSURL URLWithString:@"https://secure-garden-50529.herokuapp.com/signup"];
+        NSMutableURLRequest* request = [NSMutableURLRequest requestWithURL:url cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:10.f];
+        request.timeoutInterval = 10.f;
+        request.HTTPMethod = @"POST";
+        NSDictionary *dict = @{
+                               @"username" : self.usernameField.text,
+                               @"password" : self.passwordField.text,
+                               @"email"    : self.emailField.text,
+                               @"avatar"   : self.imageID
+                               };
+        NSError *error = nil;
+        NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dict
+                                                           options:NSJSONWritingPrettyPrinted // Pass 0 if you don't care about the readability of the generated string
+                                                             error:&error];
+        NSString* myString;
+        myString = [[NSString alloc] initWithData:jsonData encoding:NSASCIIStringEncoding];
+        //NSLog(@"%@", myString);
+        request.HTTPBody = jsonData;
+        [request addValue:@"no-cache" forHTTPHeaderField:@"cache-control"];
+        [request addValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+        [request addValue:@"application/json" forHTTPHeaderField:@"Accept"];
+        NSURLSessionConfiguration* config = [NSURLSessionConfiguration defaultSessionConfiguration];
+        NSURLSession* session = [NSURLSession sessionWithConfiguration:config];
+        NSURLSessionDataTask* dataTask = [session dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+            if (!error) {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *) response;
+                    if ([httpResponse statusCode] == 200){
+                        AppDelegate *del;
+                        del = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+                        NSDictionary* dict = [NSJSONSerialization JSONObjectWithData:data options:0 error:NULL];
+                        del.activeUser = [[User alloc] initWithDictionary:dict];
+                        [self dismissView];
+                        
+                    }
+                });
+                    
+                    /*id block = ^{
+                     NSDictionary* userDict = [NSJSONSerialization JSONObjectWithData:data options:0 error:NULL];
+                     User *user = [[User alloc] initWithDictionary:userDict];
+                     // Dictionary that holds post parameters. You can set your post parameters that your server accepts or programmed to accept.
+                     NSMutableDictionary* _params = [[NSMutableDictionary alloc] init];
+                     [_params setObject:@"1.0" forKey:@"ver"];
+                     [_params setObject:@"en" forKey:@"lan"];
+                     [_params setObject:[NSString stringWithFormat:@"%d", user.userID] forKey:@"userId"];
+                     [_params setObject:[NSString stringWithFormat:@"recfile"] forKey:@"title"];
+                     
+                     // the boundary string : a random string, that will not repeat in post data, to separate post data fields.
+                     NSString *BoundaryConstant = @"----------V2ymHFg03ehbqgZCaKO6jy";
+                     
+                     // string constant for the post parameter 'file'. My server uses this name: `file`. Your's may differ
+                     NSString* FileParamConstant = @"recfile";
+                     
+                     // the server url to which the image (or the media) is uploaded. Use your server url here
+                     NSURL* requestURL = [NSURL URLWithString:@"https://secure-garden-50529.herokuapp.com/upload"];
+                     
+                     // create request
+                     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
+                     [request setCachePolicy:NSURLRequestReloadIgnoringLocalCacheData];
+                     [request setHTTPShouldHandleCookies:NO];
+                     [request setTimeoutInterval:30];
+                     [request setHTTPMethod:@"POST"];
+                     
+                     // set Content-Type in HTTP header
+                     NSString *contentType = [NSString stringWithFormat:@"multipart/form-data; boundary=%@", BoundaryConstant];
+                     [request setValue:contentType forHTTPHeaderField: @"Content-Type"];
+                     
+                     // post body
+                     NSMutableData *body = [NSMutableData data];
+                     
+                     // add params (all params are strings)
+                     for (NSString *param in _params) {
+                     [body appendData:[[NSString stringWithFormat:@"--%@\r\n", BoundaryConstant] dataUsingEncoding:NSUTF8StringEncoding]];
+                     [body appendData:[[NSString stringWithFormat:@"Content-Disposition: form-data; name=\"%@\"\r\n\r\n", param] dataUsingEncoding:NSUTF8StringEncoding]];
+                     [body appendData:[[NSString stringWithFormat:@"%@\r\n", [_params objectForKey:param]] dataUsingEncoding:NSUTF8StringEncoding]];
+                     }
+                     
+                     // add image data
+                     NSData *imageData = UIImageJPEGRepresentation(_image, .2f);
+                     if (imageData) {
+                     [body appendData:[[NSString stringWithFormat:@"--%@\r\n", BoundaryConstant] dataUsingEncoding:NSUTF8StringEncoding]];
+                     [body appendData:[[NSString stringWithFormat:@"Content-Disposition: form-data; name=\"%@\"; filename=\"image.jpg\"\r\n", FileParamConstant] dataUsingEncoding:NSUTF8StringEncoding]];
+                     [body appendData:[@"Content-Type: image/jpeg\r\n\r\n" dataUsingEncoding:NSUTF8StringEncoding]];
+                     [body appendData:imageData];
+                     [body appendData:[[NSString stringWithFormat:@"\r\n"] dataUsingEncoding:NSUTF8StringEncoding]];
+                     }
+                     
+                     [body appendData:[[NSString stringWithFormat:@"--%@--\r\n", BoundaryConstant] dataUsingEncoding:NSUTF8StringEncoding]];
+                     
+                     // setting the body of the post to the reqeust
+                     [request setHTTPBody:body];
+                     
+                     // set the content-length
+                     NSString *postLength = [NSString stringWithFormat:@"%lu", (unsigned long)[body length]];
+                     [request setValue:postLength forHTTPHeaderField:@"Content-Length"];
+                     
+                     // set URL
+                     [request setURL:requestURL];
+                     
+                     [request setHTTPBody:body];
+                     
+                     NSURLSessionConfiguration* config = [NSURLSessionConfiguration defaultSessionConfiguration];
+                     NSURLSession* session = [NSURLSession sessionWithConfiguration:config];
+                     NSURLSessionDataTask* dataTask = [session dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+                     if (!error) {
+                     dispatch_async(dispatch_get_main_queue(), ^{
+                     NSDictionary* avatarDict = [NSJSONSerialization JSONObjectWithData:data options:0 error:NULL];
+                     _imageID = [avatarDict objectForKey:@"avatar"];
+                     });
+                     } else
+                     NSLog(@"Error: %@", [error localizedDescription]);
+                     }];
+                     [dataTask resume];
+                     };
+                     //Create a Grand Central Dispatch queue and run the operation async
+                     dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+                     dispatch_async(queue, block);
+                     }
+                     }
+                     }];
+                     [dataTask resume];*/
+            }
+        }];
+        [dataTask resume];
+
+    };
+    //Create a Grand Central Dispatch queue and run the operation async
+    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+    dispatch_async(queue, block);
+    
+    
+    }
+
         /*
          //validate fields
          if (_usernameField.text.length < 1){
@@ -197,11 +300,9 @@
             //NSLog(@"Error: %@", [error localizedDescription]);
             }
          */
-    }];
-    [dataTask resume];
-}
+                                      
 
-
+/*
 -(void)handleErrors{
     NSLog(@"handling");
     for (NSString *error in self.errorDesc){
@@ -231,6 +332,7 @@
         }
     }
 }
+ */
 -(void)showErrorMessage:(UILabel *)field andMessage:(NSString *)message{
     //Set the text field to fully transparent
     [field setAlpha:0.0f];
@@ -307,22 +409,129 @@
         self.titleLabel.text = @"Sign In";
         self.emailLabel.hidden = YES;
         self.emailField.hidden = YES;
-        self.passwordREEntryLabel.hidden = YES;
-        self.passwordReEntryField.hidden = YES;
         self.helpLabel.text = @"Need to create a profile?";
         [self.signinButton setTitle:@"Create a Profile" forState:UIControlStateNormal];
     } else {
         self.titleLabel.text = @"Create a Profile";
         self.emailLabel.hidden = NO;
         self.emailField.hidden = NO;
-        self.passwordREEntryLabel.hidden = NO;
-        self.passwordReEntryField.hidden = NO;
         self.helpLabel.text = @"Already have a profile?";
         [self.signinButton setTitle:@"Sign in Here" forState:UIControlStateNormal];
     }
 }
+//- (IBAction)selectAvatar:(id)sender {
+-(void) uploadPhoto {
+    UIImagePickerController *imagePicker = [[UIImagePickerController alloc] init];
+    imagePicker.delegate = self;
+    imagePicker.allowsEditing = YES;
+    imagePicker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
+    
+    [self presentViewController:imagePicker animated:YES completion:nil];
+}
+
+- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info {
+    [picker dismissViewControllerAnimated:YES completion:nil];
+    //Create a UIImage from the picker
+    _image = nil;
+    _image = [info objectForKey:UIImagePickerControllerEditedImage];
+    if(_image==nil)
+        _image = [info objectForKey:UIImagePickerControllerOriginalImage];
+    if(_image==nil)
+        _image = [info objectForKey:UIImagePickerControllerCropRect];
+    
+    id block = ^{
+        //Create a UIImage from the picker
+        UIImage* originalImage = nil;
+        originalImage = [info objectForKey:UIImagePickerControllerEditedImage];
+        if(originalImage==nil)
+        originalImage = [info objectForKey:UIImagePickerControllerOriginalImage];
+        if(originalImage==nil)
+        originalImage = [info objectForKey:UIImagePickerControllerCropRect];
+        //Create an API Request
+        
+        // Dictionary that holds post parameters. You can set your post parameters that your server accepts or programmed to accept.
+        NSMutableDictionary* _params = [[NSMutableDictionary alloc] init];
+        [_params setObject:@"1.0" forKey:@"ver"];
+        [_params setObject:@"en" forKey:@"lan"];
+        //[_params setObject:[NSString stringWithFormat:@"%d", _user.userID] forKey:@"userId"];
+        [_params setObject:[NSString stringWithFormat:@"recfile"] forKey:@"title"];
+        
+        // the boundary string : a random string, that will not repeat in post data, to separate post data fields.
+        NSString *BoundaryConstant = @"----------V2ymHFg03ehbqgZCaKO6jy";
+        
+        // string constant for the post parameter 'file'. My server uses this name: `file`. Your's may differ
+        NSString* FileParamConstant = @"recfile";
+        
+        // the server url to which the image (or the media) is uploaded. Use your server url here
+        NSURL* requestURL = [NSURL URLWithString:@"https://secure-garden-50529.herokuapp.com/upload"];
+        
+        // create request
+        NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
+        [request setCachePolicy:NSURLRequestReloadIgnoringLocalCacheData];
+        [request setHTTPShouldHandleCookies:NO];
+        [request setTimeoutInterval:30];
+        [request setHTTPMethod:@"POST"];
+        
+        // set Content-Type in HTTP header
+        NSString *contentType = [NSString stringWithFormat:@"multipart/form-data; boundary=%@", BoundaryConstant];
+        [request setValue:contentType forHTTPHeaderField: @"Content-Type"];
+        
+        // post body
+        NSMutableData *body = [NSMutableData data];
+        
+        // add params (all params are strings)
+        for (NSString *param in _params) {
+            [body appendData:[[NSString stringWithFormat:@"--%@\r\n", BoundaryConstant] dataUsingEncoding:NSUTF8StringEncoding]];
+            [body appendData:[[NSString stringWithFormat:@"Content-Disposition: form-data; name=\"%@\"\r\n\r\n", param] dataUsingEncoding:NSUTF8StringEncoding]];
+            [body appendData:[[NSString stringWithFormat:@"%@\r\n", [_params objectForKey:param]] dataUsingEncoding:NSUTF8StringEncoding]];
+        }
+        
+        // add image data
+        NSData *imageData = UIImageJPEGRepresentation(originalImage, .2f);
+        if (imageData) {
+            [body appendData:[[NSString stringWithFormat:@"--%@\r\n", BoundaryConstant] dataUsingEncoding:NSUTF8StringEncoding]];
+            [body appendData:[[NSString stringWithFormat:@"Content-Disposition: form-data; name=\"%@\"; filename=\"image.jpg\"\r\n", FileParamConstant] dataUsingEncoding:NSUTF8StringEncoding]];
+            [body appendData:[@"Content-Type: image/jpeg\r\n\r\n" dataUsingEncoding:NSUTF8StringEncoding]];
+            [body appendData:imageData];
+            [body appendData:[[NSString stringWithFormat:@"\r\n"] dataUsingEncoding:NSUTF8StringEncoding]];
+        }
+        
+        [body appendData:[[NSString stringWithFormat:@"--%@--\r\n", BoundaryConstant] dataUsingEncoding:NSUTF8StringEncoding]];
+        
+        // setting the body of the post to the reqeust
+        [request setHTTPBody:body];
+        
+        // set the content-length
+        NSString *postLength = [NSString stringWithFormat:@"%lu", (unsigned long)[body length]];
+        [request setValue:postLength forHTTPHeaderField:@"Content-Length"];
+        
+        // set URL
+        [request setURL:requestURL];
+        
+        [request setHTTPBody:body];
+        
+        NSURLSessionConfiguration* config = [NSURLSessionConfiguration defaultSessionConfiguration];
+        NSURLSession* session = [NSURLSession sessionWithConfiguration:config];
+        NSURLSessionDataTask* dataTask = [session dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+            if (!error) {
+                NSDictionary* dataDict = [NSJSONSerialization JSONObjectWithData:data options:0 error:NULL];
+                self.imageID = [dataDict objectForKey:@"avatar"];
+                NSString *urlStr = [@"https://secure-garden-50529.herokuapp.com/upload/" stringByAppendingString:_imageID];
+                NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString: urlStr]];
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    _avatar.image = [UIImage imageWithData:data];
+                });
+            }
+        }];
+        [dataTask resume];
+    };
+    //Create a Grand Central Dispatch queue and run the operation async
+    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+    dispatch_async(queue, block);
+}
+
 - (IBAction)backPressed:(id)sender {
-    [self dismissViewControllerAnimated:YES completion:nil];
+[self.navigationController popToViewController:[self.navigationController.viewControllers objectAtIndex:self.navigationController.viewControllers.count - 2] animated:YES];
 }
 
 @end

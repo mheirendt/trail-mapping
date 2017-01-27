@@ -16,12 +16,23 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    searchResultsTable *table = [[searchResultsTable alloc] init];
     self.scrollView.delegate = self;
     _refreshControl = [[UIRefreshControl alloc] init];
     [_refreshControl addTarget:self action:@selector(updateFeed:) forControlEvents:UIControlEventValueChanged];
     [_scrollView addSubview:_refreshControl];
-    //_scrollView.refreshControl = _refreshControl;
-    //[_scrollView.refreshControl addTarget:self action:@selector(updateFeed:) forControlEvents:UIControlEventValueChanged];
+    _searchController = [[UISearchController alloc] initWithSearchResultsController:table];
+    _searchController.delegate = self;
+    _searchController.searchBar.delegate = table;
+    _searchController.searchResultsUpdater = table;
+    _searchController.hidesNavigationBarDuringPresentation = false;
+    _searchController.dimsBackgroundDuringPresentation = true;
+    _searchController.searchBar.placeholder = @"Search for users";
+    //TODO: create cg size for searchBar ... possibly hidden until search button is pressed
+    [_searchController.searchBar sizeToFit];
+    self.definesPresentationContext = true;
+    self.navigationItem.titleView = _searchController.searchBar;
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(refreshSearchController) name:@"searchControllerRefresh" object:nil];
 
 }
 -(void)viewDidAppear:(BOOL)animated {
@@ -76,6 +87,8 @@
                     for (int i = 0; i < responseArray.count; i++) {
                         FeedPost *currentPost = [[FeedPost alloc] initWithFrame:CGRectMake(0, self.refreshControl.frame.size.height, self.scrollView.frame.size.width, 300)];
                         [currentPost setDictionary:[responseArray objectAtIndex:i]];
+                        User *user = [[User alloc] initWithDictionary:currentPost.submittedUser];
+                        [currentPost setupProfilePic:user.avatar];
                         currentPost.parent = self;
                         CGFloat yOrigin = i * 330;
                         [currentPost setFrame:CGRectMake(0, yOrigin, self.view.frame.size.width,  300)];
@@ -112,40 +125,47 @@
 
 - (IBAction)signOut:(id)sender {
     //TODO: post to appURL/logout to register with server
-    NSURL* url = [NSURL URLWithString:@"https://secure-garden-50529.herokuapp.com/logout"];
-    NSMutableURLRequest* request = [NSMutableURLRequest requestWithURL:url cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:10.f];
-    request.HTTPMethod = @"POST";
-    [request addValue:@"no-cache" forHTTPHeaderField:@"cache-control"];
-    [request addValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
-    [request addValue:@"application/json" forHTTPHeaderField:@"Accept"];
-    NSURLSessionConfiguration* config = [NSURLSessionConfiguration defaultSessionConfiguration];
-    NSURLSession* session = [NSURLSession sessionWithConfiguration:config];
-    NSURLSessionDataTask* dataTask = [session dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *res, NSError *error) {
-        //Completion block
-        if (error == nil) {
-            NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *) res;
-            NSLog(@"response status code: %lu", (long)[httpResponse statusCode]);
-            //if ([httpResponse statusCode] == 200) {
-                [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"username"];
-                [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"password"];
-                [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"facebook"];
-                [[NSUserDefaults standardUserDefaults] setObject:@"signin" forKey:@"signin"];
-                [self.tabBarController setSelectedIndex:0];
-            //} else {
-                //NSLog(@"%ld", (long)[httpResponse statusCode]);
-                //user has not been verified
-            //};
-        } else {
-            NSLog(@"Something went wrong: %@", [error localizedDescription]);
-            //if ([httpResponse statusCode] == 200) {
-            [[NSUserDefaults standardUserDefaults] setObject:@"signin" forKey:@"signin"];
-            [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"username"];
-            [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"password"];
-            [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"facebook"];
-            [self.tabBarController setSelectedIndex:0];
-        }
-    }];
-    [dataTask resume];
+    id block = ^{
+        NSURL* url = [NSURL URLWithString:@"https://secure-garden-50529.herokuapp.com/logout"];
+        NSMutableURLRequest* request = [NSMutableURLRequest requestWithURL:url cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:10.f];
+        request.HTTPMethod = @"POST";
+        [request addValue:@"no-cache" forHTTPHeaderField:@"cache-control"];
+        [request addValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+        [request addValue:@"application/json" forHTTPHeaderField:@"Accept"];
+        NSURLSessionConfiguration* config = [NSURLSessionConfiguration defaultSessionConfiguration];
+        NSURLSession* session = [NSURLSession sessionWithConfiguration:config];
+        NSURLSessionDataTask* dataTask = [session dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *res, NSError *error) {
+            //Completion block
+            dispatch_async(dispatch_get_main_queue(), ^{
+                if (error == nil) {
+                    NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *) res;
+                    NSLog(@"response status code: %lu", (long)[httpResponse statusCode]);
+                    //if ([httpResponse statusCode] == 200) {
+                    [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"username"];
+                    [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"password"];
+                    [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"facebook"];
+                    [[NSUserDefaults standardUserDefaults] setObject:@"signin" forKey:@"signin"];
+                    [self.tabBarController setSelectedIndex:0];
+                    //} else {
+                    //NSLog(@"%ld", (long)[httpResponse statusCode]);
+                    //user has not been verified
+                    //};
+                } else {
+                    NSLog(@"Something went wrong: %@", [error localizedDescription]);
+                    //if ([httpResponse statusCode] == 200) {
+                    [[NSUserDefaults standardUserDefaults] setObject:@"signin" forKey:@"signin"];
+                    [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"username"];
+                    [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"password"];
+                    [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"facebook"];
+                    [self.tabBarController setSelectedIndex:0];
+                }
+            });
+        }];
+        [dataTask resume];
+    };
+    //Create a Grand Central Dispatch queue and run the operation async
+    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+    dispatch_async(queue, block);
 }
 - (IBAction)viewProfile:(id)sender {
     NSString* urlstr = @"https://secure-garden-50529.herokuapp.com/user/profile";
@@ -188,6 +208,11 @@
     [dataTask resume];
 }
 
+-(void) refreshSearchController {
+    searchResultsTable *table = [[searchResultsTable alloc] init];
+    [table searchBarSearchButtonClicked:self.searchController.searchBar];
+}
+
 -(void)viewPostDetail:(FeedPost *)post {
     FeedPostDetailViewController *vc = [[UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]] instantiateViewControllerWithIdentifier:@"FeedPostDetailViewController"];
     //vc.feedPost = post;
@@ -199,5 +224,6 @@
 }
 
 #pragma mark - scroll view delegate methods
+
 
 @end

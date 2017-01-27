@@ -30,6 +30,10 @@
 		A96757C61D921E8300331D86 /* CategoryCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A96757C51D921E8300331D86 /* CategoryCell.m */; };
 		A96757CA1D922BEA00331D86 /* tableCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = A96757C91D922BEA00331D86 /* tableCell.xib */; };
 		A974BD781E1DAB200063E5C4 /* FeedPostDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A974BD771E1DAB200063E5C4 /* FeedPostDetailViewController.m */; };
+		A974BD7C1E2739880063E5C4 /* searchResultsTable.m in Sources */ = {isa = PBXBuildFile; fileRef = A974BD7B1E2739880063E5C4 /* searchResultsTable.m */; };
+		A974BD7F1E2BE4950063E5C4 /* FriendsView.m in Sources */ = {isa = PBXBuildFile; fileRef = A974BD7E1E2BE4930063E5C4 /* FriendsView.m */; };
+		A974BD831E2BE7670063E5C4 /* FriendsViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A974BD811E2BE7670063E5C4 /* FriendsViewCell.m */; };
+		A974BD841E2BE7670063E5C4 /* FriendsViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = A974BD821E2BE7670063E5C4 /* FriendsViewCell.xib */; };
 		A97A83DB1D7CE838003F4C80 /* Path.m in Sources */ = {isa = PBXBuildFile; fileRef = A97A83DA1D7CE838003F4C80 /* Path.m */; };
 		A97A83DE1D7D15AA003F4C80 /* Paths.m in Sources */ = {isa = PBXBuildFile; fileRef = A97A83DD1D7D15AA003F4C80 /* Paths.m */; };
 		A99005D01D8A2ECF0074B688 /* Vertex.m in Sources */ = {isa = PBXBuildFile; fileRef = A99005CF1D8A2ECF0074B688 /* Vertex.m */; };
@@ -84,6 +88,13 @@
 		A974BD761E1DAB200063E5C4 /* FeedPostDetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FeedPostDetailViewController.h; sourceTree = "<group>"; };
 		A974BD771E1DAB200063E5C4 /* FeedPostDetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FeedPostDetailViewController.m; sourceTree = "<group>"; };
 		A974BD791E1DB90E0063E5C4 /* FeedPost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FeedPost.h; sourceTree = "<group>"; };
+		A974BD7A1E2739880063E5C4 /* searchResultsTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = searchResultsTable.h; path = ../searchResultsTable.h; sourceTree = "<group>"; };
+		A974BD7B1E2739880063E5C4 /* searchResultsTable.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = searchResultsTable.m; path = ../searchResultsTable.m; sourceTree = "<group>"; };
+		A974BD7D1E2BE4930063E5C4 /* FriendsView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FriendsView.h; path = ../FriendsView.h; sourceTree = "<group>"; };
+		A974BD7E1E2BE4930063E5C4 /* FriendsView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FriendsView.m; path = ../FriendsView.m; sourceTree = "<group>"; };
+		A974BD801E2BE7670063E5C4 /* FriendsViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FriendsViewCell.h; sourceTree = "<group>"; };
+		A974BD811E2BE7670063E5C4 /* FriendsViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FriendsViewCell.m; sourceTree = "<group>"; };
+		A974BD821E2BE7670063E5C4 /* FriendsViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = FriendsViewCell.xib; sourceTree = "<group>"; };
 		A97A83D91D7CE838003F4C80 /* Path.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Path.h; sourceTree = "<group>"; };
 		A97A83DA1D7CE838003F4C80 /* Path.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Path.m; sourceTree = "<group>"; };
 		A97A83DC1D7D15AA003F4C80 /* Paths.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Paths.h; sourceTree = "<group>"; };
@@ -165,8 +176,12 @@
 				A93DF4281D73992F0028A997 /* ViewController.m */,
 				A9BBE43C1DB01616004FD193 /* FeedViewController.h */,
 				A9BBE43D1DB01616004FD193 /* FeedViewController.m */,
+				A974BD7A1E2739880063E5C4 /* searchResultsTable.h */,
+				A974BD7B1E2739880063E5C4 /* searchResultsTable.m */,
 				A974BD761E1DAB200063E5C4 /* FeedPostDetailViewController.h */,
 				A974BD771E1DAB200063E5C4 /* FeedPostDetailViewController.m */,
+				A9FF38911DE6036F00D2E98E /* ProfileViewController.h */,
+				A9FF38921DE6036F00D2E98E /* ProfileViewController.m */,
 				A99005CE1D8A2ECF0074B688 /* Vertex.h */,
 				A99005CF1D8A2ECF0074B688 /* Vertex.m */,
 				A95889371D8F178400E7711C /* CallOutAnnotation.h */,
@@ -181,6 +196,8 @@
 				A916A4AF1DA847C900A7B104 /* User.m */,
 				A96757BF1D921CD300331D86 /* categoryView.h */,
 				A96757C01D921CD300331D86 /* categoryView.m */,
+				A974BD7D1E2BE4930063E5C4 /* FriendsView.h */,
+				A974BD7E1E2BE4930063E5C4 /* FriendsView.m */,
 				A93DF4501D7658580028A997 /* trailOverviewController.h */,
 				A93DF4511D7658580028A997 /* trailOverviewController.m */,
 				A916A4A01DA7FF9300A7B104 /* SettingsTable.h */,
@@ -200,8 +217,9 @@
 				A96757C41D921E8300331D86 /* CategoryCell.h */,
 				A96757C51D921E8300331D86 /* CategoryCell.m */,
 				A96757C91D922BEA00331D86 /* tableCell.xib */,
-				A9FF38911DE6036F00D2E98E /* ProfileViewController.h */,
-				A9FF38921DE6036F00D2E98E /* ProfileViewController.m */,
+				A974BD801E2BE7670063E5C4 /* FriendsViewCell.h */,
+				A974BD811E2BE7670063E5C4 /* FriendsViewCell.m */,
+				A974BD821E2BE7670063E5C4 /* FriendsViewCell.xib */,
 			);
 			path = "Trail-Mapping";
 			sourceTree = "<group>";
@@ -290,6 +308,7 @@
 			files = (
 				A93DF4311D73992F0028A997 /* LaunchScreen.storyboard in Resources */,
 				A916A4A41DA8003700A7B104 /* SettingsTableCell.xib in Resources */,
+				A974BD841E2BE7670063E5C4 /* FriendsViewCell.xib in Resources */,
 				A96757CA1D922BEA00331D86 /* tableCell.xib in Resources */,
 				A93DF42E1D73992F0028A997 /* Assets.xcassets in Resources */,
 				A96757C31D921D2200331D86 /* TokenView.xib in Resources */,
@@ -356,6 +375,7 @@
 				A93DF4291D73992F0028A997 /* ViewController.m in Sources */,
 				A97A83DB1D7CE838003F4C80 /* Path.m in Sources */,
 				A95889391D8F178400E7711C /* CallOutAnnotation.m in Sources */,
+				A974BD831E2BE7670063E5C4 /* FriendsViewCell.m in Sources */,
 				A97A83DE1D7D15AA003F4C80 /* Paths.m in Sources */,
 				A9FF38931DE6036F00D2E98E /* ProfileViewController.m in Sources */,
 				A916A4B01DA847C900A7B104 /* User.m in Sources */,
@@ -368,12 +388,14 @@
 				A9FF388F1DE5F0E100D2E98E /* FeedPost.m in Sources */,
 				A99005D01D8A2ECF0074B688 /* Vertex.m in Sources */,
 				A916A4A71DA8013300A7B104 /* SettingsCell.m in Sources */,
+				A974BD7C1E2739880063E5C4 /* searchResultsTable.m in Sources */,
 				A9FC002E1D8CFB6000D4D707 /* VertexView.m in Sources */,
 				A916A4AD1DA83E4B00A7B104 /* RegisterScene.m in Sources */,
 				A974BD781E1DAB200063E5C4 /* FeedPostDetailViewController.m in Sources */,
 				A93DF4231D73992F0028A997 /* main.m in Sources */,
 				A9BBE43E1DB01616004FD193 /* FeedViewController.m in Sources */,
 				A9FF38881DD4140400D2E98E /* loginScene.m in Sources */,
+				A974BD7F1E2BE4950063E5C4 /* FriendsView.m in Sources */,
 				A93DF44F1D7521120028A997 /* overviewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

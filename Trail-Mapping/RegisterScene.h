@@ -7,23 +7,24 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "AppDelegate.h"
 #import "User.h"
 #import <FBSDKCoreKit/FBSDKCoreKit.h>
 #import <FBSDKLoginKit/FBSDKLoginKit.h>
+#import "loginScene.h"
 
-@interface RegisterScene : UIViewController <UITextFieldDelegate, FBSDKLoginButtonDelegate>
+@interface RegisterScene : UIViewController <UITextFieldDelegate, FBSDKLoginButtonDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate>
+@property (weak, nonatomic) IBOutlet UIImageView *avatar;
 @property (weak, nonatomic) IBOutlet UILabel *titleLabel;
 @property (weak, nonatomic) IBOutlet UILabel *emailLabel;
 @property (weak, nonatomic) IBOutlet UITextField *emailField;
 @property (weak, nonatomic) IBOutlet UITextField *usernameField;
 @property (weak, nonatomic) IBOutlet UITextField *passwordField;
-@property (weak, nonatomic) IBOutlet UILabel *passwordREEntryLabel;
-@property (weak, nonatomic) IBOutlet UITextField *passwordReEntryField;
 @property (weak, nonatomic) IBOutlet UIButton *signinButton;
-@property (weak, nonatomic) IBOutlet UILabel *emailWarning;
-@property (weak, nonatomic) IBOutlet UILabel *usernameWarning;
-@property (weak, nonatomic) IBOutlet UILabel *password1Warning;
-@property (weak, nonatomic) IBOutlet UILabel *password2Warning;
+
+@property (weak, nonatomic) UIImage *image;
+@property (strong, nonatomic) NSString *imageID;
+
 @property BOOL flag;
 @property (strong, nonatomic) NSString *facebookUsername;
 @property (strong, nonatomic) NSString *facebookEmail;

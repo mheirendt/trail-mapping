@@ -14,6 +14,7 @@
             <connections>
                 <outlet property="avatar" destination="FtA-T1-ZHG" id="yo6-zY-L89"/>
                 <outlet property="bodyText" destination="YoW-Z1-42Y" id="uLJ-4v-g7G"/>
+                <outlet property="bodyView" destination="3fj-qy-lkv" id="0c7-O7-ut6"/>
                 <outlet property="commentButton" destination="Jvx-Lv-Rkw" id="tjL-mH-xu9"/>
                 <outlet property="commentsLabel" destination="fLK-ed-SVh" id="dwj-iG-Nxu"/>
                 <outlet property="headerView" destination="wcc-t1-7hd" id="kV7-Ws-ct0"/>
@@ -37,7 +38,7 @@
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="3fj-qy-lkv" userLabel="Body View">
                     <rect key="frame" x="1" y="83" width="373" height="170"/>
                     <subviews>
-                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="30" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="YoW-Z1-42Y">
+                        <label opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="30" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="YoW-Z1-42Y">
                             <rect key="frame" x="8" y="8" width="359" height="51"/>
                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                             <nil key="textColor"/>
@@ -46,7 +47,7 @@
                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="DmO-np-WQW">
                             <rect key="frame" x="8" y="67" width="359" height="53"/>
                             <subviews>
-                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="SQU-P7-Io5">
+                                <imageView contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="SQU-P7-Io5">
                                     <rect key="frame" x="214.5" y="0.0" width="53" height="53"/>
                                     <constraints>
                                         <constraint firstAttribute="width" constant="53" id="MnE-Fe-EQC"/>
@@ -101,7 +102,7 @@
                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="eAv-Mh-5i0">
                             <rect key="frame" x="8" y="118" width="359" height="52"/>
                             <subviews>
-                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="RmD-SA-ESK">
+                                <label opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="RmD-SA-ESK">
                                     <rect key="frame" x="158.5" y="16" width="42" height="21"/>
                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                     <nil key="textColor"/>
@@ -147,13 +148,22 @@
                             <nil key="textColor"/>
                             <nil key="highlightedColor"/>
                         </label>
-                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="FtA-T1-ZHG">
-                            <rect key="frame" x="8" y="8" width="71" height="69"/>
+                        <imageView contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="FtA-T1-ZHG">
+                            <rect key="frame" x="8" y="8" width="70" height="70"/>
                             <gestureRecognizers/>
                             <constraints>
-                                <constraint firstAttribute="width" constant="71" id="14I-BO-3jA"/>
-                                <constraint firstAttribute="height" constant="69" id="43n-CP-N8Z"/>
+                                <constraint firstAttribute="width" constant="70" id="14I-BO-3jA"/>
+                                <constraint firstAttribute="height" constant="70" id="43n-CP-N8Z"/>
                             </constraints>
+                            <userDefinedRuntimeAttributes>
+                                <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                    <integer key="value" value="35"/>
+                                </userDefinedRuntimeAttribute>
+                                <userDefinedRuntimeAttribute type="number" keyPath="layer.borderWidth">
+                                    <integer key="value" value="2"/>
+                                </userDefinedRuntimeAttribute>
+                                <userDefinedRuntimeAttribute type="boolean" keyPath="layer.masksToBounds" value="YES"/>
+                            </userDefinedRuntimeAttributes>
                         </imageView>
                     </subviews>
                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -161,9 +171,9 @@
                         <constraint firstAttribute="height" constant="82" id="2Z4-d6-C0r"/>
                         <constraint firstItem="FtA-T1-ZHG" firstAttribute="top" secondItem="wcc-t1-7hd" secondAttribute="topMargin" id="3QI-LQ-Lcf"/>
                         <constraint firstItem="FtA-T1-ZHG" firstAttribute="leading" secondItem="wcc-t1-7hd" secondAttribute="leadingMargin" id="56y-Zc-4jz"/>
-                        <constraint firstItem="DWo-wh-Mgr" firstAttribute="leading" secondItem="FtA-T1-ZHG" secondAttribute="trailing" constant="10" id="ERG-ZU-Gu3"/>
+                        <constraint firstItem="DWo-wh-Mgr" firstAttribute="leading" secondItem="FtA-T1-ZHG" secondAttribute="trailing" constant="11" id="ERG-ZU-Gu3"/>
                         <constraint firstItem="FtA-T1-ZHG" firstAttribute="top" secondItem="DWo-wh-Mgr" secondAttribute="top" id="Lf8-Kc-O1C"/>
-                        <constraint firstItem="FtA-T1-ZHG" firstAttribute="bottom" secondItem="DWo-wh-Mgr" secondAttribute="bottom" id="cuX-9q-2cg"/>
+                        <constraint firstItem="FtA-T1-ZHG" firstAttribute="bottom" secondItem="DWo-wh-Mgr" secondAttribute="bottom" constant="1" id="cuX-9q-2cg"/>
                     </constraints>
                 </view>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="oSW-Ej-7LM" userLabel="button 1">

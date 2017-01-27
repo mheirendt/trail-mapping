@@ -25,17 +25,23 @@
         
         //UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(dismissKeyboard)];
         UITapGestureRecognizer *viewDetails = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(viewPost)];
-        UITapGestureRecognizer *inquire = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(viewProfile)];
+        UITapGestureRecognizer *inquire = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTouch:)];
         inquire.delegate = self;
-        //[self addGestureRecognizer:inquire];
+        viewDetails.delegate = self;
         self.userInteractionEnabled = YES;
         self.view.userInteractionEnabled = YES;
         self.headerView.userInteractionEnabled = YES;
+        self.bodyView.userInteractionEnabled = YES;
         self.avatar.userInteractionEnabled = YES;
+        [_avatar.layer setBorderColor:[UIColor colorWithRed:.0706 green:.3137 blue:.3137 alpha:1.f].CGColor];
+        [self addGestureRecognizer:inquire];
+        //[self.headerView addGestureRecognizer:inquire];
+        //[self.bodyView addGestureRecognizer:viewDetails];
+        //[self.avatar addGestureRecognizer:viewDetails];
         //self.avatarTapGesture.delegate = self.avatar;
         //self.avatarTapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(showUserProfile)];
         //[self.username addGestureRecognizer:inquire];
-        [self addGestureRecognizer:viewDetails];
+        //[self addGestureRecognizer:viewDetails];
         //[self.username addGestureRecognizer:inquire];
         [[NSBundle mainBundle] loadNibNamed:@"FeedPost" owner:self options:nil];
         [self addSubview:self.view];
@@ -43,17 +49,50 @@
     }
     return self;
 }
- 
+
+- (void)setupProfilePic:(NSString *)urlStr {
+    dispatch_async(dispatch_get_global_queue(0,0), ^{
+        NSString *urlString = [@"https://secure-garden-50529.herokuapp.com/upload/" stringByAppendingString:urlStr];
+        NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString: urlString]];
+        if ( data == nil )
+        return;
+        dispatch_async(dispatch_get_main_queue(), ^{
+            _avatar.image = [UIImage imageWithData:data];
+        });
+    });
+}
+
 
 - (void)viewPost {
-    //FeedPostDetailViewController *vc = [[UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]] instantiateViewControllerWithIdentifier:@"FeedPostDetailViewController"];
-    //vc.feedPost = self;
-    //[vc zoomToPath:_path];
+    FeedPostDetailViewController *vc = [[UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]] instantiateViewControllerWithIdentifier:@"FeedPostDetailViewController"];
+    vc.feedView = self;
+    [vc zoomToPath:_path];
     //ProfileViewController *vc = [[UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]] instantiateViewControllerWithIdentifier:@"profile"];
     
     [self.parent viewPostDetail:self];
 }
-- (void)viewProfile {
+- (void)handleTouch: (UITapGestureRecognizer *)tapRecognizer {
+    CGPoint touchPoint = [tapRecognizer locationInView:self];
+    NSLog(@"point: %f, %f", touchPoint.x, touchPoint.y);
+    if (touchPoint.y < 75) {
+        [self viewProfile];
+    } else if (touchPoint.y > 250) {
+        if (touchPoint.x < 122) {
+            //Like
+            
+        } else if (touchPoint.x > 275) {
+            //Share
+            
+        } else {
+            //Comment
+        }
+        
+    } else {
+        [self viewPost];
+    }
+}
+
+-(void) viewProfile {
     id block = ^(void) {
         NSString* urlstr = [NSString stringWithFormat:@"https://secure-garden-50529.herokuapp.com/user/search/username/%@", self.username.text];
         NSURL* url = [NSURL URLWithString:urlstr];

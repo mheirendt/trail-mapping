@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "Path.h"
 #import "Paths.h"
+#import "User.h"
 
 @interface AppDelegate : UIResponder <UIApplicationDelegate>
 
@@ -18,6 +19,7 @@
 @property (strong, nonatomic) Path *submittedPath;
 @property (strong, nonatomic) NSMutableArray *categories;
 @property (strong, nonatomic) NSString *deselection;
+@property (strong, nonatomic) User *activeUser;
 
 @property (strong, nonatomic) Paths* paths;
 

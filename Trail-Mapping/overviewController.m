@@ -26,7 +26,6 @@
     self.mapView.delegate = self;
     self.locationManager.delegate = self;
     self.tabBarController.delegate = self;
-    
     [self paths].delegate = self;
     
     MKCoordinateRegion region = MKCoordinateRegionMakeWithDistance(locationManager.location.coordinate, 800, 800);
@@ -39,19 +38,22 @@
 }
 -(void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:animated];
-    [self modelUpdated];
+    AppDelegate *del;
+    del = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+    [del.paths import];
 }
 -(void)viewDidAppear:(BOOL)animated{
     [super viewDidAppear:animated];
+    [self setTabBarVisible:YES animated:YES completion:nil];
     NSString *flag = [[NSUserDefaults standardUserDefaults] objectForKey:@"signin"];
     //NSString *name = [[NSUserDefaults standardUserDefaults] objectForKey:@"username"];
     if ([flag isEqualToString:@"signin"]){
         UIViewController *registerScene = [self.storyboard instantiateViewControllerWithIdentifier:@"introScene"];
-        [self presentViewController:registerScene animated:NO completion:nil];
+        [self.navigationController pushViewController:registerScene animated:YES];//presentViewController:registerScene animated:NO completion:nil];
     }
     if ([flag isEqualToString:@"register"]){
         UIViewController *registerScene = [self.storyboard instantiateViewControllerWithIdentifier:@"introScene"];
-        [self presentViewController:registerScene animated:NO completion:nil];
+        [self.navigationController pushViewController:registerScene animated:YES]; //presentViewController:registerScene animated:NO completion:nil];
     }
     /*
     if (name == nil || [name isEqualToString:@""]) {
@@ -166,10 +168,35 @@
             //NSLog(@"touched: %@", nearestPoly.categories);
             //MKMapPoint middlePoint = nearestPoly.points[nearestPoly.pointCount/2];
             //[self createAndAddAnnotationForCoordinate:MKCoordinateForMapPoint(middlePoint)title:nearestPoly.userID subtitle:nearestPoly.categories];
-            FeedPostDetailViewController *vc = [[UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]] instantiateViewControllerWithIdentifier:@"FeedPostDetailViewController"];
-            vc.dict = nearestPoly.reference;
-            vc.path = nearestPoly;
-            [self.navigationController pushViewController:vc animated:YES];
+            
+            id block = ^{
+                NSURL* url = [NSURL URLWithString:[@"https://secure-garden-50529.herokuapp.com/user/search/id/" stringByAppendingString:[nearestPoly.submittedUser valueForKey:@"_id"]]];
+                NSMutableURLRequest* request = [NSMutableURLRequest requestWithURL:url cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:20.f];
+                request.HTTPMethod = @"GET";
+                [request addValue:@"no-cache" forHTTPHeaderField:@"cache-control"];
+                [request addValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+                [request addValue:@"application/json" forHTTPHeaderField:@"Accept"];
+                NSURLSessionConfiguration* config = [NSURLSessionConfiguration defaultSessionConfiguration];
+                NSURLSession* session = [NSURLSession sessionWithConfiguration:config];
+                
+                NSURLSessionDataTask* dataTask = [session dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+                    if (error == nil) {
+                        dispatch_async(dispatch_get_main_queue(), ^{
+                            NSDictionary* dict = [NSJSONSerialization JSONObjectWithData:data options:0 error:NULL];
+                            FeedPostDetailViewController *vc = [[UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]] instantiateViewControllerWithIdentifier:@"FeedPostDetailViewController"];
+                            NSMutableArray *coordGeom = [[NSMutableArray alloc] init];
+                            vc.dict = [[NSMutableDictionary alloc] initWithDictionary:[nearestPoly toDictionary]];
+                            [vc.dict setValue:dict forKey:@"submittedUser"];
+                            vc.path = nearestPoly;
+                            [self.navigationController pushViewController:vc animated:YES];
+                        });
+                    }
+                }];
+                [dataTask resume];
+            };
+            //Create a Grand Central Dispatch queue and run the operation async
+            dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+            dispatch_async(queue, block);
         }
     }
 }
@@ -208,14 +235,39 @@
 - (void) refreshAnnotations
 {
     dispatch_async(dispatch_get_main_queue(), ^{
-        for (id<MKOverlay> overlay in self.mapView.overlays){
+        NSArray *enumerate = [self.mapView.overlays copy];
+        //for (id<MKOverlay> overlay in self.mapView.overlays){
+        for (id<MKOverlay> overlay in enumerate){
             [self.mapView removeOverlay:overlay];
         }
-        for (id<MKOverlay> a in self.paths.filteredLocations) {
+        //for (id<MKOverlay> a in self.paths.filteredLocations) {
+        NSArray *locations = [self.paths.filteredLocations copy];
+        for (id<MKOverlay> a in locations) {
             
             [self.mapView addOverlay:a];
         }
     });
+}
+
+#pragma mark - Hide and show the tab bar
+// pass a param to describe the state change, an animated flag and a completion block matching UIView animations completion
+- (void)setTabBarVisible:(BOOL)visible animated:(BOOL)animated completion:(void (^)(BOOL))completion {
+    // bail if the current state matches the desired state
+    if ([self tabBarIsVisible] == visible) return (completion)? completion(YES) : nil;
+    // get a frame calculation ready
+    CGRect frame = self.tabBarController.tabBar.frame;
+    CGFloat height = frame.size.height;
+    CGFloat offsetY = (visible)? -height : height;
+    // zero duration means no animation
+    CGFloat duration = (animated)? 0.3 : 0.0;
+    [UIView animateWithDuration:duration animations:^{
+        self.tabBarController.tabBar.frame = CGRectOffset(frame, 0, offsetY);
+    } completion:completion];
+}
+
+// know the current state
+- (BOOL)tabBarIsVisible {
+    return self.tabBarController.tabBar.frame.origin.y < CGRectGetMaxY(self.view.frame);
 }
 
 

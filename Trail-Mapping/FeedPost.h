@@ -18,6 +18,7 @@
 
 //UI
 @property (strong, retain) IBOutlet UIView *headerView;
+@property (strong, nonatomic) IBOutlet UIView *bodyView;
 @property (strong, retain) IBOutlet UIImageView *avatar;
 @property (strong, retain) IBOutlet UILabel *username;
 @property (strong, retain) IBOutlet UILabel *bodyText;
@@ -44,7 +45,7 @@
 
 @property (retain, strong) Path *path;
 
-
+- (void)setupProfilePic:(NSString *)urlStr;
 -(void) setDictionary:(NSDictionary *)dictionary;
 - (NSDictionary*) toDictionary;
 - (void) persist:(FeedPost*)post;

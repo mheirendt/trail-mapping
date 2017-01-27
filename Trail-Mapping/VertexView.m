@@ -71,6 +71,7 @@
     CGContextMoveToPoint(ref, CGRectGetMinX(contentRect), CGRectGetMinY(contentRect)+0.5);
     CGContextAddLineToPoint(ref, CGRectGetMaxX(contentRect), CGRectGetMinY(contentRect)+0.5);
     CGContextStrokePath(ref);
+
 }
 
 #pragma mark - Button clicked

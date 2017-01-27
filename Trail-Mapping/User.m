@@ -11,10 +11,11 @@
 #define safeSet(d,k,v) if (v) d[k] = v;
 
 @implementation User
--(User *)initWithEmail:(NSString *)email Username:(NSString *)username Password:(NSString *)password{
+-(User *)initWithEmail:(NSString *)email Username:(NSString *)username avatar:(NSString *)avatar Password:(NSString *)password{
     User *user = [[User alloc] init];
     user.email = email;
     user.username = username;
+    user.avatar = avatar;
     user.password = password;
     user.score = [NSNumber numberWithInt:0];
     return user;
@@ -29,8 +30,11 @@
         __id = dictionary[@"_id"];
         _email = dictionary[@"email"];
         _username = dictionary[@"username"];
+        _avatar = dictionary[@"avatar"];
         _score = dictionary[@"score"];
         _created = dictionary[@"created"];
+        _followers = dictionary[@"followers"];
+        _following = dictionary[@"following"];
     }
     return self;
 }
@@ -38,12 +42,14 @@
 - (NSDictionary*) toDictionary
 {
     NSMutableDictionary* jsonable = [NSMutableDictionary dictionary];
-    //safeSet(jsonable, @"userID", self.userID);
+    safeSet(jsonable, @"_id", self._id);
     safeSet(jsonable, @"username", self.username);
+    safeSet(jsonable, @"avatar", self.avatar);
     safeSet(jsonable, @"password", self.password);
     safeSet(jsonable, @"email", self.email);
     safeSet(jsonable, @"score", self.score);
-    
+    safeSet(jsonable, @"followers", self.followers);
+    safeSet(jsonable, @"following", self.following);
     
     return jsonable;
 }
@@ -51,11 +57,7 @@
 - (void) persist:(User*)user
 {
     
-    //NSString* users = @"https://secure-garden-50529.herokuapp.com/users/";
-    ///local-reg
-    
     NSString* users = @"https://secure-garden-50529.herokuapp.com/local-reg";
-    //BOOL isExistingLocation = path._id != nil;
     NSURL* url = [NSURL URLWithString:users];
     NSDictionary *dictionary = [user toDictionary];
     NSMutableURLRequest* request = [NSMutableURLRequest requestWithURL:url];
