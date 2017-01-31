@@ -22,12 +22,8 @@
     self = [super initWithFrame:frame];
     if (self)
     {
-        
-        //UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(dismissKeyboard)];
-        UITapGestureRecognizer *viewDetails = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(viewPost)];
         UITapGestureRecognizer *inquire = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTouch:)];
         inquire.delegate = self;
-        viewDetails.delegate = self;
         self.userInteractionEnabled = YES;
         self.view.userInteractionEnabled = YES;
         self.headerView.userInteractionEnabled = YES;
@@ -35,14 +31,6 @@
         self.avatar.userInteractionEnabled = YES;
         [_avatar.layer setBorderColor:[UIColor colorWithRed:.0706 green:.3137 blue:.3137 alpha:1.f].CGColor];
         [self addGestureRecognizer:inquire];
-        //[self.headerView addGestureRecognizer:inquire];
-        //[self.bodyView addGestureRecognizer:viewDetails];
-        //[self.avatar addGestureRecognizer:viewDetails];
-        //self.avatarTapGesture.delegate = self.avatar;
-        //self.avatarTapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(showUserProfile)];
-        //[self.username addGestureRecognizer:inquire];
-        //[self addGestureRecognizer:viewDetails];
-        //[self.username addGestureRecognizer:inquire];
         [[NSBundle mainBundle] loadNibNamed:@"FeedPost" owner:self options:nil];
         [self addSubview:self.view];
          
@@ -52,7 +40,7 @@
 
 - (void)setupProfilePic:(NSString *)urlStr {
     dispatch_async(dispatch_get_global_queue(0,0), ^{
-        NSString *urlString = [@"https://secure-garden-50529.herokuapp.com/upload/" stringByAppendingString:urlStr];
+        NSString *urlString = [@"https://secure-garden-50529.herokuapp.com/upload/" stringByAppendingString:[_submittedUser valueForKey:@"avatar"]];
         NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString: urlString]];
         if ( data == nil )
         return;
@@ -62,39 +50,54 @@
     });
 }
 
-
-- (void)viewPost {
-    FeedPostDetailViewController *vc = [[UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]] instantiateViewControllerWithIdentifier:@"FeedPostDetailViewController"];
-    vc.feedView = self;
-    [vc zoomToPath:_path];
-    //ProfileViewController *vc = [[UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]] instantiateViewControllerWithIdentifier:@"profile"];
-    
-    [self.parent viewPostDetail:self];
-}
+# pragma mark - UITapGestureRecognizer input mapping
 - (void)handleTouch: (UITapGestureRecognizer *)tapRecognizer {
     CGPoint touchPoint = [tapRecognizer locationInView:self];
     NSLog(@"point: %f, %f", touchPoint.x, touchPoint.y);
     if (touchPoint.y < 75) {
         [self viewProfile];
-    } else if (touchPoint.y > 250) {
+    } else if (touchPoint.y > 250 && touchPoint.y  < 280) {
         if (touchPoint.x < 122) {
             //Like
-            
+            [self postLike];
         } else if (touchPoint.x > 275) {
             //Share
-            
+            [self postShare];
         } else {
             //Comment
+            [self postComment];
         }
         
+    } else if (touchPoint.y > 280) {
+        if (touchPoint.x < 122) {
+            //View Likes
+            [self postLike];
+        } else if (touchPoint.x > 275) {
+            //Share
+            [self postShare];
+        } else {
+            //Comment
+            [self postComment];
+        }
     } else {
-        [self viewPost];
+        [self viewPost:false];
     }
+}
+
+- (void)viewPost:(bool)commentFlag {
+    FeedPostDetailViewController *vc = [[UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]] instantiateViewControllerWithIdentifier:@"FeedPostDetailViewController"];
+    if (commentFlag) {
+        //[vc showCommentView];
+    }
+    //vc.feedView = self;
+    //[vc zoomToPath:_path];
+    
+    [self.parent viewPostDetail:self];
 }
 
 -(void) viewProfile {
     id block = ^(void) {
-        NSString* urlstr = [NSString stringWithFormat:@"https://secure-garden-50529.herokuapp.com/user/search/username/%@", self.username.text];
+        NSString* urlstr = [NSString stringWithFormat:@"https://secure-garden-50529.herokuapp.com/user/search/username/%@", [self.submittedUser valueForKey:@"username"]];
         NSURL* url = [NSURL URLWithString:urlstr];
         NSMutableURLRequest* request = [NSMutableURLRequest requestWithURL:url cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:10.f];
         request.HTTPMethod = @"GET";
@@ -143,10 +146,97 @@
     dispatch_async(queue, block);
 }
 
-- (IBAction)comment:(id)sender {
+-(void) postLike {
+    id block = ^(void) {
+        NSURL* url = [NSURL URLWithString:@"https://secure-garden-50529.herokuapp.com/posts/like"];
+        NSMutableURLRequest* request = [NSMutableURLRequest requestWithURL:url cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:10.f];
+        request.HTTPMethod = @"POST";
+        [request addValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+        [request addValue:@"application/json" forHTTPHeaderField:@"Accept"];
+        NSDictionary *dictionary = [NSDictionary dictionaryWithObject:[NSString stringWithFormat:@"%@", self._id ] forKey:@"post"];
+        NSData* data = [NSJSONSerialization dataWithJSONObject:dictionary options:0 error:NULL];
+        request.HTTPBody = data;
+        NSURLSessionConfiguration* config = [NSURLSessionConfiguration defaultSessionConfiguration];
+        NSURLSession* session = [NSURLSession sessionWithConfiguration:config];
+        NSURLSessionDataTask* dataTask = [session dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *res, NSError *   error) {
+            if (error){
+                NSLog(@"error: %@", [error localizedDescription]);
+            } else {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    NSDictionary* dict = [NSJSONSerialization JSONObjectWithData:data options:0 error:NULL];
+                    [self setDictionary:dict];
+                    [self setNeedsDisplay];
+                });
+            }
+        }];
+        [dataTask resume];
+    };
+    //Create a Grand Central Dispatch queue and run the operation async
+    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+    dispatch_async(queue, block);
 }
-- (IBAction)like:(id)sender {
+-(void) postComment {
+    [self viewPost:true];
 }
+
+-(void) submitComment:(NSString *) body {
+    id block = ^(void) {
+        NSURL* url = [NSURL URLWithString:@"https://secure-garden-50529.herokuapp.com/posts/comment"];
+        NSMutableURLRequest* request = [NSMutableURLRequest requestWithURL:url cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:10.f];
+        request.HTTPMethod = @"POST";
+        [request addValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+        [request addValue:@"application/json" forHTTPHeaderField:@"Accept"];
+        NSMutableDictionary *dictionary = [NSMutableDictionary dictionaryWithObject:[NSString stringWithFormat:@"%@", self._id ] forKey:@"post"];
+        [dictionary setObject:body forKey:@"body"];
+        NSData* data = [NSJSONSerialization dataWithJSONObject:dictionary options:0 error:NULL];
+        request.HTTPBody = data;
+        NSURLSessionConfiguration* config = [NSURLSessionConfiguration defaultSessionConfiguration];
+        NSURLSession* session = [NSURLSession sessionWithConfiguration:config];
+        NSURLSessionDataTask* dataTask = [session dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *res, NSError *   error) {
+            if (error){
+                NSLog(@"error: %@", [error localizedDescription]);
+            } else {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    NSDictionary* dict = [NSJSONSerialization JSONObjectWithData:data options:0 error:NULL];
+                    [self setDictionary:dict];
+                    [self setNeedsDisplay];
+                });
+            }
+        }];
+        [dataTask resume];
+    };
+    //Create a Grand Central Dispatch queue and run the operation async
+    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+    dispatch_async(queue, block);
+}
+
+-(void) postShare {
+    id block = ^(void) {
+        NSString* urlstr = [NSString stringWithFormat:@"https://secure-garden-50529.herokuapp.com/user/search/username/%@", self.username.text];
+        NSURL* url = [NSURL URLWithString:urlstr];
+        NSMutableURLRequest* request = [NSMutableURLRequest requestWithURL:url cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:10.f];
+        request.HTTPMethod = @"GET";
+        [request addValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+        [request addValue:@"application/json" forHTTPHeaderField:@"Accept"];
+        NSURLSessionConfiguration* config = [NSURLSessionConfiguration defaultSessionConfiguration];
+        NSURLSession* session = [NSURLSession sessionWithConfiguration:config];
+        NSURLSessionDataTask* dataTask = [session dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *res, NSError *   error) {
+            if (error){
+                NSLog(@"error: %@", [error localizedDescription]);
+            } else {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    
+                });
+            }
+        }];
+        [dataTask resume];
+    };
+    //Create a Grand Central Dispatch queue and run the operation async
+    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+    dispatch_async(queue, block);
+}
+
+#pragma mark - helper methods
 
 -(void) setDictionary:(NSDictionary *)dictionary {
     
@@ -175,8 +265,8 @@
     self.avatar.image = [UIImage imageNamed:@"Bike"];
     self.bodyText.text = _body;
     self.username.text = user.username;
-    //self.likesLabel.text = [NSString stringWithFormat:@"%lu", (unsigned long)_likes.count];//[NSString stringWithFormat:@"%lu Likes", _likes.count];
-    //self.commentsLabel.text = [NSString stringWithFormat:@"%lu Comments", _comments.count];
+    self.likesLabel.text = [NSString stringWithFormat:@"%lu", (unsigned long)_likes.count];//[NSString stringWithFormat:@"%lu Likes", _likes.count];
+    self.commentsLabel.text = [NSString stringWithFormat:@"%lu Comments", _comments.count];
 }
 
 
@@ -218,3 +308,100 @@
 
 
 @end
+
+
+
+@implementation Comment
+
+- (id)initWithFrame:(CGRect)frame
+{
+    self = [super initWithFrame:frame];
+    if (self)
+    {
+        UITapGestureRecognizer *viewTouched = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(discernCommentAction:)];
+        [self addGestureRecognizer:viewTouched];
+        self.userInteractionEnabled = YES;
+        
+        
+         //Avatar
+         _avatar = [[UIImageView alloc] initWithFrame:CGRectMake(5, 15, 50, 50)];
+         [_avatar.layer setCornerRadius:25];
+         _avatar.clipsToBounds = YES;
+         [_avatar.layer setBorderWidth:2.f];
+         [_avatar.layer setBackgroundColor:[UIColor colorWithRed:.0706 green:.3137 blue:.3137 alpha:1.f].CGColor];
+
+         [self addSubview:_avatar];
+        
+         //Username label
+         _username = [[UILabel alloc] initWithFrame:CGRectMake(70, 10, 200, 15)];
+         [_username setFont:[UIFont fontWithName:[NSString stringWithFormat:@"%@-Bold",@"Helvetica"] size:17.f]];
+         [self addSubview:_username];
+         
+         //Body label
+         _body = [[UILabel alloc] initWithFrame:CGRectMake(70, 15, self.frame.size.width, self.frame.size.height - 90)];
+         _body.numberOfLines = 100;
+         //[_body sizeToFit];
+         _body.lineBreakMode = NSLineBreakByClipping;
+         _body.text = [_body.text stringByAppendingString:@"\n\n\n\n"];
+         [self addSubview:_body];
+        
+        
+        //Separator
+        UIView *separator = [[UIView alloc] initWithFrame:CGRectMake(50, 110, self.frame.size.width - 100, 1)];
+         [separator.layer setBackgroundColor:[UIColor lightGrayColor].CGColor];
+         [self addSubview:separator];
+         
+         //created label
+         _created = [[UILabel alloc] initWithFrame:CGRectMake(10, 115, 120, 20)];
+         [_created setFont:[UIFont fontWithName:@"Helvetica" size:12.f]];
+         //NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+         //[formatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:sssZ"];
+         
+         //NSString *dateObj = [NSString stringWithFormat:@"%@", [_post.comments[i] objectForKey:@"created"]];
+         
+         //NSDate *parsedDate = [formatter dateFromString:dateObj];
+         //NSLog(@"========= REal Date %@", parsedDate);
+         
+         //NSString *lastUpdate = [NSString stringWithFormat:@"%@", [formatter stringFromDate:[NSDate date]]];
+         //[_created setText:dateObj];
+         [self addSubview:_created];
+         
+         //Separator dot
+         UIView *separatorIcon = [[UIView alloc] initWithFrame:CGRectMake(_created.frame.origin.x + _created.frame.size.width + 5, 125, 4, 4)];
+         [separatorIcon.layer setBackgroundColor:[UIColor lightGrayColor].CGColor];
+         separatorIcon.layer.cornerRadius = 2.f;
+         separatorIcon.clipsToBounds = YES;
+         [self addSubview:separatorIcon];
+         
+         //like
+         UIImageView *likeIcon = [[UIImageView alloc] initWithFrame:CGRectMake(separatorIcon.frame.origin.x + 15, 115, 20, 20)];
+         [likeIcon setImage:[UIImage imageNamed:@"like"]];
+         [likeIcon setUserInteractionEnabled:YES];
+         [self addSubview:likeIcon];
+         UILabel *like = [[UILabel alloc] initWithFrame:CGRectMake(likeIcon.frame.origin.x + 40, 110, 30, 30)];
+         [like setText:@"Like"];
+         [like setFont:[UIFont fontWithName:@"Helvetica" size:12.f]];
+         [self addSubview:like];
+         
+         //Reply
+         UIImageView *commentIcon = [[UIImageView alloc] initWithFrame:CGRectMake(like.frame.origin.x + like.frame.size.width + 40, 118, 20, 20)];
+         [commentIcon setImage:[UIImage imageNamed:@"comment"]];
+         [self addSubview:commentIcon];
+         UILabel *reply = [[UILabel alloc] initWithFrame:CGRectMake(commentIcon.frame.origin.x + 40, 110, 30, 30)];
+         [reply setText:@"reply"];
+         [reply setFont:[UIFont fontWithName:@"Helvetica" size:12.f]];
+         [self addSubview:reply];
+
+
+    }
+    return self;
+}
+
+
+-(void)discernCommentAction:(UIGestureRecognizer *)recognizer {
+    
+}
+
+@end
+
+

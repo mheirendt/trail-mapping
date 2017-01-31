@@ -51,4 +51,24 @@
 - (void) persist:(FeedPost*)post;
 -(void) viewProfile;
 
+-(void) submitComment:(NSString *) body;
+
+@end
+
+@interface Comment : UIView
+
+@property (strong, retain) NSDictionary *comment;
+
+@property (strong, retain) UIImageView *avatar;
+@property (strong, retain) UILabel *username;
+@property (strong, retain) UILabel *body;
+@property (strong, retain) UILabel *created;
+@property (strong, retain) UIImageView *likeIcon;
+@property (strong, retain) UILabel *likesLabel;
+@property (strong, retain) UIImageView *repliesIcon;
+@property (strong, retain) UILabel *repliesLabel;
+
+
+
+
 @end
