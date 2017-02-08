@@ -1,18 +1,19 @@
 //
-//  FeedPostDetailViewController.m
+//  FeedPostDetail.m
 //  Trail-Mapping
 //
-//  Created by Michael Heirendt on 1/4/17.
+//  Created by Michael Heirendt on 2/6/17.
 //  Copyright © 2017 Michael Heirendt. All rights reserved.
 //
 
-#import "FeedPostDetailViewController.h"
+#import "FeedPostDetail.h"
 
-@interface FeedPostDetailViewController ()
+@interface FeedPostDetail ()
 
 @end
 
-@implementation FeedPostDetailViewController
+@implementation FeedPostDetail
+
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -25,51 +26,95 @@
     [self.post setDictionary:self.dict];
     [_scrollView addSubview:_post];
     _chatBox.delegate = self;
-    int scrollHeight = 320;
-    for (int i = 0; i < [_post.comments count]; i++) {
-        float x = 0;
-        float y = 320 + (i * 141);
-        float width = self.view.bounds.size.width;
-        float height = 139;
-        Comment *container = [[Comment alloc] initWithFrame:CGRectMake(x, y, width, height)];
-        [container.layer setBackgroundColor:[UIColor whiteColor].CGColor];
-        [container setUserInteractionEnabled:YES];
-        User *submittedUser = [[User alloc] initWithDictionary:[_post.comments[i] objectForKey:@"submittedUser"]];
-        container.comment = _post.comments[i];
-        
-        if (submittedUser.avatar) {
-            dispatch_async(dispatch_get_global_queue(0,0), ^{
-                NSString *urlStr = [@"https://secure-garden-50529.herokuapp.com/upload/" stringByAppendingString:submittedUser.avatar];
-                NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString: urlStr]];
-                if ( data == nil )
-                return;
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [container.avatar setImage:[UIImage imageWithData:data]];
-                });
-            });
-        }
-        
-        container.body.text = [container.comment objectForKey:@"body"];
-        container.username.text = submittedUser.username;
-        container.created.text = [container.comment objectForKey:@"created"];
-        
-        UITapGestureRecognizer *dismiss = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(discernCommentAction:)];
-        dismiss.cancelsTouchesInView = NO;
-        [container addGestureRecognizer:dismiss];
-        
-        
-        [_scrollView addSubview:container];
-        scrollHeight += container.bounds.size.height + 3;
-        
-    }
-
-    [_scrollView setContentSize:CGSizeMake(self.view.bounds.size.width, scrollHeight)];
+    [self buildComments:false];
+    //chatbox stuff
+    //turn off scrolling and set the font details.
+    _commentToolbar = [[UIView alloc] initWithFrame:CGRectMake(0, self.view.bounds.size.height, 200, 40)];
+    [_commentToolbar setUserInteractionEnabled:YES];
+    [self.view setUserInteractionEnabled:YES];
+    [self.scrollView setUserInteractionEnabled:YES];
+    [_commentToolbar.layer setBackgroundColor:[UIColor whiteColor].CGColor];
+    
+    _comments = [[NSMutableArray alloc] init];
+    
+    _chatBox = [[UITextView alloc] initWithFrame:CGRectMake(20, 5, 200, 30)];
+    _chatBox.scrollEnabled = NO;
+    _chatBox.font = [UIFont fontWithName:@"Helvetica" size:14];
+    _chatBox.layer.cornerRadius = 8.0f;
+    _chatBox.layer.masksToBounds = YES;
+    _chatBox.layer.borderWidth = 1.f;
+    _chatBox.layer.borderColor = [UIColor blackColor].CGColor;
+    [_chatBox setReturnKeyType:UIReturnKeySend];
+    [_chatBox setEnablesReturnKeyAutomatically:YES];
+    [self.commentToolbar addSubview:_chatBox];
+    [self.view addSubview:_commentToolbar];
+    
     //MKCoordinateRegion region = MKCoordinateRegionForMapRect([_mapView mapRectThatFits:_path.boundingMapRect]);
     //[self.mapView setRegion:[self.mapView regionThatFits:region] animated:NO];
     //self.mapView.delegate = self;
     //[self.mapView addOverlay:_path];
     
 }
+
+-(void)buildComments: (bool)adding {
+    id block = ^(void) {
+        NSString* urlstr = @"https://secure-garden-50529.herokuapp.com/comments/comment";
+        NSURL* url = [NSURL URLWithString:urlstr];
+        NSMutableURLRequest* request = [NSMutableURLRequest requestWithURL:url cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:10.f];
+        request.HTTPMethod = @"POST";
+        [request addValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+        [request addValue:@"application/json" forHTTPHeaderField:@"Accept"];
+        NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
+        [dictionary setObject:_post._id forKey:@"postId"];
+        _lastSeen ? [dictionary setObject:_lastSeen forKey:@"lastSeen"] : nil;
+        NSData* data = [NSJSONSerialization dataWithJSONObject:dictionary options:0 error:NULL];
+        request.HTTPBody = data;
+        NSURLSessionConfiguration* config = [NSURLSessionConfiguration defaultSessionConfiguration];
+        NSURLSession* session = [NSURLSession sessionWithConfiguration:config];
+        NSURLSessionDataTask* dataTask = [session dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *res, NSError *   error) {
+            if (error){
+                NSLog(@"error: %@", [error localizedDescription]);
+            } else {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    NSDictionary* dict = [NSJSONSerialization JSONObjectWithData:data options:0 error:NULL];
+                    NSArray *arr = [dict objectForKey:@"comments"];
+                    _lastSeen = [dict objectForKey:@"lastSeen"];
+                    if (arr) {
+                        int scrollHeight = 320;
+                        for (int i = 0; i < [arr count]; i++) {
+                            float x = 0;
+                            float y = 320 + (i * 141);
+                            float width = self.view.bounds.size.width;
+                            float height = 139;
+                            Comment *container = [[Comment alloc] initWithFrame:CGRectMake(x, y, width, height)];
+                            container.delegate = self;
+                            [container.layer setBackgroundColor:[UIColor whiteColor].CGColor];
+                            [container setUserInteractionEnabled:YES];
+                            [container setDictionary:arr[i]];
+                            
+                            container.parent = self;
+                            [_comments addObject:container];
+                            if (adding) {
+                                if ([_post.comments intValue] == i + 1) {
+                                    [_scrollView addSubview:container];
+                                }
+                            } else {
+                                [_scrollView addSubview:container];
+                            }
+                            scrollHeight += container.bounds.size.height + 3;
+                        }
+                        [_scrollView setContentSize:CGSizeMake(self.view.bounds.size.width, scrollHeight)];
+                    }
+                });
+            }
+        }];
+        [dataTask resume];
+    };
+    //Create a Grand Central Dispatch queue and run the operation async
+    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+    dispatch_async(queue, block);
+}
+
 -(void) viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     
@@ -88,43 +133,27 @@
                                              selector: @selector(keyPressed:)
                                                  name: UITextViewTextDidChangeNotification
                                                object: nil];
-      [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillChangeFrame:) name:UIKeyboardWillChangeFrameNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillChangeFrame:) name:UIKeyboardWillChangeFrameNotification object:nil];
     
     //friends view
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(dismissFriendsView:) name:@"friendsViewDismissed" object:nil];
     
-    //turn off scrolling and set the font details.
-    _commentToolbar = [[UIView alloc] initWithFrame:CGRectMake(0, self.view.bounds.size.height, 200, 40)];
-    [_commentToolbar setUserInteractionEnabled:YES];
-    [self.view setUserInteractionEnabled:YES];
-    [self.scrollView setUserInteractionEnabled:YES];
-    [_commentToolbar.layer setBackgroundColor:[UIColor whiteColor].CGColor];
-    
-    _chatBox = [[UITextView alloc] initWithFrame:CGRectMake(20, 5, 200, 30)];
-    _chatBox.scrollEnabled = NO;
-    _chatBox.font = [UIFont fontWithName:@"Helvetica" size:14];
-    _chatBox.layer.cornerRadius = 8.0f;
-    _chatBox.layer.masksToBounds = YES;
-    _chatBox.layer.borderWidth = 1.f;
-    _chatBox.layer.borderColor = [UIColor blackColor].CGColor;
-    [_chatBox setReturnKeyType:UIReturnKeySend];
-    [_chatBox setEnablesReturnKeyAutomatically:YES];
-    [self.commentToolbar addSubview:_chatBox];
-    [self.view addSubview:_commentToolbar];
-    [_chatBox becomeFirstResponder];
-    
-    //Send button
-    _sendButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [_sendButton setFrame:CGRectMake(self.view.bounds.size.width - 65, 5, 60, 25)];
-    [_sendButton setTitle:@"Send" forState:UIControlStateNormal];
-    [_sendButton addTarget:self action:@selector(postComment) forControlEvents:UIControlEventTouchUpInside];
-    [_sendButton.layer setBackgroundColor:[UIColor colorWithRed:.0706 green:.3137 blue:.3137 alpha:.5f].CGColor];
-    _sendButton.layer.cornerRadius = 10.f;
-    [_sendButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    _sendButton.clipsToBounds = YES;
-    _sendButton.layer.borderWidth = 1.f;
-    [_sendButton setEnabled:NO];
-    [_commentToolbar addSubview:_sendButton];
+    if (_isCommenting) {
+        [_chatBox becomeFirstResponder];
+        
+        //Send button
+        _sendButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        [_sendButton setFrame:CGRectMake(self.view.bounds.size.width - 65, 5, 60, 25)];
+        [_sendButton setTitle:@"Send" forState:UIControlStateNormal];
+        [_sendButton addTarget:self action:@selector(postComment) forControlEvents:UIControlEventTouchUpInside];
+        [_sendButton.layer setBackgroundColor:[UIColor colorWithRed:.0706 green:.3137 blue:.3137 alpha:.5f].CGColor];
+        _sendButton.layer.cornerRadius = 10.f;
+        [_sendButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+        _sendButton.clipsToBounds = YES;
+        _sendButton.layer.borderWidth = 1.f;
+        [_sendButton setEnabled:NO];
+        [_commentToolbar addSubview:_sendButton];
+    }
     
 }
 -(void) viewWillDisappear:(BOOL)animated {
@@ -133,67 +162,28 @@
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillHideNotification object:nil];
 }
 
--(void) postComment {
-    [_post submitComment:_chatBox.text];
+-(void) postComment{
+    NSNumber *type;
+    _isCommenting ? type = [NSNumber numberWithInt:1] : nil;
+    _isReplying ? type = [NSNumber numberWithInt:2] : nil;
+    //_isReplying ? typeId = [NSString stringWithFormat:@"reply"] : typeId = nil;
+    AppDelegate *del = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+    NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
+    [dictionary setObject:[NSString string] forKey:@"_id"];
+    [dictionary setObject:_chatBox.text forKey:@"body"];
+    [dictionary setObject:[del.activeUser toDictionary] forKey:@"submittedUser"];
+    [dictionary setObject:[NSArray array] forKey:@"likes"];
+    [dictionary setObject:[NSArray array] forKey:@"replies"];
+    Comment *newComment = [[Comment alloc] initWithDictionary:dictionary];
+    [_comments addObject:newComment];
+    newComment.delegate = self;
+    [_post postCommentFor:_post._id body:_chatBox.text type:type comment:newComment];
+    _isCommenting = false;
+    _isReplying = false;
+    _typeId = nil;
     [self dismissKeyboard];
 }
 
--(void) discernCommentAction: (UIGestureRecognizer *)recognizer {
-    CGPoint point = [recognizer locationInView:self.view];
-    [self dismissKeyboard];
-    //UIView *view = recognizer.view;
-    //NSLog(@"%ld", (long)view.tag);
-    
-    UIView *tappedView = [self.view hitTest:point withEvent:nil];
-    if ([tappedView isKindOfClass:[UIImageView class]]) {
-        //hmmmmmm
-        [tappedView setImage: [UIImage imageNamed:@"likePressed"]];
-        //[self likeComment:(Comment*)tappedView];
-    }
-    //NSLog(@"point: %f, %f", tappedView.x, touchLocation.y);
-
-    CGPoint touchPoint = [recognizer locationInView:tappedView];
-    NSLog(@"point: %f, %f", touchPoint.x, touchPoint.y);
-    if (touchPoint.y > 80) {
-        if (touchPoint.x > 142 && touchPoint.x < 162) {
-            //Liked
-            [self likeComment:(Comment*)tappedView];
-        } else if (touchPoint.x > 161 && touchPoint.x < 251) {
-            //view likes
-            [self viewCommentLikes:(Comment *)tappedView];
-        } else if (touchPoint.x > 250) {
-            //Reply
-            NSLog(@"Replied");
-        } else {
-            //View likes
-        }
-    }
-}
-
--(void) likeComment: (Comment *) view {
-    NSLog(@"liked");
-    [view.likeIcon setImage:[UIImage imageNamed:@"likePressed"]];
-}
-
--(void) viewCommentLikes: (Comment *) view {
-    _backgroundView = [[UIView alloc]initWithFrame:self.view.frame];
-    _backgroundView.backgroundColor = [UIColor blackColor];
-    _backgroundView.alpha = .5f;
-    UITapGestureRecognizer *recognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(dismissFriendsView:)];
-    [_backgroundView addGestureRecognizer:recognizer];
-    [self.view addSubview:_backgroundView];
-    //if (!_friendsView){
-    _friendsView = [[FriendsView alloc] initWithFrame:CGRectMake(0, 0, 250, 375)];
-    _friendsView.backgroundColor = [UIColor whiteColor];
-    CGRect viewBounds = self.view.bounds;
-    _friendsView.center = CGPointMake(CGRectGetMidX(viewBounds), CGRectGetMidY(viewBounds) - 70);
-    _friendsView.layer.borderWidth = 1.5f;
-    _friendsView.layer.borderColor = [UIColor colorWithRed:.067f green:.384 blue:.384 alpha:1.f].CGColor;
-    _friendsView.users = [NSMutableArray array];
-    _friendsView.users = [view.comment objectForKey:@"likes"];
-    //}
-    [self.view addSubview:_friendsView];
-}
 
 -(void) dismissFriendsView:(NSNotification *)notification {
     
@@ -283,7 +273,7 @@
         } else {
             newLine = _chatBox.text;
         }
-
+        
         if (newSizeH > _textFieldPreviousHeight && newSizeH <= 90)
         {
             [_chatBox scrollRectToVisible:CGRectMake(0,0,1,1) animated:NO];
@@ -324,7 +314,7 @@
             commentFrame.origin.y = commentFrame.origin.y + 16.2;
             _commentToolbar.frame = commentFrame;
         }
-
+        
         if (newSizeH >= 90)
         {
             _chatBox.scrollEnabled = YES;
@@ -333,9 +323,11 @@
         
         NSString *returnKey = [_chatBox.text substringFromIndex: [_chatBox.text length] - 1];
         if([returnKey isEqualToString:@"\n"]) {
+            //[self postComment];
             [self postComment];
         }
     }
 }
+
 
 @end

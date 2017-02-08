@@ -9,6 +9,8 @@
 #import <UIKit/UIKit.h>
 #import "FeedPost.h"
 #import "searchResultsTable.h"
+#import "FriendsView.h"
+#import "ErrorView.h"
 
 ////TODO
 @class FeedPost;
@@ -20,8 +22,13 @@
 @property (strong, nonatomic) IBOutlet UIScrollView *scrollView;
 @property (strong, nonatomic) UIRefreshControl *refreshControl;
 @property (strong, nonatomic) NSMutableArray *posts;
+@property (strong, nonatomic) NSString *lastSeen;
+@property (strong, nonatomic) UIView *backgroundView;
+@property (strong, nonatomic) FriendsView *friendsView;
 
 -(void)updateFeed:(UIRefreshControl *)refreshControl;
 -(IBAction)viewProfile:(id)sender;
--(void)viewPostDetail:(FeedPost *)post;
+-(void)viewPostDetail:(FeedPost *)post isCommenting:(bool)commenting;
+
+-(void)dismissFriendsView:(NSNotification *)notification;
 @end

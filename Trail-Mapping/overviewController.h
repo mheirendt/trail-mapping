@@ -9,7 +9,9 @@
 #import <UIKit/UIKit.h>
 #import "Paths.h"
 #import "Path.h"
-#import "FeedPostDetailViewController.h"
+#import "FeedPostDetail.h"
+#import "ErrorView.h"
+
 @import MapKit;
 
 @interface overviewController : UIViewController <MKMapViewDelegate, CLLocationManagerDelegate, UITabBarControllerDelegate, polylineModelDelegate>

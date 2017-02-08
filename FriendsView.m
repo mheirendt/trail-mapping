@@ -48,7 +48,17 @@
         [tableView registerNib:[UINib nibWithNibName:@"FriendsViewCell" bundle:nil] forCellReuseIdentifier:@"CellIdentifier"];
         cell = [tableView dequeueReusableCellWithIdentifier:@"CellIdentifier"];
     }
+    AppDelegate *del = (AppDelegate *)[[UIApplication sharedApplication] delegate];
     User *cellUser = [[User alloc] initWithDictionary:[_users objectAtIndex:indexPath.row]];
+    for (int i = 0; i < [del.activeUser.following count]; i++) {
+        NSDictionary *following = del.activeUser.following[i];
+        if ([[following objectForKey:@"_id" ] isEqualToString:cellUser._id]) {
+            [cell.followingView.layer setBackgroundColor:[UIColor lightGrayColor].CGColor];
+            cell.followingLabel.text = @"Follow";
+        } else {
+            [cell.followingView.layer setBackgroundColor:[UIColor colorWithRed:.0706 green:.3137 blue:.3137 alpha:1.f].CGColor];            cell.followingLabel.text = @"Following";
+        }
+    }
     cell.usernameLabel.text = cellUser.username;//[_users objectAtIndex:indexPath.row];//cellUser.username;
     if (cellUser.avatar) {
         dispatch_async(dispatch_get_global_queue(0,0), ^{

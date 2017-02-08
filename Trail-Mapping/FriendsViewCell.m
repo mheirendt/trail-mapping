@@ -15,7 +15,6 @@
     // Initialization code
     //19 80 80
     [_avatar.layer setBorderColor:[UIColor colorWithRed:.0706 green:.3137 blue:.3137 alpha:1.f].CGColor];
-    [_followView setUserInteractionEnabled:YES];
     [_followingView setUserInteractionEnabled:YES];
 }
 

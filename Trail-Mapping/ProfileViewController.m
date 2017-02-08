@@ -118,16 +118,16 @@
             
             NSURL* url;
             if ([_followButton.titleLabel.text isEqualToString:@"Follow"]) {
-                url = [NSURL URLWithString:@"https://secure-garden-50529.herokuapp.com/user/follow/username"];
+                url = [NSURL URLWithString:@"https://secure-garden-50529.herokuapp.com/user/follow/userId"];
             } else {
-                url = [NSURL URLWithString:@"https://secure-garden-50529.herokuapp.com/user/unfollow/username"];
+                url = [NSURL URLWithString:@"https://secure-garden-50529.herokuapp.com/user/unfollow/userId"];
             }
             NSMutableURLRequest* request = [NSMutableURLRequest requestWithURL:url cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:10.f];
             request.HTTPMethod = @"POST";
             [request addValue:@"no-cache" forHTTPHeaderField:@"cache-control"];
             [request addValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
             [request addValue:@"application/json" forHTTPHeaderField:@"Accept"];
-            NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:_user.username, @"username", nil];
+            NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:_user._id, @"userId", nil];
             NSData* data = [NSJSONSerialization dataWithJSONObject:dict options:0 error:NULL];
             request.HTTPBody = data;
             NSURLSessionConfiguration* config = [NSURLSessionConfiguration defaultSessionConfiguration];
@@ -166,14 +166,14 @@
     [_backgroundView addGestureRecognizer:recognizer];
     [self.view addSubview:_backgroundView];
     //if (!_friendsView){
-        _friendsView = [[FriendsView alloc] initWithFrame:CGRectMake(0, 0, 250, 375)];
-        _friendsView.backgroundColor = [UIColor whiteColor];
-        CGRect viewBounds = self.view.bounds;
-        _friendsView.center = CGPointMake(CGRectGetMidX(viewBounds), CGRectGetMidY(viewBounds) - 70);
-        _friendsView.layer.borderWidth = 1.5f;
-        _friendsView.layer.borderColor = [UIColor colorWithRed:.067f green:.384 blue:.384 alpha:1.f].CGColor;
-        _friendsView.users = [NSMutableArray array];
-        _friendsView.users = users;
+    _friendsView = [[FriendsView alloc] initWithFrame:CGRectMake(0, 0, 250, 375)];
+    _friendsView.backgroundColor = [UIColor whiteColor];
+    CGRect viewBounds = self.view.bounds;
+    _friendsView.center = CGPointMake(CGRectGetMidX(viewBounds), CGRectGetMidY(viewBounds) - 70);
+    _friendsView.layer.borderWidth = 1.5f;
+    _friendsView.layer.borderColor = [UIColor colorWithRed:.067f green:.384 blue:.384 alpha:1.f].CGColor;
+    _friendsView.users = [NSMutableArray array];
+    _friendsView.users = users;
     //}
     [self.view addSubview:_friendsView];
 }

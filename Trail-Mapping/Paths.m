@@ -121,13 +121,6 @@ static NSString* const kPaths = @"trails";
 
 - (NSString *) persist:(Path*)path
 {
-    /*
-    if (!path || path.categories == nil) {
-        NSLog(@"!Location");
-        return; //input safety check
-    }
-     */
-    
     NSString* paths = [kBaseURL stringByAppendingPathComponent:kPaths];
     
     BOOL isExistingLocation = path._id != nil;

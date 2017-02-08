@@ -7,14 +7,13 @@
 //
 
 #import <UIKit/UIKit.h>
-
+#import "User.h"
 @interface FriendsViewCell : UITableViewCell
-
+@property (strong, nonatomic) User *user;
 @property (weak, nonatomic) IBOutlet UIImageView *avatar;
 @property (weak, nonatomic) IBOutlet UILabel *usernameLabel;
 @property (weak, nonatomic) IBOutlet UILabel *followingLabel;
 @property (weak, nonatomic) IBOutlet UIView *followingView;
-@property (weak, nonatomic) IBOutlet UIView *followView;
 
 
 @end

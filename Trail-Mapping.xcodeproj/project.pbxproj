@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A9107DEF1E4398F30039F5FE /* ErrorView.m in Sources */ = {isa = PBXBuildFile; fileRef = A9107DEE1E4398F30039F5FE /* ErrorView.m */; };
 		A916A4A21DA7FF9400A7B104 /* SettingsTable.m in Sources */ = {isa = PBXBuildFile; fileRef = A916A4A11DA7FF9300A7B104 /* SettingsTable.m */; };
 		A916A4A41DA8003700A7B104 /* SettingsTableCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = A916A4A31DA8003700A7B104 /* SettingsTableCell.xib */; };
 		A916A4A71DA8013300A7B104 /* SettingsCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A916A4A61DA8013300A7B104 /* SettingsCell.m */; };
@@ -29,7 +30,6 @@
 		A96757C31D921D2200331D86 /* TokenView.xib in Resources */ = {isa = PBXBuildFile; fileRef = A96757C21D921D2200331D86 /* TokenView.xib */; };
 		A96757C61D921E8300331D86 /* CategoryCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A96757C51D921E8300331D86 /* CategoryCell.m */; };
 		A96757CA1D922BEA00331D86 /* tableCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = A96757C91D922BEA00331D86 /* tableCell.xib */; };
-		A974BD781E1DAB200063E5C4 /* FeedPostDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A974BD771E1DAB200063E5C4 /* FeedPostDetailViewController.m */; };
 		A974BD7C1E2739880063E5C4 /* searchResultsTable.m in Sources */ = {isa = PBXBuildFile; fileRef = A974BD7B1E2739880063E5C4 /* searchResultsTable.m */; };
 		A974BD7F1E2BE4950063E5C4 /* FriendsView.m in Sources */ = {isa = PBXBuildFile; fileRef = A974BD7E1E2BE4930063E5C4 /* FriendsView.m */; };
 		A974BD831E2BE7670063E5C4 /* FriendsViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A974BD811E2BE7670063E5C4 /* FriendsViewCell.m */; };
@@ -38,6 +38,9 @@
 		A97A83DE1D7D15AA003F4C80 /* Paths.m in Sources */ = {isa = PBXBuildFile; fileRef = A97A83DD1D7D15AA003F4C80 /* Paths.m */; };
 		A99005D01D8A2ECF0074B688 /* Vertex.m in Sources */ = {isa = PBXBuildFile; fileRef = A99005CF1D8A2ECF0074B688 /* Vertex.m */; };
 		A9BBE43E1DB01616004FD193 /* FeedViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A9BBE43D1DB01616004FD193 /* FeedViewController.m */; };
+		A9ECD9381E4982E3004037AE /* FeedPostDetail.m in Sources */ = {isa = PBXBuildFile; fileRef = A9ECD9371E4982E3004037AE /* FeedPostDetail.m */; };
+		A9ECD93B1E49848C004037AE /* Comment.m in Sources */ = {isa = PBXBuildFile; fileRef = A9ECD93A1E49848C004037AE /* Comment.m */; };
+		A9ECD93E1E4A9BFB004037AE /* Post.m in Sources */ = {isa = PBXBuildFile; fileRef = A9ECD93D1E4A9BFB004037AE /* Post.m */; };
 		A9FC002E1D8CFB6000D4D707 /* VertexView.m in Sources */ = {isa = PBXBuildFile; fileRef = A9FC002D1D8CFB6000D4D707 /* VertexView.m */; };
 		A9FF38881DD4140400D2E98E /* loginScene.m in Sources */ = {isa = PBXBuildFile; fileRef = A9FF38871DD4140400D2E98E /* loginScene.m */; };
 		A9FF388B1DD415BB00D2E98E /* introScene.m in Sources */ = {isa = PBXBuildFile; fileRef = A9FF388A1DD415BB00D2E98E /* introScene.m */; };
@@ -50,6 +53,8 @@
 /* Begin PBXFileReference section */
 		376255EBBA14F201039D240C /* Pods-Trail-Mapping.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Trail-Mapping.release.xcconfig"; path = "Pods/Target Support Files/Pods-Trail-Mapping/Pods-Trail-Mapping.release.xcconfig"; sourceTree = "<group>"; };
 		8C9A40167163477C129C1B0A /* Pods-Trail-Mapping.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Trail-Mapping.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Trail-Mapping/Pods-Trail-Mapping.debug.xcconfig"; sourceTree = "<group>"; };
+		A9107DED1E4398F30039F5FE /* ErrorView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ErrorView.h; sourceTree = "<group>"; };
+		A9107DEE1E4398F30039F5FE /* ErrorView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ErrorView.m; sourceTree = "<group>"; };
 		A916A4A01DA7FF9300A7B104 /* SettingsTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingsTable.h; sourceTree = "<group>"; };
 		A916A4A11DA7FF9300A7B104 /* SettingsTable.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingsTable.m; sourceTree = "<group>"; };
 		A916A4A31DA8003700A7B104 /* SettingsTableCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SettingsTableCell.xib; sourceTree = "<group>"; };
@@ -85,8 +90,6 @@
 		A96757C41D921E8300331D86 /* CategoryCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CategoryCell.h; sourceTree = "<group>"; };
 		A96757C51D921E8300331D86 /* CategoryCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CategoryCell.m; sourceTree = "<group>"; };
 		A96757C91D922BEA00331D86 /* tableCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = tableCell.xib; sourceTree = "<group>"; };
-		A974BD761E1DAB200063E5C4 /* FeedPostDetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FeedPostDetailViewController.h; sourceTree = "<group>"; };
-		A974BD771E1DAB200063E5C4 /* FeedPostDetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FeedPostDetailViewController.m; sourceTree = "<group>"; };
 		A974BD791E1DB90E0063E5C4 /* FeedPost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FeedPost.h; sourceTree = "<group>"; };
 		A974BD7A1E2739880063E5C4 /* searchResultsTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = searchResultsTable.h; path = ../searchResultsTable.h; sourceTree = "<group>"; };
 		A974BD7B1E2739880063E5C4 /* searchResultsTable.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = searchResultsTable.m; path = ../searchResultsTable.m; sourceTree = "<group>"; };
@@ -103,6 +106,12 @@
 		A99005CF1D8A2ECF0074B688 /* Vertex.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Vertex.m; sourceTree = "<group>"; };
 		A9BBE43C1DB01616004FD193 /* FeedViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FeedViewController.h; sourceTree = "<group>"; };
 		A9BBE43D1DB01616004FD193 /* FeedViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FeedViewController.m; sourceTree = "<group>"; };
+		A9ECD9361E4982E3004037AE /* FeedPostDetail.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FeedPostDetail.h; sourceTree = "<group>"; };
+		A9ECD9371E4982E3004037AE /* FeedPostDetail.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FeedPostDetail.m; sourceTree = "<group>"; };
+		A9ECD9391E49848C004037AE /* Comment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Comment.h; path = ../Comment.h; sourceTree = "<group>"; };
+		A9ECD93A1E49848C004037AE /* Comment.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Comment.m; path = ../Comment.m; sourceTree = "<group>"; };
+		A9ECD93C1E4A9BFB004037AE /* Post.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Post.h; sourceTree = "<group>"; };
+		A9ECD93D1E4A9BFB004037AE /* Post.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Post.m; sourceTree = "<group>"; };
 		A9FC002C1D8CFB6000D4D707 /* VertexView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VertexView.h; sourceTree = "<group>"; };
 		A9FC002D1D8CFB6000D4D707 /* VertexView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VertexView.m; sourceTree = "<group>"; };
 		A9FF38861DD4140400D2E98E /* loginScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = loginScene.h; sourceTree = "<group>"; };
@@ -178,8 +187,8 @@
 				A9BBE43D1DB01616004FD193 /* FeedViewController.m */,
 				A974BD7A1E2739880063E5C4 /* searchResultsTable.h */,
 				A974BD7B1E2739880063E5C4 /* searchResultsTable.m */,
-				A974BD761E1DAB200063E5C4 /* FeedPostDetailViewController.h */,
-				A974BD771E1DAB200063E5C4 /* FeedPostDetailViewController.m */,
+				A9ECD9361E4982E3004037AE /* FeedPostDetail.h */,
+				A9ECD9371E4982E3004037AE /* FeedPostDetail.m */,
 				A9FF38911DE6036F00D2E98E /* ProfileViewController.h */,
 				A9FF38921DE6036F00D2E98E /* ProfileViewController.m */,
 				A99005CE1D8A2ECF0074B688 /* Vertex.h */,
@@ -208,9 +217,7 @@
 				A93DF42F1D73992F0028A997 /* LaunchScreen.storyboard */,
 				A93DF4321D73992F0028A997 /* Info.plist */,
 				A93DF4211D73992F0028A997 /* Supporting Files */,
-				A974BD791E1DB90E0063E5C4 /* FeedPost.h */,
-				A9FF388D1DE5F0E100D2E98E /* FeedPost.m */,
-				A9FF388E1DE5F0E100D2E98E /* FeedPost.xib */,
+				A9ECD93F1E4A9C1F004037AE /* Posts */,
 				A916A4A51DA8013300A7B104 /* SettingsCell.h */,
 				A916A4A61DA8013300A7B104 /* SettingsCell.m */,
 				A916A4A31DA8003700A7B104 /* SettingsTableCell.xib */,
@@ -220,6 +227,8 @@
 				A974BD801E2BE7670063E5C4 /* FriendsViewCell.h */,
 				A974BD811E2BE7670063E5C4 /* FriendsViewCell.m */,
 				A974BD821E2BE7670063E5C4 /* FriendsViewCell.xib */,
+				A9107DED1E4398F30039F5FE /* ErrorView.h */,
+				A9107DEE1E4398F30039F5FE /* ErrorView.m */,
 			);
 			path = "Trail-Mapping";
 			sourceTree = "<group>";
@@ -242,6 +251,20 @@
 				DF30851544A5D023206909D9 /* libPods-Trail-Mapping.a */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		A9ECD93F1E4A9C1F004037AE /* Posts */ = {
+			isa = PBXGroup;
+			children = (
+				A9ECD93C1E4A9BFB004037AE /* Post.h */,
+				A9ECD93D1E4A9BFB004037AE /* Post.m */,
+				A974BD791E1DB90E0063E5C4 /* FeedPost.h */,
+				A9FF388D1DE5F0E100D2E98E /* FeedPost.m */,
+				A9FF388E1DE5F0E100D2E98E /* FeedPost.xib */,
+				A9ECD9391E49848C004037AE /* Comment.h */,
+				A9ECD93A1E49848C004037AE /* Comment.m */,
+			);
+			name = Posts;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -381,6 +404,7 @@
 				A916A4B01DA847C900A7B104 /* User.m in Sources */,
 				A96757C11D921CD300331D86 /* categoryView.m in Sources */,
 				A9FF388B1DD415BB00D2E98E /* introScene.m in Sources */,
+				A9ECD93B1E49848C004037AE /* Comment.m in Sources */,
 				A93DF4261D73992F0028A997 /* AppDelegate.m in Sources */,
 				A93DF4521D7658580028A997 /* trailOverviewController.m in Sources */,
 				A916A4A21DA7FF9400A7B104 /* SettingsTable.m in Sources */,
@@ -391,12 +415,14 @@
 				A974BD7C1E2739880063E5C4 /* searchResultsTable.m in Sources */,
 				A9FC002E1D8CFB6000D4D707 /* VertexView.m in Sources */,
 				A916A4AD1DA83E4B00A7B104 /* RegisterScene.m in Sources */,
-				A974BD781E1DAB200063E5C4 /* FeedPostDetailViewController.m in Sources */,
+				A9ECD9381E4982E3004037AE /* FeedPostDetail.m in Sources */,
 				A93DF4231D73992F0028A997 /* main.m in Sources */,
 				A9BBE43E1DB01616004FD193 /* FeedViewController.m in Sources */,
 				A9FF38881DD4140400D2E98E /* loginScene.m in Sources */,
 				A974BD7F1E2BE4950063E5C4 /* FriendsView.m in Sources */,
 				A93DF44F1D7521120028A997 /* overviewController.m in Sources */,
+				A9107DEF1E4398F30039F5FE /* ErrorView.m in Sources */,
+				A9ECD93E1E4A9BFB004037AE /* Post.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

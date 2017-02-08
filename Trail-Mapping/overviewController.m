@@ -30,7 +30,6 @@
     
     MKCoordinateRegion region = MKCoordinateRegionMakeWithDistance(locationManager.location.coordinate, 800, 800);
     [self.mapView setRegion:[self.mapView regionThatFits:region] animated:YES];
-    // Do any additional setup after loading the view, typically from a nib.
 
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTap:)];
     [self.mapView addGestureRecognizer:tap];
@@ -55,13 +54,6 @@
         UIViewController *registerScene = [self.storyboard instantiateViewControllerWithIdentifier:@"introScene"];
         [self.navigationController pushViewController:registerScene animated:YES]; //presentViewController:registerScene animated:NO completion:nil];
     }
-    /*
-    if (name == nil || [name isEqualToString:@""]) {
-        self.definesPresentationContext = YES;
-        UIViewController *registerScene = [self.storyboard instantiateViewControllerWithIdentifier:@"introScene"];
-        [self presentViewController:registerScene animated:NO completion:nil];
-    }
-     */
 }
 
 - (void)didReceiveMemoryWarning {
@@ -164,13 +156,8 @@
         }
         
         if (nearestDistance <= maxMeters) {
-            //NSLog(@"Touched poly: %@ distance: %f", nearestPoly.created, nearestDistance);
-            //NSLog(@"touched: %@", nearestPoly.categories);
-            //MKMapPoint middlePoint = nearestPoly.points[nearestPoly.pointCount/2];
-            //[self createAndAddAnnotationForCoordinate:MKCoordinateForMapPoint(middlePoint)title:nearestPoly.userID subtitle:nearestPoly.categories];
-            
             id block = ^{
-                NSURL* url = [NSURL URLWithString:[@"https://secure-garden-50529.herokuapp.com/user/search/id/" stringByAppendingString:[nearestPoly.submittedUser valueForKey:@"_id"]]];
+                NSURL* url = [NSURL URLWithString:[@"https://secure-garden-50529.herokuapp.com/user/search/id/" stringByAppendingString:[[nearestPoly submittedUser] valueForKey:@"_id"]]];
                 NSMutableURLRequest* request = [NSMutableURLRequest requestWithURL:url cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:20.f];
                 request.HTTPMethod = @"GET";
                 [request addValue:@"no-cache" forHTTPHeaderField:@"cache-control"];
@@ -178,19 +165,25 @@
                 [request addValue:@"application/json" forHTTPHeaderField:@"Accept"];
                 NSURLSessionConfiguration* config = [NSURLSessionConfiguration defaultSessionConfiguration];
                 NSURLSession* session = [NSURLSession sessionWithConfiguration:config];
-                
                 NSURLSessionDataTask* dataTask = [session dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
-                    if (error == nil) {
-                        dispatch_async(dispatch_get_main_queue(), ^{
-                            NSDictionary* dict = [NSJSONSerialization JSONObjectWithData:data options:0 error:NULL];
-                            FeedPostDetailViewController *vc = [[UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]] instantiateViewControllerWithIdentifier:@"FeedPostDetailViewController"];
-                            NSMutableArray *coordGeom = [[NSMutableArray alloc] init];
-                            vc.dict = [[NSMutableDictionary alloc] initWithDictionary:[nearestPoly toDictionary]];
-                            [vc.dict setValue:dict forKey:@"submittedUser"];
-                            vc.path = nearestPoly;
-                            [self.navigationController pushViewController:vc animated:YES];
-                        });
-                    }
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        if (error == nil) {
+                            NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *) response;
+                            if ([httpResponse statusCode] == 200) {
+                                NSDictionary* dict = [NSJSONSerialization JSONObjectWithData:data options:0 error:NULL];
+                                FeedPostDetail *vc = [[UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]] instantiateViewControllerWithIdentifier:@"FeedPostDetailViewController"];
+                                //NSMutableArray *coordGeom = [[NSMutableArray alloc] init];
+                                vc.dict = [[NSMutableDictionary alloc] initWithDictionary:[nearestPoly toDictionary]];
+                                [vc.dict setValue:dict forKey:@"submittedUser"];
+                                vc.path = nearestPoly;
+                                [self.navigationController pushViewController:vc animated:YES];
+                            } else {
+                               [self showErrorMessage:[NSHTTPURLResponse localizedStringForStatusCode: [httpResponse statusCode]]];
+                            }
+                        } else {
+                            [self showErrorMessage:[error localizedDescription]];
+                        }
+                    });
                 }];
                 [dataTask resume];
             };
@@ -202,28 +195,19 @@
 }
 
 -(void) createAndAddAnnotationForCoordinate : (CLLocationCoordinate2D) coordinate title: (NSNumber *)title subtitle: (NSMutableArray *)subtitle{
-    //VertexView *annoView = [[Vertexview alloc] initWithAnnotation:anno reuseIdentifier:nil];
-    
     MKPointAnnotation* annotation= [[MKPointAnnotation alloc] init];
     annotation.coordinate = coordinate;
     NSString *newTitle = [title stringValue];
     NSString *newSub = [subtitle description];
     annotation.title = newTitle;
     annotation.subtitle = newSub;
-    
     [_mapView addAnnotation: annotation];
-    
 }
 
 
 #pragma mark - Model
 - (void)modelUpdated
 {
-    NSLog(@"Updating Model...");
-    //[self.mapView addAnnotations:self.annotationArray];
-    //for (id anno in self.annotationArray){
-    //[self.locations addLocation:anno];
-    //}
     [self refreshAnnotations];
 }
 - (Paths*) paths
@@ -236,14 +220,11 @@
 {
     dispatch_async(dispatch_get_main_queue(), ^{
         NSArray *enumerate = [self.mapView.overlays copy];
-        //for (id<MKOverlay> overlay in self.mapView.overlays){
         for (id<MKOverlay> overlay in enumerate){
             [self.mapView removeOverlay:overlay];
         }
-        //for (id<MKOverlay> a in self.paths.filteredLocations) {
         NSArray *locations = [self.paths.filteredLocations copy];
         for (id<MKOverlay> a in locations) {
-            
             [self.mapView addOverlay:a];
         }
     });
@@ -270,5 +251,19 @@
     return self.tabBarController.tabBar.frame.origin.y < CGRectGetMaxY(self.view.frame);
 }
 
+-(void) showErrorMessage: (NSString *) message {
+    ErrorView *errorView = [[ErrorView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 0)];
+    [self.view addSubview:errorView];
+    [UIView animateWithDuration:.5 delay:0.0 options:UIViewAnimationOptionCurveEaseIn animations:^{
+        errorView.frame  = CGRectMake(0, 0, self.view.frame.size.width, 50);
+    } completion:^(BOOL finished) {
+        [UIView animateWithDuration:.5 delay:2.0 options:UIViewAnimationOptionCurveEaseIn animations:^{
+            errorView.frame  = CGRectMake(0, 0, self.view.frame.size.width, 0);
+            
+        } completion:^(BOOL finished) {
+            [errorView removeFromSuperview];
+        }];
+    }];
+}
 
 @end

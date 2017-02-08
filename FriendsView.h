@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "User.h"
 #import "FriendsViewCell.h"
+#import "AppDelegate.h"
 
 @interface FriendsView : UIView <UITableViewDelegate, UITableViewDataSource>
 

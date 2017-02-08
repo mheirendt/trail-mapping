@@ -5,13 +5,16 @@
 //  Created by Michael Heirendt on 11/23/16.
 //  Copyright © 2016 Michael Heirendt. All rights reserved.
 //
+#import "AppDelegate.h"
 #import "FeedViewController.h"
 #import <UIKit/UIKit.h>
 #import "ProfileViewController.h"
-#import "FeedPostDetailViewController.h"
+#import "FeedPostDetail.h"
 #import "User.h"
 #import "Path.h"
+#import "Comment.h"
 //TODO
+@class Comment;
 @class FeedViewController;
 
 @interface FeedPost : UIView <UIGestureRecognizerDelegate>
@@ -22,6 +25,7 @@
 @property (strong, retain) IBOutlet UIImageView *avatar;
 @property (strong, retain) IBOutlet UILabel *username;
 @property (strong, retain) IBOutlet UILabel *bodyText;
+@property (weak, nonatomic) IBOutlet UIImageView *likeIcon;
 @property (strong, retain) IBOutlet UIButton *likeButton;
 @property (strong, retain) IBOutlet UIButton *commentButton;
 @property (strong, retain) IBOutlet UILabel *likesLabel;
@@ -40,35 +44,35 @@
 @property (retain, strong) NSDictionary* reference;
 @property (retain, strong) NSString* body;
 @property (retain, strong) NSMutableArray* likes;
-@property (retain, strong) NSMutableArray* comments;
+@property (retain, strong) NSString* comments;
 @property (retain, strong) NSDate* created;
 
 @property (retain, strong) Path *path;
 
 - (void)setupProfilePic:(NSString *)urlStr;
 -(void) setDictionary:(NSDictionary *)dictionary;
+-(bool) checkLikes;
 - (NSDictionary*) toDictionary;
 - (void) persist:(FeedPost*)post;
 -(void) viewProfile;
+-(void) postLikeFor: (NSString *) postId type: (NSNumber *)type typeId: (NSString *) typeId;
+-(void) postCommentFor: (NSString *) postId body: (NSString *) body type: (NSNumber *)type comment: (Comment *) comment;
 
--(void) submitComment:(NSString *) body;
+@end
+
+@interface TrailPost : FeedPost
 
 @end
 
-@interface Comment : UIView
-
-@property (strong, retain) NSDictionary *comment;
-
-@property (strong, retain) UIImageView *avatar;
-@property (strong, retain) UILabel *username;
-@property (strong, retain) UILabel *body;
-@property (strong, retain) UILabel *created;
-@property (strong, retain) UIImageView *likeIcon;
-@property (strong, retain) UILabel *likesLabel;
-@property (strong, retain) UIImageView *repliesIcon;
-@property (strong, retain) UILabel *repliesLabel;
-
-
-
+@interface AnnotationPost : FeedPost
 
 @end
+
+@interface GenericPost : FeedPost
+
+@end
+
+@interface PhotoPost : FeedPost
+
+@end
+

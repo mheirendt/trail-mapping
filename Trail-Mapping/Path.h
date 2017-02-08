@@ -14,6 +14,7 @@
 
 @property (nonatomic, strong) NSString* _id;
 @property (nonatomic, strong) NSDictionary *submittedUser;
+//@property (nonatomic, strong) NSDictionary *user;
 @property (nonatomic, strong) NSDictionary* reference;
 @property (nonatomic, strong) NSMutableArray* categories;
 @property (nonatomic, strong) NSMutableArray* tags;
@@ -35,13 +36,12 @@
 
 
 #pragma mark - Location
-- (User *) submittedUser;
 - (NSMutableArray *) categories;
 - (NSMutableArray *) tags;
 //- (NSMutableArray *) coordinates;
 - (void) setLatitude:(CLLocationDegrees)latitude longitude:(CLLocationDegrees)longitude;
 - (void) setGeoJSON:(id)geoPoint;
-- (void) setCoordinate:(CLLocationCoordinate2D)newCoordinate;
+- (void) setCoordinateTo:(CLLocationCoordinate2D)newCoordinate;
 + (Path *) initWithPolyline: (MKPolyline *) line;
 
 #pragma mark - MKOverlay

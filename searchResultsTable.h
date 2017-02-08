@@ -17,4 +17,6 @@
 @property (strong, nonatomic) NSMutableArray* results;
 @property bool followingFlag;
 
+-(void) showFollowing;
+
 @end

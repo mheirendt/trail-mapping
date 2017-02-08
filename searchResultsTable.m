@@ -24,6 +24,22 @@
     [self.tableView setNeedsDisplay];
 }
 
+-(void)showFollowing {
+    for (NSInteger i = 0; i < [self.tableView numberOfRowsInSection:0]; ++i)
+    {
+        FriendsViewCell *cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:i inSection:0]];
+        NSString *cellUserId = cell.user._id;
+        AppDelegate *del = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+        for (int s = 0; s < [del.activeUser.following count]; s++) {
+            NSString *followingId = [del.activeUser.following[s] objectForKey:@"_id"];
+            if ([followingId isEqualToString:cellUserId]) {
+                cell.followingLabel.text = @"Following";
+                [cell.followingView.layer setBackgroundColor:[UIColor colorWithRed:.0706 green:.3137 blue:.3137 alpha:1.f].CGColor];
+            }
+        }
+    }
+}
+
 #pragma mark - Table view data source
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     return 1;
@@ -46,20 +62,11 @@
         cell = [tableView dequeueReusableCellWithIdentifier:@"CellIdentifier"];
     }
     UITapGestureRecognizer *follow = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(follow:)];
-    [cell.followView addGestureRecognizer:follow];
+    [cell.followingView addGestureRecognizer:follow];
     User* user = [[User alloc] initWithDictionary:[_results objectAtIndex:indexPath.row]];
-    for (int i = 1; i < [user.followers count]; i++) {
-        NSDictionary *currentUser = user.followers[i];
-        if ([[currentUser valueForKey:@"username" ] isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:@"username"]]) {
-            [cell.followingView setHidden:NO];
-            [cell.followView setHidden:YES];
-        } else {
-            [cell.followingView setHidden:YES];
-            [cell.followView setHidden:NO];
-        }
-    }
+    cell.user = user;
     cell.usernameLabel.text = user.username;
-    
+
     if (user.avatar) {
         dispatch_async(dispatch_get_global_queue(0,0), ^{
             NSString *urlStr = [@"https://secure-garden-50529.herokuapp.com/upload/" stringByAppendingString:user.avatar];
@@ -72,11 +79,12 @@
         });
     }
     
+    
     return cell;
 }
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    User *user = [[User alloc] initWithDictionary:[_results objectAtIndex:indexPath.row]];    
+    User *user = [[User alloc] initWithDictionary:[_results objectAtIndex:indexPath.row]];
     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     ProfileViewController *vc = [storyboard instantiateViewControllerWithIdentifier:@"profile"];
     vc.user = user;
@@ -110,6 +118,7 @@
                     _results = [[NSMutableArray alloc] initWithArray:arr];
                     [self.tableView reloadData];
                     [self.tableView setNeedsDisplay];
+                    [self showFollowing];
                 });
             }
         }];
@@ -123,27 +132,41 @@
 }
 
 - (void)follow:(UITapGestureRecognizer *) recognizer {
-    NSLog(@"follow");
     CGPoint point = [recognizer locationInView:self.tableView];
     NSIndexPath* indexPath = [self.tableView indexPathForRowAtPoint:point];
     FriendsViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
-    NSString *username = cell.usernameLabel.text;
-    
+    //NSString *username = cell.usernameLabel.text;
+    NSString *userId = cell.user._id;
     id block = ^{
-        NSURL* url = [NSURL URLWithString:@"https://secure-garden-50529.herokuapp.com/user/follow/username"];
+        NSURL* url;
+        if ([cell.followingLabel.text isEqualToString:@"Follow"]) {
+            url = [NSURL URLWithString:@"https://secure-garden-50529.herokuapp.com/user/follow/userId"];
+        } else {
+            url = [NSURL URLWithString:@"https://secure-garden-50529.herokuapp.com/user/unfollow/userId"];
+        }
         NSMutableURLRequest* request = [NSMutableURLRequest requestWithURL:url cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:10.f];
         request.HTTPMethod = @"POST";
         [request addValue:@"no-cache" forHTTPHeaderField:@"cache-control"];
         [request addValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
         [request addValue:@"application/json" forHTTPHeaderField:@"Accept"];
-        NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:username, @"username", nil];
+        NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:userId, @"userId", nil];
         NSData* data = [NSJSONSerialization dataWithJSONObject:dict options:0 error:NULL];
         request.HTTPBody = data;
         NSURLSessionConfiguration* config = [NSURLSessionConfiguration defaultSessionConfiguration];
         NSURLSession* session = [NSURLSession sessionWithConfiguration:config];
         NSURLSessionDataTask* dataTask = [session dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
             dispatch_async(dispatch_get_main_queue(), ^{
+                NSDictionary* dict = [NSJSONSerialization JSONObjectWithData:data options:0 error:NULL];
+                AppDelegate *del = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+                del.activeUser = [[User alloc] initWithDictionary:dict];
                 [[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:@"searchControllerRefresh" object:nil]];
+                if ([cell.followingLabel.text isEqualToString:@"Following"]) {
+                    [cell.followingView.layer setBackgroundColor:[UIColor lightGrayColor].CGColor];
+                    cell.followingLabel.text = @"Follow";
+                } else {
+                    [cell.followingView.layer setBackgroundColor:[UIColor colorWithRed:.0706 green:.3137 blue:.3137 alpha:1.f].CGColor];
+                    cell.followingLabel.text = @"Following";
+                }
             });
         }];
         [dataTask resume];

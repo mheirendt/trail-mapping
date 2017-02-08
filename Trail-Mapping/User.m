@@ -25,8 +25,6 @@
 {
     self = [super init];
     if (self) {
-        NSArray * arr = [dictionary allKeys];
-        NSLog(@"dict: %@", arr);
         __id = dictionary[@"_id"];
         _email = dictionary[@"email"];
         _username = dictionary[@"username"];
@@ -56,26 +54,30 @@
 
 - (void) persist:(User*)user
 {
-    
-    NSString* users = @"https://secure-garden-50529.herokuapp.com/local-reg";
-    NSURL* url = [NSURL URLWithString:users];
-    NSDictionary *dictionary = [user toDictionary];
-    NSMutableURLRequest* request = [NSMutableURLRequest requestWithURL:url];
-    request.HTTPMethod = @"POST";
-    NSData* data = [NSJSONSerialization dataWithJSONObject:dictionary options:0 error:NULL];
-    request.HTTPBody = data;
-    
-    [request addValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
-    
-    NSURLSessionConfiguration* config = [NSURLSessionConfiguration defaultSessionConfiguration];
-    NSURLSession* session = [NSURLSession sessionWithConfiguration:config];
-    NSURLSessionDataTask* dataTask = [session dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
-        if (!error) {
-            NSLog(@"Posted");
-        } else{
-            NSLog(@"Error: %@", error.localizedDescription);
-        }
-    }];
-    [dataTask resume];
+    id block = ^{
+        NSString* users = @"https://secure-garden-50529.herokuapp.com/local-reg";
+        NSURL* url = [NSURL URLWithString:users];
+        NSDictionary *dictionary = [user toDictionary];
+        NSMutableURLRequest* request = [NSMutableURLRequest requestWithURL:url];
+        request.HTTPMethod = @"POST";
+        NSData* data = [NSJSONSerialization dataWithJSONObject:dictionary options:0 error:NULL];
+        request.HTTPBody = data;
+        
+        [request addValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+        
+        NSURLSessionConfiguration* config = [NSURLSessionConfiguration defaultSessionConfiguration];
+        NSURLSession* session = [NSURLSession sessionWithConfiguration:config];
+        NSURLSessionDataTask* dataTask = [session dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+            if (!error) {
+                
+            } else{
+                
+            }
+        }];
+        [dataTask resume];
+    };
+    //Create a Grand Central Dispatch queue and run the operation async
+    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+    dispatch_async(queue, block);
 }
 @end

@@ -39,6 +39,7 @@ Vertex *deletedVertex;
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(categoryDeselected) name:@"Deselection" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(subviewDisplayed) name:@"ViewDisplayed" object:nil];
 }
+
 -(void)viewDidAppear:(BOOL)animated{
     UILabel *attributionLabel = [self.mapView.subviews objectAtIndex:1];
     attributionLabel.center = CGPointMake(345, 60);
@@ -608,9 +609,7 @@ Vertex *deletedVertex;
         AppDelegate *del;
         del = (AppDelegate *)[[UIApplication sharedApplication] delegate];
         del.submittedPath = self.result;
-        NSLog(@"pre del: %@", self.vertices);
         del.submittedPath.geometry = del.trails;
-        NSLog(@"Before trans: %@", del.submittedPath.geometry);
         for (id<MKOverlay> overlay in self.mapView.overlays){
             [self.mapView removeOverlay:overlay];
         }
@@ -842,5 +841,6 @@ completion:^(BOOL finished){
     self.submissionView.frame = CGRectNull;
     self.submissionView = nil;
 }
+
 
 @end

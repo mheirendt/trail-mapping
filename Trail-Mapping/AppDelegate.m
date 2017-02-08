@@ -66,6 +66,31 @@
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
 }
 
+-(void)updateActiveUser {
+    id block = ^{
+        NSURL* url = [NSURL URLWithString:@"https://secure-garden-50529.herokuapp.com/user/profile"];
+        NSMutableURLRequest* request = [NSMutableURLRequest requestWithURL:url cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:10.f];
+        request.HTTPMethod = @"GET";
+        [request addValue:@"no-cache" forHTTPHeaderField:@"cache-control"];
+        [request addValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+        [request addValue:@"application/json" forHTTPHeaderField:@"Accept"];
+        NSURLSessionConfiguration* config = [NSURLSessionConfiguration defaultSessionConfiguration];
+        NSURLSession* session = [NSURLSession sessionWithConfiguration:config];
+        NSURLSessionDataTask* dataTask = [session dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *res, NSError *error) {
+            //Completion block
+            dispatch_async(dispatch_get_main_queue(), ^{
+                NSDictionary* dict = [NSJSONSerialization JSONObjectWithData:data options:0 error:NULL];
+                self.activeUser = [[User alloc] initWithDictionary:dict];
+            });
+            
+        }];
+        [dataTask resume];
+    };
+    //Create a Grand Central Dispatch queue and run the operation async
+    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+    dispatch_async(queue, block);
+}
+
 -(void)activateUser{
     NSString *username = [[NSUserDefaults standardUserDefaults] objectForKey:@"username"];
     NSString *password = [[NSUserDefaults standardUserDefaults] objectForKey:@"password"];

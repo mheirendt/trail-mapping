@@ -56,7 +56,7 @@
     return arr;
 }
  */
-- (void)setCoordinate:(CLLocationCoordinate2D)newCoordinate
+- (void)setCoordinateTo:(CLLocationCoordinate2D)newCoordinate
 {
     [self setLatitude:newCoordinate.latitude longitude:newCoordinate.longitude];
 }
@@ -107,8 +107,6 @@
 {
     self = [super init];
     if (self) {
-        NSArray * arr = [dictionary allKeys];
-        NSLog(@"dict: %@", arr);
         __id = dictionary[@"_id"];
         _submittedUser = dictionary[@"submittedUser"];
         _reference = dictionary[@"reference"];
@@ -119,13 +117,9 @@
         
         CLLocationCoordinate2D coordinates[_geometry.count];
         for (NSInteger index = 0; index < _geometry.count; index++){
-            //Vertex *vertex = [p.vertices objectAtIndex:index];
-            //
             NSArray *arr = [_geometry objectAtIndex:index];
             NSNumber *longitude = [arr objectAtIndex:0];
             NSNumber *latitude = [arr objectAtIndex:1];
-            
-            //NSLog(@"arr: %@, %@", longitude, latitude);
             CLLocation *location = [[CLLocation alloc] initWithLatitude:latitude.doubleValue longitude:longitude.doubleValue];
             CLLocationCoordinate2D coord = location.coordinate;
             coordinates[index] = coord;

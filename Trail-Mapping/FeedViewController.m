@@ -33,46 +33,29 @@
     self.definesPresentationContext = true;
     self.navigationItem.titleView = _searchController.searchBar;
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(refreshSearchController) name:@"searchControllerRefresh" object:nil];
+    [self updateFeed:_refreshControl];
+    self.posts = [[NSMutableArray alloc] init];
 
 }
--(void)viewDidAppear:(BOOL)animated {
+/*-(void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     [self updateFeed:_refreshControl];
-}
+}*/
 -(void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(dismissFriendsView:) name:@"friendsViewDismissed" object:nil];
     [self updateFeed:_refreshControl];
+    //[self updateFeed:_refreshControl];
 }
-- (void) stretchToSuperView:(UIView*) view {
-    /*view.translatesAutoresizingMaskIntoConstraints = NO;
-    NSDictionary *bindings = NSDictionaryOfVariableBindings(view);
-    NSString *formatTemplate = @"%@:|[view]|";
-    for (NSString * axis in @[@"V"]) {
-        NSString * format = [NSString stringWithFormat:formatTemplate,axis];
-        NSArray * constraints = [NSLayoutConstraint constraintsWithVisualFormat:format options:0 metrics:nil views:bindings];
-        [view.superview.superview addConstraints:constraints];
-    }*/
-    //view.superview.superview.translatesAutoresizingMaskIntoConstraints = NO;
-    //view.superview.translatesAutoresizingMaskIntoConstraints = NO;
-    //view.translatesAutoresizingMaskIntoConstraints = NO;
-    
-    /*NSDictionary *views = @{
-                            @"subview":view,
-                            @"parent":self.scrollView
-                            };*/
-    //[self.scrollView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-0-[parent]-0-|" options:0 metrics:nil views:views]];
-    //[self.scrollView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|[subview]|" options:0 metrics:nil views:views]];
-    //[self.scrollView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:[subview(==parent)]" options:0 metrics:nil views:views]];
-    
-}
+
+#pragma mark - Feed Control
 
 -(void)updateFeed:(UIRefreshControl *)refreshControl {
     refreshControl.attributedTitle = [[NSAttributedString alloc] initWithString:@"Updating feed..."];
     [refreshControl beginRefreshing];
     id block = ^{
         [refreshControl beginRefreshing];
-        self.posts = [[NSMutableArray alloc] init];
-        NSURL* url = [NSURL URLWithString:@"https://secure-garden-50529.herokuapp.com/posts"];
+        NSURL* url = [NSURL URLWithString:@"https://secure-garden-50529.herokuapp.com/posts/0"];
         NSMutableURLRequest* request = [NSMutableURLRequest requestWithURL:url cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:10.f];
         request.HTTPMethod = @"GET";
         [request addValue:@"no-cache" forHTTPHeaderField:@"cache-control"];
@@ -82,36 +65,48 @@
         NSURLSession* session = [NSURLSession sessionWithConfiguration:config];
         NSURLSessionDataTask* dataTask = [session dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
             if (error == nil) {
-                NSMutableArray* responseArray = [NSJSONSerialization JSONObjectWithData:data options:0 error:NULL];
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    for (int i = 0; i < responseArray.count; i++) {
-                        FeedPost *currentPost = [[FeedPost alloc] initWithFrame:CGRectMake(0, self.refreshControl.frame.size.height, self.scrollView.frame.size.width, 300)];
-                        [currentPost setDictionary:[responseArray objectAtIndex:i]];
-                        User *user = [[User alloc] initWithDictionary:currentPost.submittedUser];
-                        [currentPost setupProfilePic:user.avatar];
-                        currentPost.parent = self;
-                        CGFloat yOrigin = i * 330;
-                        [currentPost setFrame:CGRectMake(0, yOrigin, self.view.frame.size.width,  300)];
-                        [self.posts addObject:currentPost];
-                        [self.scrollView addSubview:currentPost];
-                        [self stretchToSuperView:currentPost];
+                    NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *) response;
+                    if ([httpResponse statusCode] == 200) {
+                        [_scrollView.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
+                        [_scrollView addSubview:_refreshControl];
+                        NSArray *arr = [NSJSONSerialization JSONObjectWithData:data options:0 error:NULL];
+                        if (!([arr count] == 0)) {
+                            NSDictionary* dict = [NSJSONSerialization JSONObjectWithData:data options:0 error:NULL];
+                            NSMutableArray *responseArray = [dict objectForKey:@"posts"];
+                            _lastSeen = [dict objectForKey:@"lastSeen"];
+                            _posts = [NSMutableArray array];
+                            for (int i = 0; i < responseArray.count; i++) {
+                                //self.refreshControl.frame.size.height
+                                FeedPost *currentPost = [[FeedPost alloc] initWithFrame:CGRectMake(0, 0, self.scrollView.frame.size.width, 310)];
+                                [currentPost setDictionary:[responseArray objectAtIndex:i]];
+                                [currentPost checkLikes];
+                                User *user = [[User alloc] initWithDictionary:currentPost.submittedUser];
+                                [currentPost setupProfilePic:user.avatar];
+                                currentPost.parent = self;
+                                CGFloat yOrigin = i * 330;
+                                [currentPost setFrame:CGRectMake(0, yOrigin, self.view.frame.size.width,  310)];
+                                [self.posts addObject:currentPost];
+                                [self.scrollView addSubview:currentPost];
+                            }
+                            self.scrollView.contentInset = UIEdgeInsetsMake(0, 0, -10, -10);
+                            [self.view setNeedsDisplay];
+                            [self.scrollView setNeedsDisplay];
+                            //UIRefreshController interface
+                            NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+                            [formatter setDateFormat:@"MMM d, h:mm a"];
+                            NSString *lastUpdate = [NSString stringWithFormat:@"Last updated on %@", [formatter stringFromDate:[NSDate date]]];
+                            refreshControl.attributedTitle = [[NSAttributedString alloc] initWithString:lastUpdate];
+                            [refreshControl endRefreshing];
+                            [_scrollView setContentInset:UIEdgeInsetsZero];
+                            [self.scrollView setContentSize:CGSizeMake(self.scrollView.frame.size.width, 330 * self.posts.count)];
+                        }
+                    } else {
+                        [self showErrorMessage:[NSHTTPURLResponse localizedStringForStatusCode: [httpResponse statusCode]]];
                     }
-                    self.scrollView.contentInset = UIEdgeInsetsMake(0, 0, -10, -10);
-                    [self.scrollView setContentSize:CGSizeMake(self.scrollView.frame.size.width, 330 * self.posts.count)];
-                    [self.view setNeedsDisplay];
-                    [self.scrollView setNeedsDisplay];
-                    //UIRefreshController interface
-                    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-                    [formatter setDateFormat:@"MMM d, h:mm a"];
-                    NSString *lastUpdate = [NSString stringWithFormat:@"Last updated on %@", [formatter stringFromDate:[NSDate date]]];
-                    refreshControl.attributedTitle = [[NSAttributedString alloc] initWithString:lastUpdate];
-                    //[refreshControl endRefreshing];
-                    [refreshControl endRefreshing];
-                    [_scrollView setContentInset:UIEdgeInsetsZero];
                 });
-
             }else{
-                NSLog(@"Error: %@", [error localizedDescription]);
+                [self showErrorMessage:[error localizedDescription]];
             }
         }];
         [dataTask resume];
@@ -119,9 +114,7 @@
     //Create a Grand Central Dispatch queue and run the operation async
     dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
     dispatch_async(queue, block);
-    
 }
-
 
 - (IBAction)signOut:(id)sender {
     //TODO: post to appURL/logout to register with server
@@ -138,8 +131,7 @@
             //Completion block
             dispatch_async(dispatch_get_main_queue(), ^{
                 if (error == nil) {
-                    NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *) res;
-                    NSLog(@"response status code: %lu", (long)[httpResponse statusCode]);
+                    //NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *) res;
                     //if ([httpResponse statusCode] == 200) {
                     [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"username"];
                     [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"password"];
@@ -151,7 +143,7 @@
                     //user has not been verified
                     //};
                 } else {
-                    NSLog(@"Something went wrong: %@", [error localizedDescription]);
+                    [self showErrorMessage:[error localizedDescription]];
                     //if ([httpResponse statusCode] == 200) {
                     [[NSUserDefaults standardUserDefaults] setObject:@"signin" forKey:@"signin"];
                     [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"username"];
@@ -178,31 +170,35 @@
     NSURLSession* session = [NSURLSession sessionWithConfiguration:config];
     NSURLSessionDataTask* dataTask = [session dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *res, NSError *error) {
         if (error){
-            NSLog(@"error: %@", [error localizedDescription]);
+            [self showErrorMessage:[error localizedDescription]];
         } else {
-            UIImage *image = [UIImage imageNamed:@"Bike"];
-            NSDictionary* dict = [NSJSONSerialization JSONObjectWithData:data options:0 error:NULL];
-            NSString* username = [dict objectForKey:@"username"];
-            NSString* imgURLstr;
-            if ([dict objectForKey:@"avatar"]){
-                imgURLstr = [dict objectForKey:@"avatar"];
+            NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *) res;
+            if ([httpResponse statusCode] == 200) {
+                UIImage *image = [UIImage imageNamed:@"Bike"];
+                NSDictionary* dict = [NSJSONSerialization JSONObjectWithData:data options:0 error:NULL];
+                NSString* username = [dict objectForKey:@"username"];
+                NSString* imgURLstr;
+                if ([dict objectForKey:@"avatar"]){
+                    imgURLstr = [dict objectForKey:@"avatar"];
+                }
+                NSMutableArray* followers = [[NSMutableArray alloc] initWithArray:[dict objectForKey:@"followers"]];
+                NSMutableArray* following = [[NSMutableArray alloc] initWithArray:[dict objectForKey:@"following"]];
+                int followersCount = (int)[followers count];
+                int followingCount = (int)[following count];
+            
+                UIImageView *profilePic = [[UIImageView alloc] initWithImage:image];
+                ProfileViewController *vc = [[UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]] instantiateViewControllerWithIdentifier:@"profile"];
+                vc.username.text = username;
+                vc.avatar = profilePic;
+                vc.followers.text = [NSString stringWithFormat:@"%d", followersCount];
+                vc.following.text = [NSString stringWithFormat:@"%d", followingCount];
+                vc.peopleFollowers = followers;
+                vc.peopleFollowing = following;
+                self.navigationController.definesPresentationContext= YES;
+                [self.navigationController pushViewController:vc animated:YES];
+            } else {
+                [self showErrorMessage:[NSHTTPURLResponse localizedStringForStatusCode: [httpResponse statusCode]]];
             }
-            NSMutableArray* followers = [[NSMutableArray alloc] initWithArray:[dict objectForKey:@"followers"]];
-            NSMutableArray* following = [[NSMutableArray alloc] initWithArray:[dict objectForKey:@"following"]];
-            int followersCount = (int)[followers count];
-            int followingCount = (int)[following count];
-            
-            UIImageView *profilePic = [[UIImageView alloc] initWithImage:image];
-            
-            ProfileViewController *vc = [[UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]] instantiateViewControllerWithIdentifier:@"profile"];
-            vc.username.text = username;
-            vc.avatar = profilePic;
-            vc.followers.text = [NSString stringWithFormat:@"%d", followersCount];
-            vc.following.text = [NSString stringWithFormat:@"%d", followingCount];
-            vc.peopleFollowers = followers;
-            vc.peopleFollowing = following;
-            self.navigationController.definesPresentationContext= YES;
-            [self.navigationController pushViewController:vc animated:YES];
         }
     }];
     [dataTask resume];
@@ -213,17 +209,137 @@
     [table searchBarSearchButtonClicked:self.searchController.searchBar];
 }
 
--(void)viewPostDetail:(FeedPost *)post {
-    FeedPostDetailViewController *vc = [[UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]] instantiateViewControllerWithIdentifier:@"FeedPostDetailViewController"];
-    //vc.feedPost = post;
-    vc.dict = [post toDictionary];
+-(void)viewPostDetail:(FeedPost *)post isCommenting:(bool)commenting {
+    FeedPostDetail *vc = [[UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]] instantiateViewControllerWithIdentifier:@"FeedPostDetailViewController"];
+    vc.post = post;
+    vc.dict = (NSMutableDictionary *)[post toDictionary];
+    if (commenting) {
+        vc.isCommenting = YES;
+    } else {
+        vc.isCommenting = NO;
+    }
     Path *path = [[Path alloc] initWithDictionary:post.reference];
     vc.path = path;
     //[vc zoomToPath:path];
     [self.navigationController pushViewController:vc animated:YES];
 }
 
+-(void)dismissFriendsView:(NSNotification *)notification {
+    
+    [self.friendsView removeFromSuperview];
+    [UIView animateWithDuration:0.5 delay:0.f options: UIViewAnimationOptionCurveEaseOut animations:^{
+        self.backgroundView.alpha = 0;
+    }
+                     completion:^(BOOL finished){
+                         [self.backgroundView removeFromSuperview];
+                     }];
+    if ([notification isKindOfClass:[NSNotification class]] && ![[notification object] isKindOfClass:[UIButton class]]) {
+        id block = ^{
+            User *user = (User *)[notification object];
+            NSURL* url = [NSURL URLWithString:[@"https://secure-garden-50529.herokuapp.com/user/search/username/" stringByAppendingString:user.username]];
+            NSMutableURLRequest* request = [NSMutableURLRequest requestWithURL:url cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:10.f];
+            request.HTTPMethod = @"GET";
+            [request addValue:@"no-cache" forHTTPHeaderField:@"cache-control"];
+            [request addValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+            [request addValue:@"application/json" forHTTPHeaderField:@"Accept"];
+            NSURLSessionConfiguration* config = [NSURLSessionConfiguration defaultSessionConfiguration];
+            NSURLSession* session = [NSURLSession sessionWithConfiguration:config];
+            NSURLSessionDataTask* dataTask = [session dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+                if (!error) {
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        //NSDictionary* dict = [NSJSONSerialization JSONObjectWithData:data options:0 error:NULL];
+                        //User *tappedUser = [[User alloc] initWithDictionary:dict];
+                    });
+                }else{
+                    [self showErrorMessage:[error localizedDescription]];
+                }
+            }];
+            [dataTask resume];
+        };
+        //Create a Grand Central Dispatch queue and run the operation async
+        dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+        dispatch_async(queue, block);
+    }
+}
+
 #pragma mark - scroll view delegate methods
+-(void)scrollViewDidScroll: (UIScrollView*)scrollView
+{
+    float scrollViewHeight = scrollView.frame.size.height;
+    float scrollContentSizeHeight = scrollView.contentSize.height;
+    float scrollOffset = scrollView.contentOffset.y;
+    float currentHeight = scrollOffset + scrollViewHeight;
+    //c >= a && c <= b
+    if ( currentHeight == scrollContentSizeHeight) {
+    //if ( currentHeight ==  scrollContentSizeHeight - 660 ) {
+        if (_lastSeen) {
+            id block = ^{
+                NSURL* url = [NSURL URLWithString:[@"https://secure-garden-50529.herokuapp.com/posts/" stringByAppendingString:_lastSeen]];
+                NSMutableURLRequest* request = [NSMutableURLRequest requestWithURL:url cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:10.f];
+                request.HTTPMethod = @"GET";
+                [request addValue:@"no-cache" forHTTPHeaderField:@"cache-control"];
+                [request addValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+                [request addValue:@"application/json" forHTTPHeaderField:@"Accept"];
+                NSURLSessionConfiguration* config = [NSURLSessionConfiguration defaultSessionConfiguration];
+                NSURLSession* session = [NSURLSession sessionWithConfiguration:config];
+                NSURLSessionDataTask* dataTask = [session dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+                    if (error == nil) {
+                        dispatch_async(dispatch_get_main_queue(), ^{
+                            NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *) response;
+                            if ([httpResponse statusCode] == 200) {
+                                NSDictionary* dict = [NSJSONSerialization JSONObjectWithData:data options:0 error:NULL];
+                                NSMutableArray *responseArray = [dict objectForKey:@"posts"];
+                                _lastSeen = [dict objectForKey:@"lastSeen"];
+                                for (int i = 0; i < responseArray.count; i++) {
+                                    FeedPost *currentPost = [[FeedPost alloc] initWithFrame:CGRectMake(0, self.refreshControl.frame.    size.height, self.scrollView.frame.size.width, 300)];
+                                    [currentPost setDictionary:[responseArray objectAtIndex:i]];
+                                    [currentPost checkLikes];
+                                    User *user = [[User alloc] initWithDictionary:currentPost.submittedUser];
+                                    [currentPost setupProfilePic:user.avatar];
+                                    currentPost.parent = self;
+                                    CGFloat yOrigin = _posts.count * 330;
+                                    [currentPost setFrame:CGRectMake(0, yOrigin, self.view.frame.size.width,  300)];
+                                    [self.posts addObject:currentPost];
+                                    [self.scrollView addSubview:currentPost];
+                                }
+                                self.scrollView.contentInset = UIEdgeInsetsMake(0, 0, -10, -10);
+                                [self.scrollView setContentSize:CGSizeMake(self.scrollView.frame.size.width, 330 * self.posts.count)];
+                                [self.view setNeedsDisplay];
+                                [self.scrollView setNeedsDisplay];
+                        
+                                [_scrollView setContentInset:UIEdgeInsetsZero];
+                            } else {
+                                [self showErrorMessage:[NSHTTPURLResponse localizedStringForStatusCode: [httpResponse statusCode]]];
+                            }
+                        });
+                    }else{
+                        [self showErrorMessage:[error localizedDescription]];
+                    }
+                }];
+                [dataTask resume];
+            };
+            //Create a Grand Central Dispatch queue and run the operation async
+            dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+            dispatch_async(queue, block);
+        }
+    }
+}
+
+-(void) showErrorMessage: (NSString *) message {
+    ErrorView *errorView = [[ErrorView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 0)];
+    [self.view addSubview:errorView];
+    [UIView animateWithDuration:.5 delay:0.0 options:UIViewAnimationOptionCurveEaseIn animations:^{
+        errorView.frame  = CGRectMake(0, 0, self.view.frame.size.width, 50);
+    } completion:^(BOOL finished) {
+        [UIView animateWithDuration:.5 delay:2.0 options:UIViewAnimationOptionCurveEaseIn animations:^{
+            errorView.frame  = CGRectMake(0, 0, self.view.frame.size.width, 0);
+            
+        } completion:^(BOOL finished) {
+            [errorView removeFromSuperview];
+        }];
+        
+    }];
+}
 
 
 @end
