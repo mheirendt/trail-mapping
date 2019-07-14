@@ -8,8 +8,7 @@
 
 #import <UIKit/UIKit.h>
 @import MapKit;
-#import <UIKit/UIKit.h>
-#import "FeedPost.h"
+#import "Post.h"
 #import "Path.h"
 #import "FriendsView.h"
 #import "Comment.h"
@@ -24,7 +23,7 @@
 @property (strong, nonatomic) MKMapView *mapView;
 @property (strong, retain) NSMutableDictionary *dict;
 @property (strong, retain) Path *path;
-@property (strong, retain) FeedPost *post;
+@property (strong, retain) Post *post;
 @property (weak, nonatomic) UIView *mapContainer;
 @property NSInteger textFieldPreviousHeight;
 @property (strong, nonatomic) UIView *backgroundView;

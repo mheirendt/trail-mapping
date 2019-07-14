@@ -24,6 +24,7 @@
 @property (strong, nonatomic) NSString *imageID;
 @property (strong, nonatomic) UIImage *pickedImage;
 @property (weak, nonatomic) IBOutlet UILabel *errorLabel;
+@property bool IsCreatingUsername;
 
 -(void)showErrorMessage:(UILabel *)field andMessage:(NSString *)message;
 

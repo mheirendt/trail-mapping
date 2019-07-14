@@ -44,8 +44,7 @@
 		A9FC002E1D8CFB6000D4D707 /* VertexView.m in Sources */ = {isa = PBXBuildFile; fileRef = A9FC002D1D8CFB6000D4D707 /* VertexView.m */; };
 		A9FF38881DD4140400D2E98E /* loginScene.m in Sources */ = {isa = PBXBuildFile; fileRef = A9FF38871DD4140400D2E98E /* loginScene.m */; };
 		A9FF388B1DD415BB00D2E98E /* introScene.m in Sources */ = {isa = PBXBuildFile; fileRef = A9FF388A1DD415BB00D2E98E /* introScene.m */; };
-		A9FF388F1DE5F0E100D2E98E /* FeedPost.m in Sources */ = {isa = PBXBuildFile; fileRef = A9FF388D1DE5F0E100D2E98E /* FeedPost.m */; };
-		A9FF38901DE5F0E100D2E98E /* FeedPost.xib in Resources */ = {isa = PBXBuildFile; fileRef = A9FF388E1DE5F0E100D2E98E /* FeedPost.xib */; };
+		A9FF38901DE5F0E100D2E98E /* Post.xib in Resources */ = {isa = PBXBuildFile; fileRef = A9FF388E1DE5F0E100D2E98E /* Post.xib */; };
 		A9FF38931DE6036F00D2E98E /* ProfileViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A9FF38921DE6036F00D2E98E /* ProfileViewController.m */; };
 		FB07FF2DE398F8BBB9B3C6EB /* libPods-Trail-Mapping.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DF30851544A5D023206909D9 /* libPods-Trail-Mapping.a */; };
 /* End PBXBuildFile section */
@@ -90,7 +89,6 @@
 		A96757C41D921E8300331D86 /* CategoryCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CategoryCell.h; sourceTree = "<group>"; };
 		A96757C51D921E8300331D86 /* CategoryCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CategoryCell.m; sourceTree = "<group>"; };
 		A96757C91D922BEA00331D86 /* tableCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = tableCell.xib; sourceTree = "<group>"; };
-		A974BD791E1DB90E0063E5C4 /* FeedPost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FeedPost.h; sourceTree = "<group>"; };
 		A974BD7A1E2739880063E5C4 /* searchResultsTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = searchResultsTable.h; path = ../searchResultsTable.h; sourceTree = "<group>"; };
 		A974BD7B1E2739880063E5C4 /* searchResultsTable.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = searchResultsTable.m; path = ../searchResultsTable.m; sourceTree = "<group>"; };
 		A974BD7D1E2BE4930063E5C4 /* FriendsView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FriendsView.h; path = ../FriendsView.h; sourceTree = "<group>"; };
@@ -118,8 +116,7 @@
 		A9FF38871DD4140400D2E98E /* loginScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = loginScene.m; sourceTree = "<group>"; };
 		A9FF38891DD415BB00D2E98E /* introScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = introScene.h; path = ../introScene.h; sourceTree = "<group>"; };
 		A9FF388A1DD415BB00D2E98E /* introScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = introScene.m; path = ../introScene.m; sourceTree = "<group>"; };
-		A9FF388D1DE5F0E100D2E98E /* FeedPost.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FeedPost.m; sourceTree = "<group>"; };
-		A9FF388E1DE5F0E100D2E98E /* FeedPost.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = FeedPost.xib; sourceTree = "<group>"; };
+		A9FF388E1DE5F0E100D2E98E /* Post.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = Post.xib; sourceTree = "<group>"; };
 		A9FF38911DE6036F00D2E98E /* ProfileViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProfileViewController.h; sourceTree = "<group>"; };
 		A9FF38921DE6036F00D2E98E /* ProfileViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProfileViewController.m; sourceTree = "<group>"; };
 		DF30851544A5D023206909D9 /* libPods-Trail-Mapping.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Trail-Mapping.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -258,9 +255,7 @@
 			children = (
 				A9ECD93C1E4A9BFB004037AE /* Post.h */,
 				A9ECD93D1E4A9BFB004037AE /* Post.m */,
-				A974BD791E1DB90E0063E5C4 /* FeedPost.h */,
-				A9FF388D1DE5F0E100D2E98E /* FeedPost.m */,
-				A9FF388E1DE5F0E100D2E98E /* FeedPost.xib */,
+				A9FF388E1DE5F0E100D2E98E /* Post.xib */,
 				A9ECD9391E49848C004037AE /* Comment.h */,
 				A9ECD93A1E49848C004037AE /* Comment.m */,
 			);
@@ -336,7 +331,7 @@
 				A93DF42E1D73992F0028A997 /* Assets.xcassets in Resources */,
 				A96757C31D921D2200331D86 /* TokenView.xib in Resources */,
 				A93DF42C1D73992F0028A997 /* Main.storyboard in Resources */,
-				A9FF38901DE5F0E100D2E98E /* FeedPost.xib in Resources */,
+				A9FF38901DE5F0E100D2E98E /* Post.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -409,7 +404,6 @@
 				A93DF4521D7658580028A997 /* trailOverviewController.m in Sources */,
 				A916A4A21DA7FF9400A7B104 /* SettingsTable.m in Sources */,
 				A96757C61D921E8300331D86 /* CategoryCell.m in Sources */,
-				A9FF388F1DE5F0E100D2E98E /* FeedPost.m in Sources */,
 				A99005D01D8A2ECF0074B688 /* Vertex.m in Sources */,
 				A916A4A71DA8013300A7B104 /* SettingsCell.m in Sources */,
 				A974BD7C1E2739880063E5C4 /* searchResultsTable.m in Sources */,

@@ -7,7 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "FeedPost.h"
+#import "FeedPostDetail.h"
+#import "Post.h"
 #import "searchResultsTable.h"
 #import "FriendsView.h"
 #import "ErrorView.h"
@@ -15,7 +16,7 @@
 ////TODO
 @class FeedPost;
 
-@interface FeedViewController : UIViewController <UIScrollViewDelegate, UITextFieldDelegate, UISearchControllerDelegate>
+@interface FeedViewController : UIViewController <UIScrollViewDelegate, UITextFieldDelegate, UISearchControllerDelegate, MHPostDelegate>
 
 @property (strong, nonatomic) UISearchController *searchController;
 @property (strong, nonatomic) UINavigationController *navController;
@@ -28,7 +29,6 @@
 
 -(void)updateFeed:(UIRefreshControl *)refreshControl;
 -(IBAction)viewProfile:(id)sender;
--(void)viewPostDetail:(FeedPost *)post isCommenting:(bool)commenting;
 
 -(void)dismissFriendsView:(NSNotification *)notification;
 @end

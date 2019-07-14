@@ -29,53 +29,31 @@
 }
 
 -(IBAction)validateUser:(id)sender{
-    id block = ^{
-        NSURL* url = [NSURL URLWithString:@"https://secure-garden-50529.herokuapp.com/login"];
-        NSMutableURLRequest* request = [NSMutableURLRequest requestWithURL:url cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:10.f];
-        request.HTTPMethod = @"POST";
-        NSDictionary *dict = @{
+    NSDictionary *dict = @{
                            @"username" : _usernameField.text,
                            @"password" : _passwordField.text,
                            };
-        NSError *error = nil;
-        NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dict options:0 error:&error];
-        request.HTTPBody = jsonData;
-        [request addValue:@"no-cache" forHTTPHeaderField:@"cache-control"];
-        [request addValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
-        [request addValue:@"application/json" forHTTPHeaderField:@"Accept"];
-        NSURLSessionConfiguration* config = [NSURLSessionConfiguration defaultSessionConfiguration];
-        NSURLSession* session = [NSURLSession sessionWithConfiguration:config];
-        NSURLSessionDataTask* dataTask = [session dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *res, NSError *   error) {
-            if (error == nil) {
-                NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *) res;
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    if ([httpResponse statusCode] == 200) {
-                        //User has been verified
-                        [[NSUserDefaults standardUserDefaults] setValue:_usernameField.text forKey:@"username"];
-                        [[NSUserDefaults standardUserDefaults] setValue:_passwordField.text forKey:@"password"];
-                        NSDictionary* dict = [NSJSONSerialization JSONObjectWithData:data options:0 error:NULL];
-                        User *user = [[User alloc] initWithDictionary:dict];
-                        AppDelegate *del = (AppDelegate *)[[UIApplication sharedApplication] delegate];
-                        del.activeUser = user;
-                        [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"signin"];
-                        [self.navigationController popToRootViewControllerAnimated:YES];
-                    } else {
-                        //NSDictionary* dict = [NSJSONSerialization JSONObjectWithData:data options:0 error:NULL];
-                        [self showErrorMessage:_errorLabel andMessage:[NSHTTPURLResponse localizedStringForStatusCode: [httpResponse statusCode]]];
-                    }
-                });
-            } else {
-                [self showErrorMessage:_errorLabel andMessage:[error localizedDescription]];
-            }
-        }];
-        [dataTask resume];
-    };
-    //Create a Grand Central Dispatch queue and run the operation async
-    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
-    dispatch_async(queue, block);
+    [[[User alloc] initWithDictionary:dict] login:dict completionBlock:^(NSData * data){
+        if (data != nil)
+        {
+            //User has been verified
+            [[NSUserDefaults standardUserDefaults] setValue:_usernameField.text forKey:@"username"];
+            [[NSUserDefaults standardUserDefaults] setValue:_passwordField.text forKey:@"password"];
+            NSDictionary* dict = [NSJSONSerialization JSONObjectWithData:data options:0 error:NULL];
+            User *user = [[User alloc] initWithDictionary:dict];
+            AppDelegate *del = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+            del.activeUser = user;
+            [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"signin"];
+            [self.navigationController popToRootViewControllerAnimated:YES];
+        }
+        else
+        {
+            [self showErrorMessage:_errorLabel andMessage:@"An error occurred"];
+        }
+    }];
 }
-
-#pragma mark - FBSDK integration
+#pragma mark end region
+#pragma mark facebook delegate methods
 - (void)loginButton:(FBSDKLoginButton *)loginButton didCompleteWithResult:(FBSDKLoginManagerLoginResult *)result error:(NSError *)error{
     if (error == nil){
         if (result){
@@ -83,11 +61,25 @@
             [parameters setValue:@"id,name,email" forKey:@"fields"];
             FBSDKGraphRequest *req = [[FBSDKGraphRequest alloc] initWithGraphPath:@"me" parameters:parameters];
             [req startWithCompletionHandler:^(FBSDKGraphRequestConnection *connection, id res, NSError *error) {
-                if(error == nil) {
-                    [self validateFacebookUser];
-                } else {
-                    [self showErrorMessage:_errorLabel andMessage:[error localizedDescription]];
+                if(error == nil)
+                {
+                    [[[User alloc] init] loginWithFacebook:^(NSData * data)
+                    {
+                        if (data != nil)
+                        {
+                            NSDictionary* dict = [NSJSONSerialization JSONObjectWithData:data options:0 error:NULL];
+                            User *user = [[User alloc] initWithDictionary:dict];
+                            AppDelegate *del = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+                            del.activeUser = user;
+                            [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"signin"];
+                            [self.navigationController popToRootViewControllerAnimated:YES];
+                        }
+                        else
+                            [self showErrorMessage:_errorLabel andMessage:@"An error occurred"];
+                    }];
                 }
+                else
+                    [self showErrorMessage:_errorLabel andMessage:[error localizedDescription]];
             }];
         }
     }
@@ -96,52 +88,8 @@
 - (void)loginButtonDidLogOut:(FBSDKLoginButton *)loginButton{
     //Nothing for now
 }
-
--(void) validateFacebookUser {
-    id block = ^{
-        NSString *fbAccessToken = [[FBSDKAccessToken currentAccessToken] tokenString];
-        NSURL* url = [NSURL URLWithString:@"https://secure-garden-50529.herokuapp.com/auth/facebook/token"];
-        NSMutableURLRequest* request = [NSMutableURLRequest requestWithURL:url cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:10.f];
-        request.HTTPMethod = @"POST";
-        NSError* error = nil;
-        NSDictionary *dict = @{
-                               @"access_token" : fbAccessToken
-                               };
-        NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dict
-                                                           options:NSJSONWritingPrettyPrinted
-                                                             error:&error];
-        request.HTTPBody = jsonData;
-        [request addValue:@"no-cache" forHTTPHeaderField:@"cache-control"];
-        [request addValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
-        [request addValue:@"application/json" forHTTPHeaderField:@"Accept"];
-        NSURLSessionConfiguration* config = [NSURLSessionConfiguration defaultSessionConfiguration];
-        NSURLSession* session = [NSURLSession sessionWithConfiguration:config];
-        NSURLSessionDataTask* dataTask = [session dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                if (error == nil) {
-                    NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *) response;
-                    if ([httpResponse statusCode] == 200){
-                        //User exists in database
-                        [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"signin"];
-                        [self.navigationController popToRootViewControllerAnimated:YES];
-                    } else {
-                        //should we navigate to register scene here?
-                        [self showErrorMessage:_errorLabel andMessage:[NSHTTPURLResponse localizedStringForStatusCode: [httpResponse statusCode]]];
-                    }
-                } else {
-                    [self showErrorMessage:_errorLabel andMessage:[error localizedDescription]];
-                }
-            });
-        }];
-        [dataTask resume];
-    };
-    //Create a Grand Central Dispatch queue and run the operation async
-    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
-    dispatch_async(queue, block);
-}
-#pragma mark - END FBSDK integration
-
-#pragma mark - UITextField delegate methods
+#pragma mark end region
+#pragma mark text field delegate methods
 -(BOOL)textFieldShouldReturn:(UITextField *)textField{
     //Dismiss the keyboards when the user selects the 'Return' button
     [self dismissTheKeyboard];
@@ -152,8 +100,8 @@
     [self.usernameField resignFirstResponder];
     [self.passwordField resignFirstResponder];
 }
-
-#pragma mark - validation
+#pragma mark end region
+#pragma mark validation
 -(void)showErrorMessage:(UILabel *)field andMessage:(NSString *)message{
     //Set the text field to fully transparent
     [field setAlpha:0.0f];
@@ -172,8 +120,8 @@
         } completion:nil];
     }];
 }
-
-#pragma mark - Navigation
+#pragma mark end region
+#pragma mark navigation
 - (IBAction)backPressed:(id)sender {
     [self.navigationController popToViewController:[self.navigationController.viewControllers objectAtIndex:self.navigationController.viewControllers.count - 2] animated:YES];
 }
@@ -197,4 +145,5 @@
 - (BOOL)tabBarIsVisible {
     return self.tabBarController.tabBar.frame.origin.y < CGRectGetMaxY(self.view.frame);
 }
+#pragma mark end region
 @end

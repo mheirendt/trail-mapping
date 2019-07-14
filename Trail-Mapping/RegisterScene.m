@@ -33,47 +33,26 @@
 }
 
 - (IBAction)validate:(id)sender {
-    id block = ^ {
-        NSURL* url = [NSURL URLWithString:@"https://secure-garden-50529.herokuapp.com/signup"];
-        NSMutableURLRequest* request = [NSMutableURLRequest requestWithURL:url cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:10.f];
-        request.timeoutInterval = 10.f;
-        request.HTTPMethod = @"POST";
-        NSMutableDictionary *dict = [NSMutableDictionary dictionary];
-        [dict setObject:self.usernameField.text forKey:@"username"];
-        [dict setObject:self.passwordField.text forKey:@"password"];
-        [dict setObject:self.emailField.text forKey:@"email"];
-        _imageID ? [dict setObject: self.imageID forKey:@"avatar"] : nil;
-        NSError *error = nil;
-        NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dict options:NSJSONWritingPrettyPrinted error:&error];
-        request.HTTPBody = jsonData;
-        [request addValue:@"no-cache" forHTTPHeaderField:@"cache-control"];
-        [request addValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
-        [request addValue:@"application/json" forHTTPHeaderField:@"Accept"];
-        NSURLSessionConfiguration* config = [NSURLSessionConfiguration defaultSessionConfiguration];
-        NSURLSession* session = [NSURLSession sessionWithConfiguration:config];
-        NSURLSessionDataTask* dataTask = [session dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
-            if (!error) {
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *) response;
-                    if ([httpResponse statusCode] == 200){
-                        AppDelegate *del;
-                        del = (AppDelegate *)[[UIApplication sharedApplication] delegate];
-                        NSDictionary* dict = [NSJSONSerialization JSONObjectWithData:data options:0 error:NULL];
-                        del.activeUser = [[User alloc] initWithDictionary:dict];
-                        [self dismissView];
-                    } else {
-                        [self showErrorMessage:_errorLabel andMessage:[NSHTTPURLResponse localizedStringForStatusCode: [httpResponse statusCode]]];
-                    }
-                });
-            } else {
-                [self showErrorMessage:_errorLabel andMessage:[error localizedDescription]];
-            }
-        }];
-        [dataTask resume];
-    };
-    //Create a Grand Central Dispatch queue and run the operation async
-    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
-    dispatch_async(queue, block);
+    NSMutableDictionary *dict = [NSMutableDictionary dictionary];
+    [dict setObject:self.usernameField.text forKey:@"username"];
+    [dict setObject:self.passwordField.text forKey:@"password"];
+    [dict setObject:self.emailField.text forKey:@"email"];
+    _imageID ? [dict setObject: self.imageID forKey:@"avatar"] : nil;
+    User *user = [[User alloc] initWithDictionary:dict];
+    [user persist:dict completionBlock:^(NSData * data){
+        if (data != nil)
+        {
+            AppDelegate *del;
+            del = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+            NSDictionary* dict = [NSJSONSerialization JSONObjectWithData:data options:0 error:NULL];
+            del.activeUser = [[User alloc] initWithDictionary:dict];
+            [self dismissView];
+        }
+        else
+        {
+            [self showErrorMessage:_errorLabel andMessage:@"An error occurred"];
+        }
+    }];
 }
 
 #pragma mark - FBSDK integration
@@ -89,18 +68,31 @@
                     NSString *fbid = [res objectForKey:@"id"];
                     dispatch_async(dispatch_get_global_queue(0,0), ^{
                         NSString *urlStr = [@"http://graph.facebook.com/%@/picture?type=small" stringByAppendingString:fbid];
-                        NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString: urlStr]];
-                        //if ( data == nil )
-                        //return;
-                        //dispatch_async(dispatch_get_main_queue(), ^{
-                            [self uploadImageData:data];
-                        //});
+                        NSData * imageData = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString: urlStr]];
+                        [[[User alloc] init] uploadImageData:imageData completionBlock:^(NSData * data)
+                         {
+                             if (data != nil)
+                             {
+                                 NSDictionary* dataDict = [NSJSONSerialization JSONObjectWithData:data options:0 error:NULL];
+                                 self.imageID = [dataDict objectForKey:@"avatar"];
+                                 if (self.imageID) {
+                                     NSString *urlStr = [@"https://secure-garden-50529.herokuapp.com/upload/" stringByAppendingString:_imageID];
+                                     NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString: urlStr]];
+                                     dispatch_async(dispatch_get_main_queue(), ^{
+                                         _avatar.image = [UIImage imageWithData:data];
+                                     });
+                                 }
+                             }
+                             else
+                                 [self showErrorMessage:_errorLabel andMessage:@"An error occurred"];
+                         }];
                     });
                     [self.emailField setText:[res objectForKey:@"email"]];
                     //self.facebookPassword = [res objectForKey:@"id"];
                     //disable password field
                     [_passwordField setEnabled:NO];
                     [_usernameField becomeFirstResponder];
+                    _IsCreatingUsername = true;
                 } else {
                     [self showErrorMessage:_errorLabel andMessage:[error localizedDescription]];
                 }
@@ -114,59 +106,37 @@
 }
 
 -(void)validateFacebookUser {
-    //NSString *fbAccessToken = [[FBSDKAccessToken currentAccessToken] tokenString];
-    NSURL* url = [NSURL URLWithString:@"https://secure-garden-50529.herokuapp.com/auth/facebook/token"];
-    NSMutableURLRequest* request = [NSMutableURLRequest requestWithURL:url cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:10.f];
-    request.HTTPMethod = @"POST";
-    NSError* error = nil;
     NSDictionary *dict = @{
                            @"username" : self.usernameField.text,
-                           @"avatar" : self.imageID,
                            @"email" : self.emailField.text
                            };
-    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dict
-                                                       options:NSJSONWritingPrettyPrinted
-                                                         error:&error];
-    request.HTTPBody = jsonData;
-    [request addValue:@"no-cache" forHTTPHeaderField:@"cache-control"];
-    [request addValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
-    [request addValue:@"application/json" forHTTPHeaderField:@"Accept"];
-    NSURLSessionConfiguration* config = [NSURLSessionConfiguration defaultSessionConfiguration];
-    NSURLSession* session = [NSURLSession sessionWithConfiguration:config];
-    NSURLSessionDataTask* dataTask = [session dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
-        //Completion block
-        if (error == nil) {
-            NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *) response;
-            if ([httpResponse statusCode] == 200){
-                //User exists in database
-                //_facebookPassword = fbAccessToken;
-                //[[NSUserDefaults standardUserDefaults] setValue:self.facebookPassword forKey:@"facebook"];
-                NSDictionary* dict = [NSJSONSerialization JSONObjectWithData:data options:0 error:NULL];
-                User *user = [[User alloc] initWithDictionary:dict];
-                AppDelegate *del = (AppDelegate *)[[UIApplication sharedApplication] delegate];
-                del.activeUser = user;
-                [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"signin"];
-                [self.navigationController popToRootViewControllerAnimated:YES];
-            } else {
-                //NSDictionary* dict = [NSJSONSerialization JSONObjectWithData:data options:0 error:NULL];
-                [self showErrorMessage:_errorLabel andMessage:[NSHTTPURLResponse localizedStringForStatusCode: [httpResponse statusCode]]];
-            }
-        } else {
-            [self showErrorMessage:_errorLabel andMessage:[error localizedDescription]];
+    //TODO: image?
+    [[[User alloc] initWithDictionary:dict] signupWithFacebook:dict completionBlock:^(NSData * data)
+    {
+        if (data != nil)
+        {
+            NSDictionary* dict = [NSJSONSerialization JSONObjectWithData:data options:0 error:NULL];
+            User *user = [[User alloc] initWithDictionary:dict];
+            AppDelegate *del = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+            del.activeUser = user;
+            [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"signin"];
+            [self.navigationController popToRootViewControllerAnimated:YES];
+        }
+        else
+        {
+            _IsCreatingUsername = true;
+            [_usernameField becomeFirstResponder];
+            [self showErrorMessage:_errorLabel andMessage:@"An error occurred"];
         }
     }];
-    [dataTask resume];
-    
 }
 #pragma mark - END FBSDK integration
-
 #pragma mark - image uploading
 -(void) uploadPhoto {
     UIImagePickerController *imagePicker = [[UIImagePickerController alloc] init];
     imagePicker.delegate = self;
     imagePicker.allowsEditing = YES;
     imagePicker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
-    
     [self presentViewController:imagePicker animated:YES completion:nil];
 }
 
@@ -180,96 +150,25 @@
     if(_pickedImage==nil)
         _pickedImage = [info objectForKey:UIImagePickerControllerCropRect];
     NSData *imageData = UIImageJPEGRepresentation(_pickedImage, .2f);
-    [self uploadImageData:imageData];
-}
-
--(void) uploadImageData:(NSData *)imageData {
-    id block = ^{
-        //Create an API Request
-        // Dictionary that holds post parameters. You can set your post parameters that your server accepts or programmed to accept.
-        NSMutableDictionary* _params = [[NSMutableDictionary alloc] init];
-        [_params setObject:@"1.0" forKey:@"ver"];
-        [_params setObject:@"en" forKey:@"lan"];
-        //[_params setObject:[NSString stringWithFormat:@"%d", _user.userID] forKey:@"userId"];
-        [_params setObject:[NSString stringWithFormat:@"recfile"] forKey:@"title"];
-        
-        // the boundary string : a random string, that will not repeat in post data, to separate post data fields.
-        NSString *BoundaryConstant = @"----------V2ymHFg03ehbqgZCaKO6jy";
-        
-        // string constant for the post parameter 'file'. My server uses this name: `file`. Your's may differ
-        NSString* FileParamConstant = @"recfile";
-        
-        // the server url to which the image (or the media) is uploaded. Use your server url here
-        NSURL* requestURL = [NSURL URLWithString:@"https://secure-garden-50529.herokuapp.com/upload"];
-        
-        // create request
-        NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
-        [request setCachePolicy:NSURLRequestReloadIgnoringLocalCacheData];
-        [request setHTTPShouldHandleCookies:NO];
-        [request setTimeoutInterval:30];
-        [request setHTTPMethod:@"POST"];
-        
-        // set Content-Type in HTTP header
-        NSString *contentType = [NSString stringWithFormat:@"multipart/form-data; boundary=%@", BoundaryConstant];
-        [request setValue:contentType forHTTPHeaderField: @"Content-Type"];
-        
-        // post body
-        NSMutableData *body = [NSMutableData data];
-        
-        // add params (all params are strings)
-        for (NSString *param in _params) {
-            [body appendData:[[NSString stringWithFormat:@"--%@\r\n", BoundaryConstant] dataUsingEncoding:NSUTF8StringEncoding]];
-            [body appendData:[[NSString stringWithFormat:@"Content-Disposition: form-data; name=\"%@\"\r\n\r\n", param] dataUsingEncoding:NSUTF8StringEncoding]];
-            [body appendData:[[NSString stringWithFormat:@"%@\r\n", [_params objectForKey:param]] dataUsingEncoding:NSUTF8StringEncoding]];
-        }
-        
-        // add image data
-        
-        if (imageData) {
-            [body appendData:[[NSString stringWithFormat:@"--%@\r\n", BoundaryConstant] dataUsingEncoding:NSUTF8StringEncoding]];
-            [body appendData:[[NSString stringWithFormat:@"Content-Disposition: form-data; name=\"%@\"; filename=\"image.jpg\"\r\n", FileParamConstant] dataUsingEncoding:NSUTF8StringEncoding]];
-            [body appendData:[@"Content-Type: image/jpeg\r\n\r\n" dataUsingEncoding:NSUTF8StringEncoding]];
-            [body appendData:imageData];
-            [body appendData:[[NSString stringWithFormat:@"\r\n"] dataUsingEncoding:NSUTF8StringEncoding]];
-        }
-        
-        [body appendData:[[NSString stringWithFormat:@"--%@--\r\n", BoundaryConstant] dataUsingEncoding:NSUTF8StringEncoding]];
-        
-        // setting the body of the post to the reqeust
-        [request setHTTPBody:body];
-        
-        // set the content-length
-        NSString *postLength = [NSString stringWithFormat:@"%lu", (unsigned long)[body length]];
-        [request setValue:postLength forHTTPHeaderField:@"Content-Length"];
-        
-        // set URL
-        [request setURL:requestURL];
-        
-        [request setHTTPBody:body];
-        
-        NSURLSessionConfiguration* config = [NSURLSessionConfiguration defaultSessionConfiguration];
-        NSURLSession* session = [NSURLSession sessionWithConfiguration:config];
-        NSURLSessionDataTask* dataTask = [session dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
-            if (!error) {
-                NSDictionary* dataDict = [NSJSONSerialization JSONObjectWithData:data options:0 error:NULL];
-                self.imageID = [dataDict objectForKey:@"avatar"];
-                if (self.imageID) {
-                    NSString *urlStr = [@"https://secure-garden-50529.herokuapp.com/upload/" stringByAppendingString:_imageID];
-                    NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString: urlStr]];
-                    dispatch_async(dispatch_get_main_queue(), ^{
-                        _avatar.image = [UIImage imageWithData:data];
-                    });
-                }
+    [[[User alloc] init] uploadImageData:imageData completionBlock:^(NSData * data)
+    {
+        if (data != nil)
+        {
+            NSDictionary* dataDict = [NSJSONSerialization JSONObjectWithData:data options:0 error:NULL];
+            self.imageID = [dataDict objectForKey:@"avatar"];
+            if (self.imageID) {
+                NSString *urlStr = [@"https://secure-garden-50529.herokuapp.com/upload/" stringByAppendingString:_imageID];
+                NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString: urlStr]];
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    _avatar.image = [UIImage imageWithData:data];
+                });
             }
-        }];
-        [dataTask resume];
-    };
-    //Create a Grand Central Dispatch queue and run the operation async
-    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
-    dispatch_async(queue, block);
+        }
+        else
+            [self showErrorMessage:_errorLabel andMessage:@"An error occurred"];
+    }];
 }
 #pragma mark - END image uploading
-
 #pragma mark - validation
 -(void)showErrorMessage:(UILabel *)field andMessage:(NSString *)message{
     //Set the text field to fully transparent
@@ -301,6 +200,8 @@
     [self.emailField resignFirstResponder];
     [self.usernameField resignFirstResponder];
     [self.passwordField resignFirstResponder];
+    if (_IsCreatingUsername)
+        [self validateFacebookUser];
 }
 
 #pragma mark - navigation

@@ -7,6 +7,8 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <FBSDKCoreKit/FBSDKCoreKit.h>
+#import <FBSDKLoginKit/FBSDKLoginKit.h>
 
 @interface User : NSObject
 @property (strong, nonatomic) NSString *_id;
@@ -22,7 +24,11 @@
 
 -(NSDictionary *)toDictionary;
 
-- (void) persist:(User*)user;
+- (void) persist:(NSDictionary *)dictionary completionBlock:(void(^)(NSData *)) completionBlock;
+-(void) login:(NSDictionary *)dictionary completionBlock:(void(^)(NSData *)) completionBlock;
+-(void) signupWithFacebook:(NSDictionary *)dictionary completionBlock:(void(^)(NSData *)) completionBlock;
+-(void) loginWithFacebook:(void(^)(NSData *)) completionBlock;
 - (instancetype) initWithDictionary:(NSDictionary*)dictionary;
 - (User *)initWithEmail:(NSString *)email Username:(NSString *)username avatar:(NSString *)avatar Password:(NSString *)password;
+-(void) uploadImageData:(NSData *)imageData completionBlock:(void(^)(NSData *)) completionBlock;
 @end

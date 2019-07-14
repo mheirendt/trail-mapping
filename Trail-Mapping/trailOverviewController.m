@@ -11,7 +11,7 @@
 #import "ViewController.h"
 #import "overviewController.h"
 #import "Path.h"
-#import "FeedPost.h"
+#import "Post.h"
 #import "User.h"
 
 @interface trailOverviewController ()

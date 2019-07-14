@@ -22,7 +22,7 @@
     [self.scrollView setUserInteractionEnabled:YES];
     [_scrollView.layer setBackgroundColor:[UIColor lightGrayColor].CGColor];
     [self.view addSubview:_scrollView];
-    self.post = [[FeedPost alloc] initWithFrame:CGRectMake(self.view.bounds.origin.x, self.view.bounds.origin.y, self.view.bounds.size.width, 320)];
+    self.post = [[Post alloc] initWithFrame:CGRectMake(self.view.bounds.origin.x, self.view.bounds.origin.y, self.view.bounds.size.width, 320)];
     [self.post setDictionary:self.dict];
     [_scrollView addSubview:_post];
     _chatBox.delegate = self;
@@ -91,7 +91,9 @@
                             [container.layer setBackgroundColor:[UIColor whiteColor].CGColor];
                             [container setUserInteractionEnabled:YES];
                             [container setDictionary:arr[i]];
-                            
+                            CGRect commentRect = [container.bodyLabel.text boundingRectWithSize:CGSizeMake(width - 40, 9999) options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName:[UIFont fontWithName:@"Helvetica" size:14.f]} context:nil];
+                            CGSize size = commentRect.size;
+                            [container setFrame:CGRectMake(container.frame.origin.x, container.frame.origin.y, size.width, size.height)];
                             container.parent = self;
                             [_comments addObject:container];
                             if (adding) {

@@ -7,8 +7,6 @@
 //
 
 #import "AppDelegate.h"
-#import <FBSDKCoreKit/FBSDKCoreKit.h>
-#import <FBSDKLoginKit/FBSDKLoginKit.h>
 
 @interface AppDelegate ()
 
@@ -20,23 +18,13 @@
     [self activateUser];
     _trails = [[NSMutableArray alloc] init];
     _categories = [[NSMutableArray alloc] init];
-    
     self.paths = [[Paths alloc] init];
     NSString *username = [[NSUserDefaults standardUserDefaults] objectForKey:@"username"];
     NSString *password = [[NSUserDefaults standardUserDefaults] objectForKey:@"password"];
     NSString *token = [[NSUserDefaults standardUserDefaults] objectForKey:@"facebook"];
-    NSLog(@"username: %@ password: %@", username, password);
-    if(username && password){
+    if((username && password) || token){
         [self.paths import];
     }
-    if (token) {
-        NSLog(@"importing paths");
-        [self.paths import];
-    }
-    
-    
-
-    // Override point for customization after application launch.
     return YES;
 }
 -(BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation{
@@ -92,95 +80,50 @@
 }
 
 -(void)activateUser{
-    NSString *username = [[NSUserDefaults standardUserDefaults] objectForKey:@"username"];
-    NSString *password = [[NSUserDefaults standardUserDefaults] objectForKey:@"password"];
-    NSString *token = [[NSUserDefaults standardUserDefaults] objectForKey:@"facebook"];
-    
-    if(username && password){
-        id block = ^{
-            NSURL* url = [NSURL URLWithString:@"https://secure-garden-50529.herokuapp.com/login"];
-            NSMutableURLRequest* request = [NSMutableURLRequest requestWithURL:url cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:10.f];
-            request.HTTPMethod = @"POST";
-            NSDictionary *dict = @{
-                                   @"username" : username,
-                                   @"password" : password,
-                                   };
-            NSError *error = nil;
-            NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dict options:0 error:&error];
-            request.HTTPBody = jsonData;
-            [request addValue:@"no-cache" forHTTPHeaderField:@"cache-control"];
-            [request addValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
-            [request addValue:@"application/json" forHTTPHeaderField:@"Accept"];
-            NSURLSessionConfiguration* config = [NSURLSessionConfiguration defaultSessionConfiguration];
-            NSURLSession* session = [NSURLSession sessionWithConfiguration:config];
-            NSURLSessionDataTask* dataTask = [session dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *res, NSError *error) {
-                //Completion block
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    if (error == nil) {
-                        NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *) res;
-                        NSLog(@"response status code: %lu", (long)[httpResponse statusCode]);
-                        if ([httpResponse statusCode] == 200) {
-                            //User has been verified
-                            NSDictionary* dict = [NSJSONSerialization JSONObjectWithData:data options:0 error:NULL];
-                            self.activeUser = [[User alloc] initWithDictionary:dict];
-                            
-                            [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"signin"];
-                            //[self dismissViewControllerAnimated:YES completion:nil];
-                        } else {
-                            NSLog(@"%ld", (long)[httpResponse statusCode]);
-                            //user has not been verified
-                        };
-                    } else {
-                        NSLog(@"Something went wrong: %@", [error localizedDescription]);
-                    }
-                });
-            }];
-            [dataTask resume];
-        };
-        //Create a Grand Central Dispatch queue and run the operation async
-        dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
-        dispatch_async(queue, block);
+    NSString * token = [[NSUserDefaults standardUserDefaults] objectForKey:@"facebook"];
+    NSString * username = [[NSUserDefaults standardUserDefaults] objectForKey:@"username"];
+    NSString * password = [[NSUserDefaults standardUserDefaults] objectForKey:@"password"];
+
+    if(username && password)
+    {
+        NSDictionary *dict = @{
+                               @"username" : username,
+                               @"password" : password,
+                               };
+        [[[User alloc] init] login:dict completionBlock:^(NSData * data)
+        {
+            if (data != nil)
+            {
+                //User has been verified
+                NSDictionary* dict = [NSJSONSerialization JSONObjectWithData:data options:0 error:NULL];
+                self.activeUser = [[User alloc] initWithDictionary:dict];
+                [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"signin"];
+            }
+            else
+            {
+                [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"username"];
+                [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"password"];
+                [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"facebook"];
+                [[NSUserDefaults standardUserDefaults] setObject:@"signin" forKey:@"signin"];
+            }
+        }];
     }
-    if (token){
-        id block = ^{
-            //NSString *fbAccessToken = [[FBSDKAccessToken currentAccessToken] tokenString];
-            //NSLog(@"This is token: %@", fbAccessToken);
-            NSURL* url = [NSURL URLWithString:@"https://secure-garden-50529.herokuapp.com/auth/facebook/token"];
-            NSMutableURLRequest* request = [NSMutableURLRequest requestWithURL:url cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:10.f];
-            request.HTTPMethod = @"POST";
-            NSError* error = nil;
-            NSDictionary *dict = @{
-                                   @"access_token" : token
-                                   };
-            NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dict
-                                                               options:NSJSONWritingPrettyPrinted // Pass 0 if you don't care about the readability of the generated string
-                                                                 error:&error];
-            request.HTTPBody = jsonData;
-            [request addValue:@"no-cache" forHTTPHeaderField:@"cache-control"];
-            [request addValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
-            [request addValue:@"application/json" forHTTPHeaderField:@"Accept"];
-            NSURLSessionConfiguration* config = [NSURLSessionConfiguration defaultSessionConfiguration];
-            NSURLSession* session = [NSURLSession sessionWithConfiguration:config];
-            NSURLSessionDataTask* dataTask = [session dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
-                //Completion block
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    if (error == nil) {
-                        NSLog(@"res: %@", response);
-                        if (response.expectedContentLength < 5){
-                            //User exists in database
-                            NSLog(@"token still valid");
-                        }
-                    }
-                    else {
-                        NSLog(@"error: %@", error.localizedDescription);
-                    }
-                });
-            }];
-            [dataTask resume];
-        };
-        //Create a Grand Central Dispatch queue and run the operation async
-        dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
-        dispatch_async(queue, block);
+    if (token)
+    {
+        [[[User alloc] init] loginWithFacebook:^(NSData * data){
+            if (data != nil)
+            {
+                //User has been verified
+                NSDictionary* dict = [NSJSONSerialization JSONObjectWithData:data options:0 error:NULL];
+                self.activeUser = [[User alloc] initWithDictionary:dict];
+                [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"signin"];
+            }
+            else
+            {
+                [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"facebook"];
+                [[NSUserDefaults standardUserDefaults] setObject:@"signin" forKey:@"signin"];
+            }
+        }];
     }
 }
 

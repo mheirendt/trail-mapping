@@ -78,12 +78,12 @@
                             _posts = [NSMutableArray array];
                             for (int i = 0; i < responseArray.count; i++) {
                                 //self.refreshControl.frame.size.height
-                                FeedPost *currentPost = [[FeedPost alloc] initWithFrame:CGRectMake(0, 0, self.scrollView.frame.size.width, 310)];
+                                Post *currentPost = [[Post alloc] initWithFrame:CGRectMake(0, 0, self.scrollView.frame.size.width, 310)];
+                                currentPost.delegate = self;
                                 [currentPost setDictionary:[responseArray objectAtIndex:i]];
                                 [currentPost checkLikes];
                                 User *user = [[User alloc] initWithDictionary:currentPost.submittedUser];
                                 [currentPost setupProfilePic:user.avatar];
-                                currentPost.parent = self;
                                 CGFloat yOrigin = i * 330;
                                 [currentPost setFrame:CGRectMake(0, yOrigin, self.view.frame.size.width,  310)];
                                 [self.posts addObject:currentPost];
@@ -209,17 +209,17 @@
     [table searchBarSearchButtonClicked:self.searchController.searchBar];
 }
 
--(void)viewPostDetail:(FeedPost *)post isCommenting:(bool)commenting {
+-(void)viewPostDetail:(Post *)post isCommenting:(bool)commenting {
     FeedPostDetail *vc = [[UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]] instantiateViewControllerWithIdentifier:@"FeedPostDetailViewController"];
-    vc.post = post;
-    vc.dict = (NSMutableDictionary *)[post toDictionary];
+    //vc.post = post;
+    //vc.dict = (NSMutableDictionary *)[post toDictionary];
     if (commenting) {
         vc.isCommenting = YES;
     } else {
         vc.isCommenting = NO;
     }
-    Path *path = [[Path alloc] initWithDictionary:post.reference];
-    vc.path = path;
+    //Path *path = [[Path alloc] initWithDictionary:post.reference];
+    //vc.path = path;
     //[vc zoomToPath:path];
     [self.navigationController pushViewController:vc animated:YES];
 }
@@ -291,12 +291,12 @@
                                 NSMutableArray *responseArray = [dict objectForKey:@"posts"];
                                 _lastSeen = [dict objectForKey:@"lastSeen"];
                                 for (int i = 0; i < responseArray.count; i++) {
-                                    FeedPost *currentPost = [[FeedPost alloc] initWithFrame:CGRectMake(0, self.refreshControl.frame.    size.height, self.scrollView.frame.size.width, 300)];
+                                    Post *currentPost = [[Post alloc] initWithFrame:CGRectMake(0, self.refreshControl.frame.    size.height, self.scrollView.frame.size.width, 300)];
                                     [currentPost setDictionary:[responseArray objectAtIndex:i]];
                                     [currentPost checkLikes];
                                     User *user = [[User alloc] initWithDictionary:currentPost.submittedUser];
                                     [currentPost setupProfilePic:user.avatar];
-                                    currentPost.parent = self;
+                                    currentPost.delegate = self;
                                     CGFloat yOrigin = _posts.count * 330;
                                     [currentPost setFrame:CGRectMake(0, yOrigin, self.view.frame.size.width,  300)];
                                     [self.posts addObject:currentPost];
