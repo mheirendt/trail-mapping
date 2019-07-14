@@ -21,9 +21,9 @@
 		<string>fbshareextension</string>
 	</array>
 	<key>FacebookAppID</key>
-	<string>143683242760890</string>
+	<string>[TODO: FACEBOOK APP ID HERE]</string>
 	<key>FacebookDisplayName</key>
-	<string>trail-mapping-feed</string>
+	<string>[TODO: FACEBOOK DISPLAY NAME HERE]</string>
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSExceptionDomains</key>
